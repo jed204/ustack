@@ -25,6 +25,7 @@ public interface FundingInt {
 	public void setActionCommand(String cmd);
 	public void setActionListener(ActionListener al);
 	
+	public void cancelSubscription() throws Exception;
 	public void subscribeTo(String planId, boolean prorate) throws Exception;
 	
 	public String requestFunding(String actor, String userIpAddress, String description, int price, boolean test) throws Exception;

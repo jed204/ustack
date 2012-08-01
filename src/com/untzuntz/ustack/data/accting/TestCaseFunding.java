@@ -44,6 +44,9 @@ public class TestCaseFunding implements FundingInt {
 	{
 		return null;
 	}
+
+	public void cancelSubscription() throws Exception
+	{}
 	
 	public void subscribeTo(String planId, boolean prorate) throws Exception
 	{}

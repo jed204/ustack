@@ -105,6 +105,9 @@ public class AuthorizeNetFunding implements FundingInt,ActionListener {
 		return cfg;
 	}
 	
+	public void cancelSubscription() throws Exception
+	{}
+
 	public void subscribeTo(String planId, boolean prorate) throws Exception
 	{}
 	

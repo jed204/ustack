@@ -73,6 +73,9 @@ public class UAppCfg {
 	
 	/** Name of the database in mongo db that stores the 'addressBook' collections */
 	public static final String DATABASE_ADDRBOOK_COL = "Database.AddressBook";
+	
+	/** Name of the database in mongo db that stores the 'apiLogs' collections */
+	public static final String DATABASE_APILOG_COL = "Database.APILog";
 
 	/** Enable SSL Connection */
 	public static final String EMAIL_SECURE_SSL = "Email.Secure";

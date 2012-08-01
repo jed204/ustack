@@ -156,6 +156,12 @@ public class StripeFunding implements FundingInt,ActionListener {
 		return new Vector<String>();
 	}
 	
+	public void cancelSubscription() throws Exception
+	{
+		Customer cust = Customer.retrieve(cfg.getString("customerId"), stripeParams.getPrivateKey());
+		cust.cancelSubscription(stripeParams.getPrivateKey());
+	}
+	
 	public void subscribeTo(String planId, boolean prorate) throws Exception
 	{
 		Customer cust = Customer.retrieve(cfg.getString("customerId"), stripeParams.getPrivateKey());
@@ -176,6 +182,7 @@ public class StripeFunding implements FundingInt,ActionListener {
 			Customer cust = Customer.retrieve(cfg.getString("customerId"), stripeParams.getPrivateKey());
 			if (cust != null)
 			{
+				logger.info("Got customer object for cust id [" + cfg.getString("customerId") + "] => " + cust.toString());
 				if (cust.getActiveCard() != null)
 				{
 					ret.put("last4", cust.getActiveCard().getLast4());
@@ -188,7 +195,9 @@ public class StripeFunding implements FundingInt,ActionListener {
 					ret.put("subscriptionCurrentStart", cust.getSubscription().getCurrentPeriodStart());
 					ret.put("subscriptionCurrentEnd", cust.getSubscription().getCurrentPeriodEnd());
 					ret.put("subscriptionStart", cust.getSubscription().getStart());
-					ret.put("subscriptionCanceledAt", cust.getSubscription().getCanceledAt());
+					
+					if (cust.getSubscription().getCancelAtPeriodEnd())
+						ret.put("subscriptionCanceledAt", cust.getSubscription().getCanceledAt());
 					
 					if (cust.getSubscription().getPlan() != null)
 					{
