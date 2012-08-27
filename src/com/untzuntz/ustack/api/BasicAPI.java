@@ -30,10 +30,10 @@ public class BasicAPI {
     	String serverSig = callParams.getRequestSignature(def.getHashKey());
     	
     	DBObject resp = new BasicDBObject("serverSignature", serverSig);
-    	String clientSig = "(NOT PROVIDED)";
+    	String clientSig = "(NOT PROVIDED)";  
     	if (callParams.getParameter("sig") != null)
     		clientSig = callParams.getParameter("sig");
-    	    	
+    	
     	resp.put("clientSignature", clientSig);
     	resp.put("signatureStatus", "Error");
 		if (clientSig.equals(serverSig))
@@ -67,11 +67,11 @@ public class BasicAPI {
 				channel.write(res).addListener(ChannelFutureListener.CLOSE);
 			}
 			else
-	    		APIResponse.httpOk(channel, new BasicDBObject("status", "SUCCESS"));
+	    		APIResponse.httpOk(channel, APIResponse.success(""));
 			
 			return;
 		}
-		APIResponse.httpError(channel, new BasicDBObject("errorText", "Error during email confirmation process"));
+		APIResponse.httpError(channel, APIResponse.error("Error during email confirmation process"));
     }
     
 	public void forgotPassword(MethodDefinition def, Channel channel, HttpRequest req, CallParameters callParams) throws Exception
@@ -83,13 +83,13 @@ public class BasicAPI {
 				UForgotPasswordSvc.sendForgotPassword(usrAcct.getUserName(), getClientIPObject(channel, req), (String)def.getData("url"), usrAcct.getUserName(), usrAcct.getPrimaryEmail(), usrAcct.getFullName(), (String)def.getData("template"));
 			} catch (Exception e) {
 	    		logger.warn("User [" + usrAcct.getUserName() + "] hit an exception during forgot password", e);
-	    		APIResponse.httpError(channel, new BasicDBObject("errorText", "Error during forgot password request"));
+	    		APIResponse.httpError(channel, APIResponse.error("Error during forgot password request"));
 	    		return;
 			}
-    		APIResponse.httpOk(channel, new BasicDBObject("status", "SUCCESS"));
+    		APIResponse.httpOk(channel, APIResponse.success(""));
 		}
 		else
-    		APIResponse.httpError(channel, new BasicDBObject("errorText", "Error during forgot password request"));
+    		APIResponse.httpError(channel, APIResponse.error("Error during forgot password request"));
 
 	}
 	
@@ -102,13 +102,13 @@ public class BasicAPI {
 				UForgotPasswordSvc.sendResetPassword(usrAcct.getUserName(), getClientIPObject(channel, req), usrAcct.getUserName(), usrAcct.getPrimaryEmail(), usrAcct.getFullName(), (String)def.getData("template"), null);
 			} catch (Exception e) {
 	    		logger.warn("User [" + usrAcct.getUserName() + "] hit an exception during forgot password", e);
-	    		APIResponse.httpError(channel, new BasicDBObject("errorText", "Error during forgot password request"));
+	    		APIResponse.httpError(channel, APIResponse.error("Error during reset password request"));
 	    		return;
 			}
-    		APIResponse.httpOk(channel, new BasicDBObject("status", "SUCCESS"));
+    		APIResponse.httpOk(channel, APIResponse.success(""));
 		}
 		else
-    		APIResponse.httpError(channel, new BasicDBObject("errorText", "Error during forgot password request"));
+    		APIResponse.httpError(channel, APIResponse.error("Error during reset password request"));
 
 	}
 	

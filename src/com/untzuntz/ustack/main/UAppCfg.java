@@ -77,6 +77,8 @@ public class UAppCfg {
 	/** Name of the database in mongo db that stores the 'apiLogs' collections */
 	public static final String DATABASE_APILOG_COL = "Database.APILog";
 
+	public static final String DATABASE_IN_THE_FUTURE_COL = "Database.InTheFuture";
+	
 	/** Enable SSL Connection */
 	public static final String EMAIL_SECURE_SSL = "Email.Secure";
 	

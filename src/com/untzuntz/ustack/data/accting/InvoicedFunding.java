@@ -70,6 +70,8 @@ public class InvoicedFunding implements FundingInt,ActionListener {
 	}
 	public void cancelSubscription() throws Exception
 	{}
+	
+	public boolean isSubscribed(String planId) throws Exception { return false; }
 
 	public void subscribeTo(String planId, boolean prorate) throws Exception
 	{}

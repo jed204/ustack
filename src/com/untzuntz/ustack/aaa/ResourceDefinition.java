@@ -473,6 +473,9 @@ public class ResourceDefinition extends UntzDBObject {
 			if (rd != null)
 				return rd;
 		}
+		
+		if (id == null || "null".equalsIgnoreCase(id))
+			return null;
 
 		DBObject res = new ResourceDefinition().getCollection().findOne(BasicDBObjectBuilder.start("_id", new ObjectId(id)).get());
 		

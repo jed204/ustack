@@ -22,6 +22,7 @@ import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
+import com.mongodb.util.JSONCallback;
 import com.untzuntz.ustack.main.UFile;
 
 public class UDataMgr {
@@ -250,11 +251,11 @@ public class UDataMgr {
 	public static DBObject readDBObjectFromInputStream(InputStream in) throws Exception
 	{
 		BSONDecoder decoder = new BasicBSONDecoder();
-		BSONObject bObj = decoder.readObject(in);
 
-		BasicDBObject ret = new BasicDBObject();
-		ret.putAll(bObj);
-		return ret;
+		JSONCallback callback = new JSONCallback();
+		decoder.decode(in, callback);
+		DBObject obj = (DBObject)callback.get();		
+		return obj;
 	}
 
 	/**

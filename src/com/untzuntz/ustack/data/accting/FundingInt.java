@@ -27,6 +27,7 @@ public interface FundingInt {
 	
 	public void cancelSubscription() throws Exception;
 	public void subscribeTo(String planId, boolean prorate) throws Exception;
+	public boolean isSubscribed(String planId) throws Exception;
 	
 	public String requestFunding(String actor, String userIpAddress, String description, int price, boolean test) throws Exception;
 	

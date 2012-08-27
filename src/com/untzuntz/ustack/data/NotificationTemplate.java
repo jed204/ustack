@@ -251,7 +251,7 @@ public class NotificationTemplate extends UntzDBObject {
 	{
 		List<NotificationTemplate> ret = new Vector<NotificationTemplate>();
 		DBCollection col = getDBCollection();
-		DBCursor cur = col.find();
+		DBCursor cur = col.find().sort(new BasicDBObject("eventName", 1));
 		
 		while (cur.hasNext())
 			ret.add(new NotificationTemplate(cur.next()));

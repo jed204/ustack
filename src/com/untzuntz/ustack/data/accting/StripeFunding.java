@@ -21,6 +21,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.stripe.model.Charge;
 import com.stripe.model.Customer;
+import com.stripe.model.Subscription;
 import com.untzuntz.components.app.Stripe;
 import com.untzuntz.ustack.data.ExternalAPIParams;
 import com.untzuntz.ustack.main.Msg;
@@ -160,6 +161,20 @@ public class StripeFunding implements FundingInt,ActionListener {
 	{
 		Customer cust = Customer.retrieve(cfg.getString("customerId"), stripeParams.getPrivateKey());
 		cust.cancelSubscription(stripeParams.getPrivateKey());
+	}
+	
+	public boolean isSubscribed(String planId) throws Exception
+	{
+		Customer cust = Customer.retrieve(cfg.getString("customerId"), stripeParams.getPrivateKey());
+		
+		Subscription sub = cust.getSubscription();
+		if (sub == null)
+			return false;
+
+		if (sub.getPlan().getId().equalsIgnoreCase(planId))
+			return true;
+		
+		return false;
 	}
 	
 	public void subscribeTo(String planId, boolean prorate) throws Exception
@@ -365,20 +380,15 @@ public class StripeFunding implements FundingInt,ActionListener {
 			String country, 
 			String phone, String fax, 
 			String cardNumber, Date expirationDate, String ccv, boolean test) throws Exception
-	{
-		String description = name + " - " + customerId;
-		if (lastName != null)
-			description = lastName + " - " + customerId;
-		if (company != null && company.length() > 0)
-			description = company + " - " + customerId;
-		
+	{		
 		Map<String, Object> customerParams = new HashMap<String, Object>();
+		customerParams.put("id", customerId);
 		customerParams.put("email", email);
-		customerParams.put("description", description);
+		customerParams.put("description", name);
 		customerParams.put("card", cardNumber); // obtained with Stripe.js
 		
 		Customer cust = Customer.create(customerParams, stripeParams.getPrivateKey());
-		logger.info("Creating customer [" + description + "] => Token: " + cardNumber + " => Cust ID: " + cust.getId());
+		logger.info("Creating customer [" + customerId + "] => Token: " + cardNumber + " => Cust ID: " + cust.getId());
 		
 		cfg = new FundingConfig(name, "com.untzuntz.ustack.data.accting.StripeFunding");
 		cfg.put("customerId", cust.getId());

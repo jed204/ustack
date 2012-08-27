@@ -1,6 +1,7 @@
 package com.untzuntz.ustack.data;
 
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -802,6 +803,11 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	
 	public static List<DBObject> search(SearchTableHeaderInt sth, TablePagerInt pager, DBCollection col, DBObject additionalSearch)
 	{
+		return search(sth, pager, col, additionalSearch, null);
+	}
+	
+	public static List<DBObject> search(SearchTableHeaderInt sth, TablePagerInt pager, DBCollection col, DBObject additionalSearch, DBObject sorter)
+	{
 		BasicDBObject lookup = new BasicDBObject();
 		
 		if (additionalSearch != null)
@@ -839,7 +845,8 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 			}
 		}		
 		
-		BasicDBObject sorter = new BasicDBObject();
+		if (sorter == null)
+			sorter = new BasicDBObject();
 		
 		if (sth != null && sth.getSortField() != null)
 			sorter.put(sth.getSortField(), sth.getSortDirectionInt());
@@ -892,6 +899,8 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 		int count = 0;
 		int fieldLen = fields.length;
 
+		SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+		
 		/*
 		 * Output CSV Header
 		 */
@@ -930,7 +939,23 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 						if (res == null)
 							res = "";
 						
-						buf.append("\"").append(res).append("\"");
+						buf.append("\"");
+						if (res instanceof Date)
+							buf.append(sdf.format( (Date)res ));
+						else if (res instanceof String)
+						{
+							String val = (String)res;
+							if ("true".equalsIgnoreCase(val))
+								buf.append(1);
+							else if ("false".equalsIgnoreCase(val))
+								buf.append(0);
+							else
+								buf.append(res);
+						}
+						else
+							buf.append(res);
+							
+						buf.append("\"");
 						if ((i + 1) < fieldLen)
 							buf.append(",");
 					}
