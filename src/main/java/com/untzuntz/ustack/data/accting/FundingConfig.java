@@ -32,6 +32,10 @@ public class FundingConfig extends BasicDBObject implements DBObject {
 		return getString("fundingActorClass");
 	}
 	
+	public String getFundingActorClassUI() { 
+		return getString("fundingActorClass") + "UI";
+	}
+	
 	public void setFundingActorClass(String cls) {
 		put("fundingActorClass", cls);
 	}

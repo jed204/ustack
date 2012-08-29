@@ -28,7 +28,7 @@ public class LocationTest extends UStackTestCaseBase {
 	
 	@Test public void testCountryLoad() throws Exception
 	{
-		Country.loadCountriesToDB(new FileInputStream("src/main/java/com/untzuntz/ustack/resources/countries.csv"));
+		Country.loadCountriesToDB(new FileInputStream("src/main/resources/com/untzuntz/ustack/resources/countries.csv"));
 		assertEquals(272, Country.getCountryCount());
 	}
 	
