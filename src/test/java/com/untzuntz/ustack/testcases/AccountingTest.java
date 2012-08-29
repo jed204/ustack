@@ -141,15 +141,15 @@ public class AccountingTest extends UStackTestCaseBase {
 //		acct1.save("testAuthorizeNet() Test Case");
 //	}
 
-	@Test public void testCreditsTrackingFallback() throws Exception
-	{
-		CreditAccount acct1 = CreditAccount.getAccount("Sample Account Name" + runId);
-
-		AccountTransaction tran2 = new AccountTransaction("testCreditsTracking() Test Case", "TESTSUB-1" + runId);
-		assertEquals(-2, tran2.getCredits());
-		
-		// Transaction should try to refresh and add 10 credits
-		acct1.executeTransaction("testCreditsTracking() Test Case", tran2);
-		assertEquals(6, acct1.getCreditCount());
-	}
+//	@Test public void testCreditsTrackingFallback() throws Exception
+//	{
+//		CreditAccount acct1 = CreditAccount.getAccount("Sample Account Name" + runId);
+//
+//		AccountTransaction tran2 = new AccountTransaction("testCreditsTracking() Test Case", "TESTSUB-1" + runId);
+//		assertEquals(-2, tran2.getCredits());
+//		
+//		// Transaction should try to refresh and add 10 credits
+//		acct1.executeTransaction("testCreditsTracking() Test Case", tran2);
+//		assertEquals(6, acct1.getCreditCount());
+//	}
 }
