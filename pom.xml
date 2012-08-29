@@ -82,21 +82,17 @@
         	<version>1.07.00</version>
         </dependency>
         <dependency>
-        	<groupId>com.anet</groupId>
-        	<artifactId>anet-java-sdk</artifactId>
-        	<version>1.4.3</version>
+        	<groupId>javapns</groupId>
+        	<artifactId>javapns</artifactId>
+        	<version>2.2</version>
         </dependency>
-        <dependency>
-        	<groupId>com.javapns</groupId>
-        	<artifactId>javapns-java</artifactId>
-        	<version>2.2.0</version>
-        </dependency>
-        <dependency>
-        	<groupId>com.memcached</groupId>
-        	<artifactId>memcached</artifactId>
-        	<version>2.5</version>
-        </dependency>
-    </dependencies>
+		<dependency>
+	        <groupId>spy</groupId>
+	        <artifactId>spymemcached</artifactId>
+	        <version>2.8.1</version>
+	        <scope>provided</scope>
+	    </dependency>
+        </dependencies>
     <description>UntzUntz UStack Core</description>
     <organization>
         <url>http://www.untzuntz.com</url>
@@ -167,11 +163,24 @@
     </scm>
 	<distributionManagement>
 	  <repository>
-	    <id>bert</id>
-	    <url>http://bert.intelegrid.net/nexus/content/repositories/releases</url>
+	    <id>sonatype-nexus-staging</id>
+	    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
 	  </repository>
 	</distributionManagement>
-    <repositories>
-	    <repository> <id>intelemage</id> <name>Intelemage Repository</name> <url>http://bert.intelegrid.net/nexus/content/groups/public/</url> </repository>
+      <repositories>
+	    <repository>
+	      <id>spy</id>
+	      <name>Spy Repository</name>
+	      <layout>default</layout>
+	      <url>http://files.couchbase.com/maven2/</url>
+	      <snapshots>
+	        <enabled>false</enabled>
+	      </snapshots>
+	    </repository>
+	    <repository>
+	    	<id>openmobster</id>
+	    	<name>javapns</name>
+	    	<url>http://openmobster.googlecode.com/svn/maven2</url>
+	    </repository>
     </repositories>
 </project>

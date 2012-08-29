@@ -12,7 +12,6 @@ import org.jasypt.util.text.BasicTextEncryptor;
 import org.junit.Test;
 
 import com.untzuntz.ustack.data.accting.AccountTransaction;
-import com.untzuntz.ustack.data.accting.AuthorizeNetFunding;
 import com.untzuntz.ustack.data.accting.CreditAccount;
 import com.untzuntz.ustack.data.accting.FundingConfig;
 import com.untzuntz.ustack.data.accting.InsufficientFundsException;
@@ -28,16 +27,16 @@ public class AccountingTest extends UStackTestCaseBase {
 	public AccountingTest()
 	{
 		super();
-		BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
-		textEncryptor.setPassword(AuthorizeNetFunding.SB_ENC);
-		
-		String login = textEncryptor.encrypt("3gZrV955G7");
-		String key = textEncryptor.encrypt("8W2CmG7h4Vf259dD");
-		
-		//MpKSItay8lSjMXbo5lvuDpOoPUY99YUGYT5arjs=
-
-		System.setProperty(UAppCfg.AUTHNET_SANDBOX_LOGINID, login);
-		System.setProperty(UAppCfg.AUTHNET_SANDBOX_TRANSACTIONKEY, key);
+//		BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
+//		textEncryptor.setPassword(AuthorizeNetFunding.SB_ENC);
+//		
+//		String login = textEncryptor.encrypt("3gZrV955G7");
+//		String key = textEncryptor.encrypt("8W2CmG7h4Vf259dD");
+//		
+//		//MpKSItay8lSjMXbo5lvuDpOoPUY99YUGYT5arjs=
+//
+//		System.setProperty(UAppCfg.AUTHNET_SANDBOX_LOGINID, login);
+//		System.setProperty(UAppCfg.AUTHNET_SANDBOX_TRANSACTIONKEY, key);
 	}
 	
 	@Test public void testProduct() throws Exception
@@ -121,26 +120,26 @@ public class AccountingTest extends UStackTestCaseBase {
 		assertEquals(3200, acct1.getPriceTotal());
 	}
 	
-	@Test public void testAuthorizeNet() throws Exception
-	{
-		CreditAccount acct1 = CreditAccount.getAccount("Sample Account Name" + runId);
-		
-		AuthorizeNetFunding funding = new AuthorizeNetFunding();
-		funding.setCreditAccount(acct1);
-		
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.YEAR, 5);
-		Date expiration = cal.getTime();
-		
-		FundingConfig cfg = funding.createFunding("testCase", "Test Funding", "Business", acct1.getUid(), "My Company", runId + "-itmtest@mailinator.com", "Mike", "Gordon", "123 Main St.", null, "State College", "Pennsylvania", "16801", "United States", "612-555-1212", null, "4111-1111-1111-1111", expiration, "000", true);
-		acct1.addFundingSource(cfg);
-		acct1.save("testAuthorizeNet() Test Case");
-		
-		funding.requestFunding("testAuthorizeNet() Test Case", null, "Test Case Add", 1000, true);
-		funding.updateBillingAddress("testCase", "My Company", "Mike", "Gordon", "123 Main St.", null, "State College", "Pennsylvania", "16801", "United States", "612-555-1212", null, true);
-		funding.updateCreditCardInfo("testCase", "4111-1111-1111-1111", expiration, "000", true);
-		acct1.save("testAuthorizeNet() Test Case");
-	}
+//	@Test public void testAuthorizeNet() throws Exception
+//	{
+//		CreditAccount acct1 = CreditAccount.getAccount("Sample Account Name" + runId);
+//		
+//		AuthorizeNetFunding funding = new AuthorizeNetFunding();
+//		funding.setCreditAccount(acct1);
+//		
+//		Calendar cal = Calendar.getInstance();
+//		cal.add(Calendar.YEAR, 5);
+//		Date expiration = cal.getTime();
+//		
+//		FundingConfig cfg = funding.createFunding("testCase", "Test Funding", "Business", acct1.getUid(), "My Company", runId + "-itmtest@mailinator.com", "Mike", "Gordon", "123 Main St.", null, "State College", "Pennsylvania", "16801", "United States", "612-555-1212", null, "4111-1111-1111-1111", expiration, "000", true);
+//		acct1.addFundingSource(cfg);
+//		acct1.save("testAuthorizeNet() Test Case");
+//		
+//		funding.requestFunding("testAuthorizeNet() Test Case", null, "Test Case Add", 1000, true);
+//		funding.updateBillingAddress("testCase", "My Company", "Mike", "Gordon", "123 Main St.", null, "State College", "Pennsylvania", "16801", "United States", "612-555-1212", null, true);
+//		funding.updateCreditCardInfo("testCase", "4111-1111-1111-1111", expiration, "000", true);
+//		acct1.save("testAuthorizeNet() Test Case");
+//	}
 
 	@Test public void testCreditsTrackingFallback() throws Exception
 	{
