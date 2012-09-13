@@ -80,9 +80,7 @@ public class Branding extends UntzDBObject {
 	
 	public static Branding getByURL(URL url)
 	{
-		String key = url.toString();
-		
-		logger.info("Branding Lookup: " + key);
+//		String key = url.toString();
 		
 		if (UOpts.getCacheEnabled())
 		{
@@ -102,9 +100,6 @@ public class Branding extends UntzDBObject {
 			
 			//if (UOpts.getCacheEnabled())
 			//	UDataCache.getInstance().set(key, 900, ret);
-			
-			logger.info("Branding Found => " + ret);
-			
 			return ret;
 		}
 		
