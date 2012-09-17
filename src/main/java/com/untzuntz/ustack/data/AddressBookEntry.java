@@ -76,6 +76,55 @@ public class AddressBookEntry extends BasicDBObject {
 	public String getLink() {
 		return getString("internalLink");
 	}
+	
+	/**
+	 * Only valid for 'group' types
+	 * @param display
+	 * @param name
+	 */
+	public void addGroupMember(String display, String internalId, String internalLink)
+	{
+		BasicDBList memberList = (BasicDBList)get("memberList");
+		if (memberList == null)
+			memberList = new BasicDBList();
+
+		DBObject member = null;
+		for (int i = 0; member == null && i < memberList.size(); i++)
+		{
+			DBObject test = (DBObject)memberList.get(i);
+			if (internalLink.equals( (String)test.get("siteId") ))
+				member = test;
+			if (internalLink.equals( (String)test.get("userName") ))
+				member = test;
+		}
+
+		if (member == null)
+		{
+			member = new BasicDBObject();
+			member.put(internalId, internalLink);
+		}
+		
+		member.put("displayVal", display);
+		memberList.add(member);
+
+		put("memberList", memberList);
+	}
+	
+	public void removeGroupMember(String internalLink)
+	{
+		BasicDBList memberList = (BasicDBList)get("memberList");
+		if (memberList == null)
+			memberList = new BasicDBList();
+
+		for (int i = 0; i < memberList.size(); i++)
+		{
+			DBObject member = (DBObject)memberList.get(i);
+			if (internalLink.equals( (String)member.get("siteId") ))
+				memberList.remove(i);
+			if (internalLink.equals( (String)member.get("userName") ))
+				memberList.remove(i);
+		}
+	}
 
 	/**
 	 * Returns the last time the 'actor' used this entry

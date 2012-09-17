@@ -12,6 +12,7 @@ import com.mongodb.Mongo;
 import com.untzuntz.ustack.data.AddressBook;
 import com.untzuntz.ustack.data.AddressBookEntry;
 import com.untzuntz.ustack.data.MongoDB;
+import com.untzuntz.ustack.util.AddressBookSearch;
 
 public class AddressBookTest extends UStackTestCaseBase {
 
@@ -31,7 +32,9 @@ public class AddressBookTest extends UStackTestCaseBase {
 		AddressBookEntry entry2 = new AddressBookEntry("dave@untzuntz.com" + runId);
 		AddressBookEntry entry3 = new AddressBookEntry("john@untzuntz.com" + runId); // should be the same as entry1
 		entry1.setDisplayValue("Johnny");
+		entry1.setType("user");
 		entry2.setDisplayValue("David Davies");
+		entry2.setType("user");
 		entry3.setDisplayValue("Johnny Same");
 		
 		myBook1.addEntry(entry1);
@@ -40,6 +43,20 @@ public class AddressBookTest extends UStackTestCaseBase {
 		myBook1.save("Test Case");
 		
 		assertEquals(2, myBook1.getEntryList().size()); // only 2 are expected because 'entry3' should no add due to matching entry1
+	}
+	
+	@Test public void testSearch() throws Exception
+	{
+		AddressBook myBook1 = AddressBook.getByName("test@testy.com" + runId);
+		assertEquals(2, myBook1.getEntryList().size()); // we should have values from the last test
+		
+		assertEquals(1, AddressBookSearch.search(myBook1, "Johnny", null, null).size());
+		assertEquals(1, AddressBookSearch.search(myBook1, "David Davies", null, null).size());
+		assertEquals(0, AddressBookSearch.search(myBook1, "INVALID", null, null).size());
+		assertEquals(1, AddressBookSearch.search(myBook1, "Johnny", null, "user").size());
+		assertEquals(1, AddressBookSearch.search(myBook1, "David Davies", null, "user").size());
+		assertEquals(2, AddressBookSearch.search(myBook1, null, null, "user").size());
+		assertEquals(0, AddressBookSearch.search(myBook1, null, null, "site").size());
 	}
 	
 	@Test public void testRemoveLogic() throws Exception

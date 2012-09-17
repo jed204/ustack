@@ -16,9 +16,9 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.untzuntz.ustack.exceptions.InvalidSiteAccountName;
 import com.untzuntz.ustack.exceptions.InvalidUserAccountName;
-import com.untzuntz.ustack.main.UOpts;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
+import com.untzuntz.ustack.uisupport.UEntryError;
 
 /**
  * The address book object allows you to manage an address book per user.
@@ -333,6 +333,26 @@ public class AddressBook extends UntzDBObject {
 			setEntryList(entryList);
 		}
 	}
+	
+	public void updateEntry(AddressBookEntry entry)
+	{
+		BasicDBList entryList = getEntryList();
+		boolean found = false;
+		for (int i = 0; !found && i < entryList.size(); i++)
+		{
+			DBObject test = (DBObject)entryList.get(i);
+			if (entry.getMatch().equalsIgnoreCase( (String)test.get("match") ))
+			{
+				found = true;
+				entryList.set(i, entry);
+			}
+		}
+
+		if (!found)
+			entryList.add(entry);
+		
+		setEntryList(entryList);
+	}
 
 	/**
 	 * Removes an entry from this address book only (not subscribed books)
@@ -350,6 +370,41 @@ public class AddressBook extends UntzDBObject {
 				i--;
 			}
 		}
+	}
+	
+	public AddressBookEntry getByGroupId(String groupId)
+	{
+		if (groupId == null)
+			return null;
+		
+		groupId = groupId.trim();
+		
+		List<AddressBookEntry> entries = getEntries();
+		for (AddressBookEntry e : entries)
+		{
+			if (groupId.equalsIgnoreCase((String)e.get("groupId")))
+				return e;
+		}
+		
+		return null;
+
+	}
+	
+	public AddressBookEntry getEntryByDisplayName(String name)
+	{
+		if (name == null)
+			return null;
+		
+		name = name.trim();
+		
+		List<AddressBookEntry> entries = getEntries();
+		for (AddressBookEntry e : entries)
+		{
+			if (e.getDisplayValue().equalsIgnoreCase(name))
+				return e;
+		}
+		
+		return null;
 	}
 
 	/**
