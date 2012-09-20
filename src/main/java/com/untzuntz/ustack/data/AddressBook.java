@@ -341,15 +341,19 @@ public class AddressBook extends UntzDBObject {
 		for (int i = 0; !found && i < entryList.size(); i++)
 		{
 			DBObject test = (DBObject)entryList.get(i);
-			if (entry.getMatch().equalsIgnoreCase( (String)test.get("match") ))
+			if (entry.getType().equalsIgnoreCase( (String)test.get("type") ) && entry.getMatch().equalsIgnoreCase( (String)test.get("match") ))
 			{
 				found = true;
 				entryList.set(i, entry);
+				logger.info("Found match for entry [" + entry.getMatch() + "] at " + i);
 			}
 		}
 
 		if (!found)
+		{
+			logger.info("Unable to find match for entry [" + entry.getMatch() + "] => Adding");
 			entryList.add(entry);
+		}
 		
 		setEntryList(entryList);
 	}

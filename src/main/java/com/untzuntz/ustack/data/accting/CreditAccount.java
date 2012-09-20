@@ -475,7 +475,7 @@ public class CreditAccount extends UntzDBObject {
 						
 					} catch (Exception err) {
 						
-						logger.error("Funding Request Failed [" + getAccountName() + "/" + getAccountId() + "] -> Reason: " + err.getMessage(), err);
+						logger.warn("Funding Request Failed [" + getAccountName() + "/" + getAccountId() + "] -> Reason: " + err.getMessage(), err);
 						
 						// Save the failed transaction as part of the account record
 						AccountTransaction failedTran = new AccountTransaction(actor, refresh.getProductId());

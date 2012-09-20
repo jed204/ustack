@@ -92,9 +92,7 @@ public class AddressBookEntry extends BasicDBObject {
 		for (int i = 0; member == null && i < memberList.size(); i++)
 		{
 			DBObject test = (DBObject)memberList.get(i);
-			if (internalLink.equals( (String)test.get("siteId") ))
-				member = test;
-			if (internalLink.equals( (String)test.get("userName") ))
+			if (internalLink.equals( (String)test.get(internalId) ))
 				member = test;
 		}
 
@@ -102,10 +100,10 @@ public class AddressBookEntry extends BasicDBObject {
 		{
 			member = new BasicDBObject();
 			member.put(internalId, internalLink);
+			memberList.add(member);
 		}
 		
 		member.put("displayVal", display);
-		memberList.add(member);
 
 		put("memberList", memberList);
 	}
