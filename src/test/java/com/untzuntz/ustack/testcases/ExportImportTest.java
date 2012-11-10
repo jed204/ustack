@@ -61,7 +61,7 @@ public class ExportImportTest extends UStackTestCaseBase {
 		
 		UDataCache.getInstance().set("test", 100, cacheVal);
 		
-		String recvVal = (String)UDataCache.getInstance().get("test");
+//		String recvVal = (String)UDataCache.getInstance().get("test");
 
 //		assertNotNull(recvVal);
 //		BasicDBList newList2 = UDataMgr.readDBListFromString(new String(Base64.decodeBase64(recvVal.getBytes())));

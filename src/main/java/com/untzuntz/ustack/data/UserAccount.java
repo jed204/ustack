@@ -35,7 +35,6 @@ import com.untzuntz.ustack.exceptions.InvalidUserAccountName;
 import com.untzuntz.ustack.exceptions.PasswordException;
 import com.untzuntz.ustack.exceptions.PasswordLengthException;
 import com.untzuntz.ustack.exceptions.RequiredAccountDataMissingException;
-import com.untzuntz.ustack.main.UOpts;
 import com.untzuntz.ustack.main.Emailer;
 import com.untzuntz.ustack.main.Msg;
 import com.untzuntz.ustack.main.UAppCfg;

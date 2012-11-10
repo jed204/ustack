@@ -22,6 +22,7 @@ import com.untzuntz.ustack.main.UOpts;
 public class Branding extends UntzDBObject {
 
 	private static final long serialVersionUID = 1L;
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(Branding.class);
 
 	public String getCollectionName() { return "branding"; }

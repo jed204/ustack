@@ -45,10 +45,11 @@ public class InvoicedFunding implements FundingInt {
 		return errors;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public DBObject getFundingData()
 	{
 		DBObject ret = new BasicDBObject();
-		ret.putAll((Map)cfg);
+		ret.putAll((Map<String,Object>)cfg.toMap());
 		return ret;
 	}
 	

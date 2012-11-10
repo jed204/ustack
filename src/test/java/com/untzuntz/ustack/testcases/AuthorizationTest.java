@@ -171,8 +171,6 @@ public class AuthorizationTest extends UStackTestCaseBase {
 		/*
 		 * Test Cache of User Auth List
 		 */
-		int i = 0;
-		i++;
 		try {
 			List<ResourceLink> links = Authorization.getUserAuthList(testUser, "Admin App" + runId, null, UBasePermission.Login);
 			assertNotNull(links);

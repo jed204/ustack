@@ -14,7 +14,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.untzuntz.ustack.exceptions.ObjectExistsException;
-import com.untzuntz.ustack.main.UOpts;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
 

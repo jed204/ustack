@@ -6,15 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import java.io.FileInputStream;
 
 import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import com.untzuntz.ustack.data.Country;
-import com.untzuntz.ustack.data.MongoDB;
 import com.untzuntz.ustack.data.UDataMgr;
 
 public class LocationTest extends UStackTestCaseBase {

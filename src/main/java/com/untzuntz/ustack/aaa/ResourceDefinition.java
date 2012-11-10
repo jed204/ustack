@@ -18,7 +18,6 @@ import com.untzuntz.ustack.data.UserAccount;
 import com.untzuntz.ustack.exceptions.AccountExistsException;
 import com.untzuntz.ustack.exceptions.ObjectExistsException;
 import com.untzuntz.ustack.exceptions.PasswordLengthException;
-import com.untzuntz.ustack.main.UOpts;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
 

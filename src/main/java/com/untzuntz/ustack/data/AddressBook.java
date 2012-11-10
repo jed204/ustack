@@ -18,7 +18,6 @@ import com.untzuntz.ustack.exceptions.InvalidSiteAccountName;
 import com.untzuntz.ustack.exceptions.InvalidUserAccountName;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
-import com.untzuntz.ustack.uisupport.UEntryError;
 
 /**
  * The address book object allows you to manage an address book per user.

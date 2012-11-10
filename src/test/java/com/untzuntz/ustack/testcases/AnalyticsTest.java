@@ -6,14 +6,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.log4j.Logger;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.Mongo;
 import com.untzuntz.ustack.data.Analytics;
-import com.untzuntz.ustack.data.MongoDB;
 import com.untzuntz.ustack.data.TrackingObject;
 
 public class AnalyticsTest extends UStackTestCaseBase {

@@ -4,11 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.apache.log4j.Logger;
-import org.jasypt.util.text.BasicTextEncryptor;
 import org.junit.Test;
 
 import com.untzuntz.ustack.data.accting.AccountTransaction;
@@ -18,7 +14,6 @@ import com.untzuntz.ustack.data.accting.InsufficientFundsException;
 import com.untzuntz.ustack.data.accting.Product;
 import com.untzuntz.ustack.exceptions.AccountExistsException;
 import com.untzuntz.ustack.exceptions.InvalidUserAccountName;
-import com.untzuntz.ustack.main.UAppCfg;
 
 public class AccountingTest extends UStackTestCaseBase {
 

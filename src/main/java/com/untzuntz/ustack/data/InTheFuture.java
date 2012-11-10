@@ -11,7 +11,6 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.untzuntz.ustack.main.UOpts;
 import com.untzuntz.ustack.main.Duration;
 import com.untzuntz.ustack.main.InTheFutureCallbackInt;
 import com.untzuntz.ustack.main.UAppCfg;

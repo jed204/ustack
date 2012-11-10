@@ -2,16 +2,11 @@ package com.untzuntz.ustack.testcases;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.mongodb.Mongo;
 import com.untzuntz.ustack.data.AddressBook;
 import com.untzuntz.ustack.data.AddressBookEntry;
-import com.untzuntz.ustack.data.MongoDB;
 import com.untzuntz.ustack.util.AddressBookSearch;
 
 public class AddressBookTest extends UStackTestCaseBase {

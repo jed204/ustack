@@ -13,14 +13,12 @@ import java.util.ResourceBundle;
 
 public class Msg {
 
-	private static final long serialVersionUID = 2865734405614972072L;
-	
     /**
      * A map which contains <code>DateFormat</code> objects for various 
      * locales.
      */
-    private static final Map DATE_FORMAT_MEDIUM_MAP = new HashMap();
-    private static final Map DATE_FORMAT_SHORT_MAP = new HashMap();
+    private static final Map<Locale,DateFormat> DATE_FORMAT_MEDIUM_MAP = new HashMap<Locale,DateFormat>();
+    private static final Map<Locale,DateFormat> DATE_FORMAT_SHORT_MAP = new HashMap<Locale,DateFormat>();
     
     /**
      * Formats a date with the specified locale. (MEDIUM format)

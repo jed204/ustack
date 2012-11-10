@@ -408,6 +408,7 @@ public class UNotificationSvc {
 		return ret;
 	}
 	
+	@SuppressWarnings("unused")
 	private void handlePushedNotification(PushedNotification notification, NotificationInst notif)
 	{
 		if (!notification.isSuccessful()) 

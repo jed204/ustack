@@ -12,7 +12,6 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.untzuntz.ustack.main.UOpts;
 
 /**
  * A session (for long term tracking)
