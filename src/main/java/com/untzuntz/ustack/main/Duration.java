@@ -143,8 +143,8 @@ public class Duration {
 	    	  int tfIdx = 2;
 		      if (!"at".equalsIgnoreCase(durItems[1]))
 		      {
-		    	  // on XXX
-		    	  // on the XXX
+		    	  // test: on XXX
+		    	  // test: on the XXX
 		    	  String timeFrame = null;
 		    	  if ("the".equalsIgnoreCase(durItems[2]))
 		    		  tfIdx++;
