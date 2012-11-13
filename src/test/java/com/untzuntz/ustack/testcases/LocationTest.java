@@ -41,8 +41,8 @@ public class LocationTest extends UStackTestCaseBase {
 		UDataMgr.calculateLatLong(addr);
 		DBObject loc = (DBObject)addr.get("loc");
 		assertNotNull( loc );
-		assertEquals( Double.valueOf(39.0956923d), (Double)loc.get("lat") );
-		assertEquals( Double.valueOf(-84.5244312d), (Double)loc.get("lng") );
+		assertEquals( Double.valueOf(39.0955695d), (Double)loc.get("lat") );
+		assertEquals( Double.valueOf(-84.5233519d), (Double)loc.get("lng") );
 	}
 	
 }
