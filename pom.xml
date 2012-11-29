@@ -3,7 +3,7 @@
     <groupId>com.untzuntz.ustack</groupId>
     <artifactId>ustack-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
     <name>UntzUntz UStack Core</name>
 	<licenses>
 	    <license>
@@ -96,6 +96,13 @@
         <url>http://www.untzuntz.com</url>
         <name>UntzUntz, LLC.</name>
     </organization>
+    <developers>
+    	<developer>
+    		<id>jed204</id>
+    		<name>Jed Danner</name>
+    		<email>jdanner@untzuntz.com</email>
+    	</developer>
+    </developers>
     <build>
         <plugins>
             <plugin>
