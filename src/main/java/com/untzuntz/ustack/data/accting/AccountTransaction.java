@@ -20,6 +20,12 @@ public class AccountTransaction extends UntzDBObject {
 
 	public String getCollectionName() { return "accountTransactions"; }
 	
+	public AccountTransaction(String createdBy)
+	{
+		put("created", new Date());
+		put("createdBy", createdBy);
+	}
+	
 	public AccountTransaction(String createdBy, String productId)
 	{
 		put("created", new Date());
