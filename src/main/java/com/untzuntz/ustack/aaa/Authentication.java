@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.jasypt.util.password.StrongPasswordEncryptor;
 
+import com.untzuntz.ustack.data.APIClient;
+import com.untzuntz.ustack.data.UDataCache;
 import com.untzuntz.ustack.data.UserAccount;
 import com.untzuntz.ustack.data.accting.CreditAccount;
 import com.untzuntz.ustack.exceptions.AuthExceptionUserDisabled;
@@ -90,6 +92,37 @@ public class Authentication {
 			throw new AuthExceptionUserLocked();
 	}
 	
+	public static APIClient authenticateAPI(String clientId, String apiKey) throws AuthenticationException
+	{
+		String cacheKey = "api_" + clientId + "_" + apiKey;
+		if (UDataCache.getInstance() != null)
+		{
+			APIClient ret = (APIClient)UDataCache.getInstance().get(cacheKey);
+			if (ret != null)
+				return ret;
+		}
+		
+		APIClient acct = APIClient.getAPIClient(clientId);
+		
+		if (acct == null) // acct doesn't exist
+			throw new AuthExceptionUserPasswordMismatch();
+		
+		if (acct.isDisabled()) // check for disabled account
+			throw new AuthExceptionUserDisabled();
+		
+		if (acct.isLocked()) // check for locked account
+			throw new AuthExceptionUserLocked();
+
+		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
+		if (!encryptor.checkPassword(acct.getString("salt") + apiKey, acct.getString("apiKey")))
+			throw new AuthExceptionUserPasswordMismatch();
+	
+		if (UDataCache.getInstance() != null)
+			UDataCache.getInstance().set(cacheKey, 600, acct);
+		
+		return acct;	
+	}
+	
 	public static UserAccount authenticateUserHash(String userName, String password) throws AuthenticationException
 	{
 		UserAccount user = null;
@@ -132,6 +165,14 @@ public class Authentication {
 	 */
 	public static UserAccount authenticateUser(String userName, String password) throws AuthenticationException
 	{
+		String cacheKey = "user_" + userName + "_" + password;
+		if (UDataCache.getInstance() != null)
+		{
+			UserAccount ret = (UserAccount)UDataCache.getInstance().get(cacheKey);
+			if (ret != null)
+				return ret;
+		}
+
 		UserAccount user = null;
 		try {
 			if (password == null || password.length() < UOpts.getInt(UAppCfg.PASSWORD_MIN_LENGTH)) // verify a reasonably valid password is provided, otherwise skip it
@@ -158,6 +199,9 @@ public class Authentication {
 		
 		logger.info("Authentication Success: [" + userName + "/**********(Len:" + (password == null ? "null" : password.length()) + ")]");
 		
+		if (UDataCache.getInstance() != null)
+			UDataCache.getInstance().set(cacheKey, 600, user);
+
 		return user;
 	}
 

@@ -53,7 +53,7 @@ public class UForgotPasswordSvc {
 
 		// set expires
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MINUTE, 60);
+		cal.add(Calendar.MINUTE, 240);
 		
 		uniqRef.put("name", toName);
 		uniqRef.put("userName", userName);

@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
+import com.untzuntz.ustack.data.APIClient;
 import com.untzuntz.ustack.data.UDataCache;
 import com.untzuntz.ustack.data.UserAccount;
 import com.untzuntz.ustack.exceptions.AuthenticationException;
@@ -18,6 +19,7 @@ import com.untzuntz.ustack.main.UOpts;
 
 public class Authorization {
 
+	private static final int AUTH_CACHE_TTL = 300;
 	private static Logger logger = Logger.getLogger(Authorization.class);
 
 	/**
@@ -96,6 +98,18 @@ public class Authorization {
 		return chk.toString();
 	}
 	
+	/** Build the key to use in the cache */
+	public static String buildCacheKey(APIClient client, String perm)
+	{
+		StringBuffer chk = new StringBuffer();
+		chk.append("[");
+		chk.append("[API-").append(client.getClientId()).append("]");
+		chk.append("[").append(perm).append("]");
+		chk.append("]");
+		
+		return chk.toString();
+	}
+	
 	/**
 	 * Verify authorization, throw an exception
 	 * 
@@ -104,6 +118,81 @@ public class Authorization {
 	public static void authorizeUser(UserAccount user, String resource, DBObject context, UStackPermissionEnum perm) throws AuthorizationException
 	{		
 		authorizeUser(user, resource, context, perm.getPermission());
+	}
+	
+	/**
+	 * Authorize the API client
+	 * 
+	 * @param apiClient
+	 * @param perm
+	 * @throws AuthorizationException
+	 */
+	public static void authorizeAPI(APIClient apiClient, UStackPermissionEnum perm) throws AuthorizationException
+	{
+		if (apiClient == null)
+			throw new InvalidUserAuthException();
+
+		try {
+			/*
+			 * Check Cache First
+			 */
+			if (UOpts.getCacheEnabled())
+			{
+				String key = buildCacheKey(apiClient, perm.getPermission());
+				String curCache = (String)UDataCache.getInstance().get(key);
+				if ("TRUE".equals(curCache))
+				{
+					logger.debug("Authorization Success (CACHE): [" + apiClient.getClientId() + "/" + perm + "]");
+					return;
+				}
+				else if (curCache != null)
+					throw new InvalidAccessAttempt();
+			}
+			/*
+			 * Do Lookup
+			 */
+			List<ResourceLink> links = apiClient.getResourceLinksByName(null, null);
+			if (links.size() == 0)
+				throw new InvalidAccessAttempt();
+			
+			logger.debug(links.size() + " Resource Links Found");
+			
+			boolean passed = false;
+			for (int i = 0; !passed && i < links.size(); i++)
+			{
+				ResourceLink link = links.get(i);
+				ResourceDefinition def = ResourceDefinition.getByName(link.getName());
+				if (def == null)
+					throw new InvalidAuthorizationConfig("No resource named '" + link.getName() + "'");
+				
+				RoleDefinition role = def.getRoleByName(link.getRoleName());
+				if (role == null)
+					throw new InvalidAuthorizationConfig("No role named '" + link.getRoleName() + "' for resource '" + link.getName() + "'");
+	
+				if (role.hasPermission(perm.getPermission()))
+					passed = true;
+			}
+			
+			if (!passed)
+				throw new InvalidAccessAttempt();
+			
+			if (UOpts.getCacheEnabled())
+			{
+				String key = buildCacheKey(apiClient, perm.getPermission());
+				UDataCache.getInstance().set(key, AUTH_CACHE_TTL, "TRUE");
+			}
+			
+		} catch (AuthorizationException ae) {
+			if (apiClient == null)
+				logger.debug("Authorization FAILED: [NULL/" + perm + "]");
+			else
+				logger.debug("Authorization FAILED: [" + apiClient.getClientId() + "/" + perm + "] => " + ae.getMessage());
+				
+			throw ae;
+		}
+		
+		logger.debug("Authorization Success (DIRECT): [" + apiClient.getClientId() + "/" + perm + "]");
+
 	}
 
 	/**
@@ -173,7 +262,7 @@ public class Authorization {
 			if (UOpts.getCacheEnabled())
 			{
 				String key = buildCacheKey(user, resource, context, perm);
-				UDataCache.getInstance().set(key, 300, "TRUE");
+				UDataCache.getInstance().set(key, AUTH_CACHE_TTL, "TRUE");
 			}
 			
 		} catch (AuthorizationException ae) {
@@ -259,7 +348,7 @@ public class Authorization {
 //				String resListStr = UDataMgr.writeDBListToString(resList);
 //				String cacheVal = new String(Base64.encodeBase64(resListStr.getBytes()));
 //				logger.debug("Setting Cache => " + cacheVal.length() + " ==> " + cacheVal);
-//				UDataCache.getInstance().set("DBL" + buildCacheKey(user, resource, context, perm), 300, cacheVal);
+//				UDataCache.getInstance().set("DBL" + buildCacheKey(user, resource, context, perm), AUTH_CACHE_TTL, cacheVal);
 //			}
 			
 		} catch (AuthorizationException ae) {

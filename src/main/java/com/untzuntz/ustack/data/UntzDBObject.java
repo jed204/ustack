@@ -662,7 +662,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 			DBObject resourceLink = (DBObject)resourceLinkList.get(i);
 			//logger.info(i + " -> " + resourceLink);
 			String rn = (String)resourceLink.get("internalName");
-			if (rn.equalsIgnoreCase(resourceLinkName))
+			if (rn.equalsIgnoreCase(resourceLinkName) || "*".equals(resourceLinkName))
 			{
 				if (checkContext(resourceLink, context))
 					ret.add(new ResourceLink(resourceLink));
