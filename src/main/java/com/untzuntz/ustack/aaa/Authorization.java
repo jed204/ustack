@@ -99,11 +99,11 @@ public class Authorization {
 	}
 	
 	/** Build the key to use in the cache */
-	public static String buildCacheKey(APIClient client, String perm)
+	public static String buildCacheKey(String clientId, String perm)
 	{
 		StringBuffer chk = new StringBuffer();
 		chk.append("[");
-		chk.append("[API-").append(client.getClientId()).append("]");
+		chk.append("[API-").append(clientId).append("]");
 		chk.append("[").append(perm).append("]");
 		chk.append("]");
 		
@@ -121,37 +121,61 @@ public class Authorization {
 	}
 	
 	/**
+	 * Authorize an API client returning a boolean instead of throwing an Exception
+	 * 
+	 * @param clientId
+	 * @param perm
+	 * @return
+	 */
+	public static boolean authorizeAPIBool(String clientId, UStackPermissionEnum perm)
+	{
+		try {
+			
+			authorizeAPI(clientId, perm);
+			return true;
+			
+		} catch (AuthorizationException exp) {}
+		
+		return false;
+	}
+
+	/**
 	 * Authorize the API client
 	 * 
 	 * @param apiClient
 	 * @param perm
 	 * @throws AuthorizationException
 	 */
-	public static void authorizeAPI(APIClient apiClient, UStackPermissionEnum perm) throws AuthorizationException
+	public static void authorizeAPI(String clientId, UStackPermissionEnum perm) throws AuthorizationException
 	{
-		if (apiClient == null)
+		if (clientId == null)
 			throw new InvalidUserAuthException();
-
+		
+		APIClient apiClient = null;
 		try {
 			/*
 			 * Check Cache First
 			 */
 			if (UOpts.getCacheEnabled())
 			{
-				String key = buildCacheKey(apiClient, perm.getPermission());
+				String key = buildCacheKey(clientId, perm.getPermission());
 				String curCache = (String)UDataCache.getInstance().get(key);
 				if ("TRUE".equals(curCache))
 				{
-					logger.debug("Authorization Success (CACHE): [" + apiClient.getClientId() + "/" + perm + "]");
+					logger.debug("Authorization Success (CACHE): [" + clientId + "/" + perm + "]");
 					return;
 				}
 				else if (curCache != null)
 					throw new InvalidAccessAttempt();
 			}
+			
+			apiClient = APIClient.getAPIClient(clientId);
+			if (apiClient == null)
+				throw new InvalidUserAuthException();
 			/*
 			 * Do Lookup
 			 */
-			List<ResourceLink> links = apiClient.getResourceLinksByName(null, null);
+			List<ResourceLink> links = apiClient.getResourceLinksByName("*", null);
 			if (links.size() == 0)
 				throw new InvalidAccessAttempt();
 			
@@ -178,7 +202,7 @@ public class Authorization {
 			
 			if (UOpts.getCacheEnabled())
 			{
-				String key = buildCacheKey(apiClient, perm.getPermission());
+				String key = buildCacheKey(clientId, perm.getPermission());
 				UDataCache.getInstance().set(key, AUTH_CACHE_TTL, "TRUE");
 			}
 			
@@ -235,7 +259,7 @@ public class Authorization {
 			{
 				links = user.getResourceLinksByFullName(resource, context);
 				if (links.size() == 0)
-					throw new InvalidAccessAttempt();
+					throw new InvalidAccessAttempt(resource);
 			}
 			
 			logger.debug(links.size() + " Resource Links Found : " + resource + " // " + context);

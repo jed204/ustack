@@ -9,5 +9,9 @@ public class InvalidAccessAttempt extends AuthorizationException {
 	public InvalidAccessAttempt() {
 		super(Msg.getString("InvalidAccessAttempt"));
 	}
+	
+	public InvalidAccessAttempt(String message) {
+		super(Msg.getString("InvalidAccessAttempt") + " - " + message);
+	}
 
 }

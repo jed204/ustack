@@ -895,6 +895,29 @@ public class UserAccount extends UntzDBObject {
 		return user;
 	}
 
+	public static UserAccount getByAPIToken(String clientId, String token) {
+	
+		if (clientId == null || clientId.length() == 0 || token == null || token.length() == 0)
+			return null;
+
+		clientId = clientId.toLowerCase().trim();
+		
+		DBObject elemMatch = new BasicDBObject("$elemMatch", new BasicDBObject("name", clientId).append("t", token) );
+
+		DBObject user = null;
+		try {
+			user = new UserAccount().getCollection().findOne(BasicDBObjectBuilder.start("apiMappingList", elemMatch).get());
+		} catch (Exception exp) { 
+			return null;
+		}
+		
+		if (user == null)
+			return null;
+		
+		return new UserAccount(user);
+
+	}
+	
 	/**
 	 * Get a user account by name
 	 * 

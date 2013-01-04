@@ -8,6 +8,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -660,7 +661,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 		for (int i = 0; i < resourceLinkList.size(); i++)
 		{
 			DBObject resourceLink = (DBObject)resourceLinkList.get(i);
-			//logger.info(i + " -> " + resourceLink);
+			//logger.info(i + " [internalName:" + resourceLinkName + "] -> " + resourceLink);
 			String rn = (String)resourceLink.get("internalName");
 			if (rn.equalsIgnoreCase(resourceLinkName) || "*".equals(resourceLinkName))
 			{
@@ -1154,7 +1155,24 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 		}
 	}
 
-	public DBObject getAPIMapping(String apiName)
+	public APIMapping getAPIMappingGen(String apiName) {
+		
+		if (apiName == null)
+			return null;
+		
+		APIMapping ret = getAPIMapping(apiName);
+		if (ret == null)
+		{
+			ret = APIMapping.createMapping(apiName);
+			ret.setAccessInfo(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+			addAPIMapping(ret);
+			save(); // save new mapping automatically
+		}
+		
+		return ret;
+	}
+	
+	public APIMapping getAPIMapping(String apiName)
 	{
 		if (apiName == null)
 			return null;
@@ -1164,7 +1182,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 		{
 			DBObject chk = (DBObject)list.get(i);
 			if (apiName.equalsIgnoreCase( (String)chk.get("name") ))
-				return chk;
+				return new APIMapping(chk);
 		}
 		
 		return null;

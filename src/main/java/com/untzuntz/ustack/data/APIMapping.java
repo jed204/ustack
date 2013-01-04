@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.jasypt.salt.RandomSaltGenerator;
 import org.jasypt.util.text.BasicTextEncryptor;
 
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -19,6 +20,7 @@ public class APIMapping extends BasicDBObject {
 	protected static Logger   	logger           = Logger.getLogger(APIMapping.class);
 
 	private static final long serialVersionUID = 1L;
+	public static String INTERNAL_KEY;
 	
 	private BasicTextEncryptor textEncryptor;
 	
@@ -64,31 +66,31 @@ public class APIMapping extends BasicDBObject {
 			saltStr = getString("s2");
 		
 		textEncryptor = new BasicTextEncryptor();
-		textEncryptor.setPassword(getName() + "-" + saltStr + "!Msfkajfsakfu3831jimsfkakj#*@");
+		textEncryptor.setPassword(getName() + "-" + saltStr + APIMapping.INTERNAL_KEY);
 		return textEncryptor;
 	}
 	
 	public void setAccessInfo(String tokenId, String secret)
 	{
 		BasicTextEncryptor textEncryptor = getEncryptor();
-//		String encAccountName = textEncryptor.encrypt(accountName);
-		String encTokenId = textEncryptor.encrypt(tokenId);
 		String encSecret = textEncryptor.encrypt(secret);
-//		put("a", encAccountName);
-		put("t", encTokenId);
+		put("t", tokenId);
 		put("s1", encSecret);
 	}
 	
-//	public String getAccountName()
-//	{
-//		BasicTextEncryptor textEncryptor = getEncryptor();
-//		return textEncryptor.decrypt( getString("a") );
-//	}
-//	
-	public String getTokenId()
+	public boolean checkAPIKey(String apiKey) 
 	{
 		BasicTextEncryptor textEncryptor = getEncryptor();
-		return textEncryptor.decrypt( getString("t") );
+		String rawKey = (String)get("s1");
+		String storedKey = textEncryptor.decrypt(rawKey);
+		if (apiKey.equals(storedKey))
+			return true;
+		
+		return false;
+	}
+
+	public String getTokenId() {
+		return getString("t");
 	}
 	
 	public String getSecret()

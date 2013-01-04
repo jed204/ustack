@@ -92,15 +92,11 @@ public class Authentication {
 			throw new AuthExceptionUserLocked();
 	}
 	
-	public static APIClient authenticateAPI(String clientId, String apiKey) throws AuthenticationException
+	public static void authenticateAPI(String clientId, String apiKey) throws AuthenticationException
 	{
-		String cacheKey = "api_" + clientId + "_" + apiKey;
-		if (UDataCache.getInstance() != null)
-		{
-			APIClient ret = (APIClient)UDataCache.getInstance().get(cacheKey);
-			if (ret != null)
-				return ret;
-		}
+		String cacheKey = "api" + clientId + apiKey.replace("-", "");
+		if (UDataCache.getInstance() != null && UDataCache.getInstance().get(cacheKey) != null)
+			return;
 		
 		APIClient acct = APIClient.getAPIClient(clientId);
 		
@@ -113,14 +109,11 @@ public class Authentication {
 		if (acct.isLocked()) // check for locked account
 			throw new AuthExceptionUserLocked();
 
-		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
-		if (!encryptor.checkPassword(acct.getString("salt") + apiKey, acct.getString("apiKey")))
+		if (!acct.checkAPIKey(apiKey))
 			throw new AuthExceptionUserPasswordMismatch();
-	
+			
 		if (UDataCache.getInstance() != null)
-			UDataCache.getInstance().set(cacheKey, 600, acct);
-		
-		return acct;	
+			UDataCache.getInstance().set(cacheKey, 1800, "t");
 	}
 	
 	public static UserAccount authenticateUserHash(String userName, String password) throws AuthenticationException
@@ -165,14 +158,15 @@ public class Authentication {
 	 */
 	public static UserAccount authenticateUser(String userName, String password) throws AuthenticationException
 	{
-		String cacheKey = "user_" + userName + "_" + password;
-		if (UDataCache.getInstance() != null)
-		{
-			UserAccount ret = (UserAccount)UDataCache.getInstance().get(cacheKey);
-			if (ret != null)
-				return ret;
-		}
-
+		// TODO: Do some additional testing and implement this
+//		String userCacheKey = "userAcct" + userName + password;
+//		if (UDataCache.getInstance() != null)
+//		{
+//			UserAccount user = (UserAccount)UDataCache.getInstance().get(userCacheKey);
+//			if (user != null)
+//				return user;
+//		}
+		
 		UserAccount user = null;
 		try {
 			if (password == null || password.length() < UOpts.getInt(UAppCfg.PASSWORD_MIN_LENGTH)) // verify a reasonably valid password is provided, otherwise skip it
@@ -181,12 +175,19 @@ public class Authentication {
 			user = UserAccount.getUser(userName);
 			checkAccountBasics(user);
 			
-			// verify password
-			StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
-			if (!encryptor.checkPassword(user.getString("salt") + password, user.getString("password")))
+			String cacheKey = "userAuth" + userName + password;
+			if (UDataCache.getInstance() == null || !"t".equals((String)UDataCache.getInstance().get(cacheKey)))
 			{
-				user.increasePasswordErrorCount();
-				throw new AuthExceptionUserPasswordMismatch();
+				// verify password
+				StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
+				if (!encryptor.checkPassword(user.getString("salt") + password, user.getString("password")))
+				{
+					user.increasePasswordErrorCount();
+					throw new AuthExceptionUserPasswordMismatch();
+				}
+				
+				if (UDataCache.getInstance() != null)
+					UDataCache.getInstance().set(cacheKey, 600, "t");
 			}
 
 			// mark user as logged in (this also saves the user object)
@@ -198,9 +199,10 @@ public class Authentication {
 		}
 		
 		logger.info("Authentication Success: [" + userName + "/**********(Len:" + (password == null ? "null" : password.length()) + ")]");
-		
-		if (UDataCache.getInstance() != null)
-			UDataCache.getInstance().set(cacheKey, 600, user);
+
+		// TODO: Do some additional testing and implement this
+		//if (UDataCache.getInstance() != null)
+		//	UDataCache.getInstance().set(userCacheKey, 600, user);
 
 		return user;
 	}

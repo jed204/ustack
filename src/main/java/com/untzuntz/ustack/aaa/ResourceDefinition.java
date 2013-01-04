@@ -29,6 +29,7 @@ public class ResourceDefinition extends UntzDBObject {
 	public static final String STATUS_DISABLED = "Disabled";
 	public static final String STATUS_ACTIVE = "Active";
 
+	public static final String TYPE_APIACCESS = "APIAccess";
 	public static final String TYPE_USERACCESS = "UserAccess";
 	public static final String TYPE_SITEPROFILE = "SiteProfile";
 

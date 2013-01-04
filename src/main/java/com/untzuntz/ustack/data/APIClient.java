@@ -1,10 +1,14 @@
 package com.untzuntz.ustack.data;
 
 import java.util.Date;
+import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
 import org.jasypt.salt.RandomSaltGenerator;
-import org.jasypt.util.password.StrongPasswordEncryptor;
+import org.jasypt.util.text.BasicTextEncryptor;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -22,6 +26,7 @@ public class APIClient extends UntzDBObject {
 	
 	public static final String STATUS_DISABLED = "Disabled";
 	public static final String STATUS_ACTIVE = "Active";
+	public static String INTERNAL_KEY;
 	
 	public String getCollectionName() { return "apiClients"; }
 
@@ -90,6 +95,73 @@ public class APIClient extends UntzDBObject {
 		
 		return status;
 	}
+	
+	public BasicDBList getAPIKeys() {
+		return getList("apiKeys");
+	}
+	
+	public void setAPIKeys(BasicDBList l) {
+		setList("apiKeys", l);
+	}
+	
+	public void revokeKey(String actor, String uid)
+	{
+		BasicDBList keyList = getAPIKeys();
+		for (int i = 0; i < keyList.size(); i++)
+		{
+			DBObject k = (DBObject)keyList.get(i);
+			
+			if (uid.equals( (String)k.get("uid") ))
+			{
+				k.put("revoked", "t");
+				k.put("revokedBy", actor);
+				setAPIKeys(keyList);
+				return;
+			}
+		}
+	}
+	
+	public void generateKey(String actor)
+	{
+		String init = UUID.randomUUID().toString();
+		
+		BasicTextEncryptor textEncryptor = getEncryptor();
+		String encSecret = textEncryptor.encrypt(init);
+		
+		BasicDBObject key = new BasicDBObject();
+		key.put("uid", UUID.randomUUID().toString());
+		key.put("key", encSecret);
+		key.put("createdBy", actor);
+		
+		BasicDBList keys = getAPIKeys();
+		keys.add(key);
+		setAPIKeys(keys);
+	}
+
+	private BasicTextEncryptor textEncryptor;
+	public BasicTextEncryptor getEncryptor()
+	{
+		if (textEncryptor != null)
+			return textEncryptor;
+		
+		String saltStr = null;
+		if (get("s2") == null)
+		{
+			RandomSaltGenerator rsg = new RandomSaltGenerator();
+			
+			Base64 base = new Base64();
+			saltStr = new String(base.encode(rsg.generateSalt(10)));
+			
+			put("s2", saltStr);
+		}
+		
+		saltStr = getString("s2");
+		
+		String passwd = getClientId() + "-" + saltStr + APIClient.INTERNAL_KEY;
+		textEncryptor = new BasicTextEncryptor();
+		textEncryptor.setPassword(passwd);
+		return textEncryptor;
+	}
 
 	/**
 	 * Determine if the account is currently locked
@@ -117,33 +189,66 @@ public class APIClient extends UntzDBObject {
 		
 		return false;
 	}
+	
+	public String getValidKey() {
 
-	/**
-	 * Salts, encrypts and stores apiKey
-	 * 
-	 * @param password
-	 */
-	public void setAPIKey(String actor, String password) throws PasswordException
-	{
-		if (isDisabled())
-			return;
+		BasicDBList keyList = getAPIKeys();
+		for (int i = 0; i < keyList.size(); i++)
+		{
+			DBObject k = (DBObject)keyList.get(i);
+			
+			if (!"t".equalsIgnoreCase( (String)k.get("revoked") ))
+			{
+				BasicTextEncryptor textEncryptor = getEncryptor();
+				return textEncryptor.decrypt( (String)k.get("key") );
+			}
+		}
 
-		// salt + password setup
-		RandomSaltGenerator rsg = new RandomSaltGenerator();
-		String saltStr = new String(rsg.generateSalt(10));
+		return null;
+
+	}
+	
+	public String getKey(String uid) {
 		
-		put("salt", saltStr);
-		password = saltStr + password; // salt the password for enhanced one-way hash
-		
-		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
-		String encPassword = encryptor.encryptPassword(password); // encrypt
-		put("apiKey", encPassword);
-		put("apiKeyChangeDate", new Date());
+		BasicDBList keyList = getAPIKeys();
+		for (int i = 0; i < keyList.size(); i++)
+		{
+			DBObject k = (DBObject)keyList.get(i);
+			
+			if (uid.equals( (String)k.get("uid") ))
+			{
+				BasicTextEncryptor textEncryptor = getEncryptor();
+				return textEncryptor.decrypt( (String)k.get("key") );
+			}
+		}
 
-		// clear locking data
-		unlock();
+		return null;
 	}
 
+	public boolean checkAPIKey(String apiKey) 
+	{
+		BasicTextEncryptor textEncryptor = getEncryptor();
+
+		
+		BasicDBList keys = getAPIKeys();
+		for (int i = 0; i < keys.size(); i++)
+		{
+			DBObject k = (DBObject)keys.get(i);
+		
+			String rawKey = (String)k.get("key");
+			String storedKey = textEncryptor.decrypt(rawKey);
+			if (apiKey.equals(storedKey))
+			{
+				if (!"t".equalsIgnoreCase((String)k.get("revoked")))
+					return true;
+				else
+					return false;
+			}
+		}
+		
+		return false;
+	}
+	
 	public void unlock() 
 	{
 		removeField("locked");
@@ -191,7 +296,7 @@ public class APIClient extends UntzDBObject {
 	 * @throws AccountExistsException
 	 * @throws PasswordLengthException
 	 */
-	public static APIClient createAPI(String actor, String clientId, String apiKey) throws AccountExistsException,PasswordException
+	public static APIClient createAPI(String actor, String clientId) throws AccountExistsException,PasswordException
 	{
 		if (clientId == null || clientId.length() == 0)
 			throw new InvalidUserAccountName(Msg.getString("Invalid-ClientID"));
@@ -206,7 +311,7 @@ public class APIClient extends UntzDBObject {
 		acct = new APIClient();
 		acct.put("createdBy", actor);
 		acct.setClientId(clientId);
-		acct.setAPIKey(actor, apiKey);
+		acct.generateKey(actor);
 		
 		return acct;
 	}
