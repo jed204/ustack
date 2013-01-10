@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.jasypt.salt.RandomSaltGenerator;
 import org.jasypt.util.text.BasicTextEncryptor;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 

@@ -26,7 +26,6 @@ public class UDataCache {
 	private static UDataCache instance = null;
 	private static MemcachedClient[] m = null;
 	private static final int CLIENT_COUNT = 20;
-	private static int hasConfig;
 	 
 	private UDataCache() {
 		
@@ -37,7 +36,6 @@ public class UDataCache {
 				MemcachedClient c =  new MemcachedClient(new BinaryConnectionFactory(), addrList);
 				m[i] = c;
 			}
-			hasConfig = 1;
 		} catch (Exception e) {
 			logger.warn("Failed to setup clients", e);
 		}
@@ -46,10 +44,9 @@ public class UDataCache {
 	 
 	public static synchronized UDataCache getInstance() {
 		
-		if (hasConfig == 2)
-			return null;
-		
 		if(instance == null) {
+			if (!UOpts.getCacheEnabled())
+				return null;
 			
 			String hosts = UOpts.getString(UAppCfg.CACHE_HOST_STRING);
 			if (hosts != null && hosts.length() > 0)
@@ -57,8 +54,6 @@ public class UDataCache {
 				logger.info("Creating a new UDataCache instance...[" + hosts + "]");
 				instance = new UDataCache();
 			}
-			else
-				hasConfig = 2;
 		}
 		return instance;
 
