@@ -45,9 +45,6 @@ public class UDataCache {
 	public static synchronized UDataCache getInstance() {
 		
 		if(instance == null) {
-			if (!UOpts.getCacheEnabled())
-				return null;
-			
 			String hosts = UOpts.getString(UAppCfg.CACHE_HOST_STRING);
 			if (hosts != null && hosts.length() > 0)
 			{
@@ -108,6 +105,9 @@ public class UDataCache {
 	
 	public MemcachedClient getCache() {
 		
+		if (!UOpts.getCacheEnabled())
+			return null;
+
 		MemcachedClient c = null;
 		
 		try {

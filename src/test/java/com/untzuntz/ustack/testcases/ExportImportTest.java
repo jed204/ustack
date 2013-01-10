@@ -11,11 +11,13 @@ import com.mongodb.DBObject;
 import com.untzuntz.ustack.data.UDataCache;
 import com.untzuntz.ustack.data.UDataMgr;
 import com.untzuntz.ustack.main.UFile;
+import com.untzuntz.ustack.main.UOpts;
 
 public class ExportImportTest extends UStackTestCaseBase {
 
 	@Test public void testBSONExportImport()
 	{
+		UOpts.setCacheFlag(false);
 		System.clearProperty("UAppCfg.CacheHost");
 		
 		BasicDBObject myObject = new BasicDBObject();
@@ -54,6 +56,7 @@ public class ExportImportTest extends UStackTestCaseBase {
 		/*
 		 * Through Memcached
 		 */
+		UOpts.setCacheFlag(true);
 		System.setProperty("UAppCfg.CacheHost", "localhost:11211");
 
 		String resListStr = UDataMgr.writeDBListToString(list);

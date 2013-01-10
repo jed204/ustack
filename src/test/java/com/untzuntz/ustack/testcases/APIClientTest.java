@@ -15,6 +15,7 @@ import com.untzuntz.ustack.data.UDataCache;
 import com.untzuntz.ustack.exceptions.AccountExistsException;
 import com.untzuntz.ustack.exceptions.AuthenticationException;
 import com.untzuntz.ustack.exceptions.PasswordException;
+import com.untzuntz.ustack.main.UOpts;
 
 public class APIClientTest extends UStackTestCaseBase {
 
@@ -57,6 +58,8 @@ public class APIClientTest extends UStackTestCaseBase {
 	
 	@Test public void testCache() 
 	{
+		UOpts.setCacheFlag(true);
+		
 		String key = "apitestApi11355884578251315948fdc17b4dffffbe6538d7dac187";
 		UDataCache.getInstance().set(key, 300, "Hello");
 		

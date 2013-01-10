@@ -24,6 +24,7 @@ import com.untzuntz.ustack.exceptions.AccountExistsException;
 import com.untzuntz.ustack.exceptions.AuthorizationException;
 import com.untzuntz.ustack.exceptions.ObjectExistsException;
 import com.untzuntz.ustack.exceptions.PasswordException;
+import com.untzuntz.ustack.main.UOpts;
 
 public class AuthorizationTest extends UStackTestCaseBase {
 
@@ -185,6 +186,7 @@ public class AuthorizationTest extends UStackTestCaseBase {
 	
 	@Test public void testPlugins()
 	{
+		UOpts.setCacheFlag(true);
 		// Generate a dummy resource + roles + permissions
 		ResourceDefinition res = null;
 		RoleDefinition role = new RoleDefinition("General");
