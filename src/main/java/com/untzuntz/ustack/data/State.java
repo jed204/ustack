@@ -46,12 +46,12 @@ public class State extends UntzDBObject {
 		return ret;
 	}
 	
-	public String resolveStateAbbrev(String state)
+	public static String resolveStateAbbrev(String state)
 	{
 		return resolveStateAbbrev("United States", state);
 	}
 	
-	public String resolveStateAbbrev(String country, String state)
+	public static String resolveStateAbbrev(String country, String state)
 	{
 		Country cntry = Country.resolveCountry(country);
 		if (cntry == null)
