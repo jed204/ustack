@@ -46,4 +46,24 @@ public class State extends UntzDBObject {
 		return ret;
 	}
 	
+	public String resolveStateAbbrev(String state)
+	{
+		return resolveStateAbbrev("United States", state);
+	}
+	
+	public String resolveStateAbbrev(String country, String state)
+	{
+		Country cntry = Country.resolveCountry(country);
+		if (cntry == null)
+			return null;
+		
+		DBObject stateObj = cntry.resolveState(state);
+		if (stateObj == null)
+			return null;
+		
+		return (String)stateObj.get("stateAbbrev");
+	}
+	
+
+	
 }
