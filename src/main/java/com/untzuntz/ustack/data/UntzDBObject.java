@@ -926,8 +926,46 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 					for (int i = 0; i < fieldLen; i++)
 					{
 						String field = fields[i];
-						Object res = object.get(field);
-						if (res instanceof DBObject)
+						String[] actionFields = field.split("\\.");
+						
+						boolean noOutput = false;
+						Object res = object.get(actionFields[0]);
+						if (res instanceof BasicDBList)
+						{
+							String myField = actionFields[1];
+							String[] limiter = null;
+							if (myField.indexOf("[") > -1)
+							{
+								limiter = myField.substring(myField.indexOf("[") + 1, myField.length() - 1).split("=");
+								myField = myField.substring(0, myField.indexOf("["));
+							}
+							
+							noOutput = true;
+							boolean hasWritten = false;
+							BasicDBList list = (BasicDBList)res;
+							for (int q = 0; q < list.size(); q++)
+							{
+								DBObject o = (DBObject)list.get(q);
+								if (limiter != null)
+								{
+									if (limiter[1].equalsIgnoreCase( (String)o.get(limiter[0]) ))
+									{
+										if (hasWritten)
+											buf.append(",");
+
+										outputValue(o.get(myField), buf, sdf);
+										hasWritten = true;
+									}
+								}
+								else 
+								{
+									outputValue(o.get(myField), buf, sdf);
+									if ((q + 1) < list.size())
+										buf.append(",");
+								}
+							}
+						}	
+						else if (res instanceof DBObject)
 						{ 
 							// handle certain internal object types
 							DBObject dbO = (DBObject)res;
@@ -936,27 +974,11 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 							else if (dbO.get("countryCode") != null && dbO.get("phoneNumber") != null)
 								res = "+" + dbO.get("countryCode") + " " + dbO.get("phoneNumber");
 						}
+
+						if (!noOutput)
+							outputValue(res, buf, sdf);
+
 						
-						if (res == null)
-							res = "";
-						
-						buf.append("\"");
-						if (res instanceof Date)
-							buf.append(sdf.format( (Date)res ));
-						else if (res instanceof String)
-						{
-							String val = (String)res;
-							if ("true".equalsIgnoreCase(val))
-								buf.append(1);
-							else if ("false".equalsIgnoreCase(val))
-								buf.append(0);
-							else
-								buf.append(res);
-						}
-						else
-							buf.append(res);
-							
-						buf.append("\"");
 						if ((i + 1) < fieldLen)
 							buf.append(",");
 					}
@@ -967,13 +989,39 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 			}
 			out.flush();
 		} catch (Exception err) {
-			
+			logger.warn("Failed during export", err);
 		} finally {
 			if (out != null)
 				try { out.close(); } catch (Exception e) {}
 		}
 		
 		return count;
+	}
+	
+	private static void outputValue(Object res, StringBuffer buf, SimpleDateFormat sdf)
+	{
+		if (res == null)
+			res = "";
+		
+		buf.append("\"");
+		if (res instanceof Date)
+			buf.append(sdf.format( (Date)res ));
+		else if (res instanceof String)
+		{
+			String val = (String)res;
+			if ("true".equalsIgnoreCase(val))
+				buf.append(1);
+			else if ("false".equalsIgnoreCase(val))
+				buf.append(0);
+			else
+				buf.append(res);
+		}
+		else
+			buf.append(res);
+			
+		buf.append("\"");
+
+		
 	}
 	
 	/**

@@ -90,6 +90,8 @@ public class Authentication {
 		
 		if (user.isLocked()) // check for locked account
 			throw new AuthExceptionUserLocked();
+		
+		// note: we don't check for password expiration - your app should (user.isPasswordExpired())
 	}
 	
 	public static void authenticateAPI(String clientId, String apiKey) throws AuthenticationException

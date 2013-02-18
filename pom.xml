@@ -3,7 +3,7 @@
     <groupId>com.untzuntz.ustack</groupId>
     <artifactId>ustack-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.11</version>
+    <version>1.0.13</version>
     <name>UntzUntz UStack Core</name>
 	<licenses>
 	    <license>
@@ -52,7 +52,7 @@
         <dependency>
         	<groupId>commons-lang</groupId>
         	<artifactId>commons-lang</artifactId>
-        	<version>2.1</version>
+        	<version>2.6</version>
         </dependency>
         <dependency>
         	<groupId>commons-logging</groupId>
