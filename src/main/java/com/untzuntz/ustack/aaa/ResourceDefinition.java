@@ -417,7 +417,7 @@ public class ResourceDefinition extends UntzDBObject {
 	 */
 	public static ResourceDefinition getByInternalName(String name)
 	{
-		if (UDataCache.getInstance() != null)
+		if (UOpts.getCacheEnabled())
 		{
 			ResourceDefinition rd = (ResourceDefinition)UDataCache.getInstance().get("urdi-" + name.replaceAll(" ", "_"));
 			if (rd != null)
@@ -442,9 +442,12 @@ public class ResourceDefinition extends UntzDBObject {
 	 */
 	public static ResourceDefinition getByName(String name)
 	{
-		if (UDataCache.getInstance() != null)
+		logger.debug("Getting resource from database or cache [" + name + "]");
+		if (UOpts.getCacheEnabled())
 		{
-			ResourceDefinition rd = (ResourceDefinition)UDataCache.getInstance().get("urd-" + name.replaceAll(" ", "_"));
+			String key = "urd-" + name.replaceAll(" ", "_");
+			logger.debug("Trying to find in cache [" + key + "]");
+			ResourceDefinition rd = (ResourceDefinition)UDataCache.getInstance().get(key);
 			if (rd != null)
 				return rd;
 		}
@@ -496,8 +499,11 @@ public class ResourceDefinition extends UntzDBObject {
 	
 	private void cache(String key)
 	{
-		if (UDataCache.getInstance() != null)
+		if (UOpts.getCacheEnabled())
+		{
+			logger.debug(String.format("Caching Object [%s] for 1200 =>\n%s", key, this));
 			UDataCache.getInstance().set(key, 1200, this);
+		}
 	}
 	
 	/**
