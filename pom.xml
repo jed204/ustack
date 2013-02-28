@@ -3,7 +3,7 @@
     <groupId>com.untzuntz.ustack</groupId>
     <artifactId>ustack-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
     <name>UntzUntz UStack Core</name>
 	<licenses>
 	    <license>

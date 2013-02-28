@@ -2,6 +2,8 @@ package com.untzuntz.ustack.data;
 
 import org.jasypt.util.text.BasicTextEncryptor;
 
+import com.Ostermiller.util.Base64;
+
 public class AccessToken {
 
 	public static String INTERNAL_KEY;
@@ -27,7 +29,7 @@ public class AccessToken {
 		buf.append(userName).append("|");
 		buf.append(expirationAge);
 		
-		return at.getEncryptor().encrypt(buf.toString());
+		return Base64.encode(at.getEncryptor().encrypt(buf.toString()));
 	}
 	
 	public static AccessTokenDetails decode(String value)
@@ -38,7 +40,7 @@ public class AccessToken {
 		AccessToken at = new AccessToken();
 		String decrypted = null;
 		try {
-			decrypted = at.getEncryptor().decrypt(value);
+			decrypted = at.getEncryptor().decrypt(Base64.decode(value));
 		} catch (org.jasypt.exceptions.EncryptionOperationNotPossibleException err) {
 			// invalid token
 		}
