@@ -1,6 +1,10 @@
 package com.untzuntz.ustack.data;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import org.bson.types.ObjectId;
@@ -50,10 +54,45 @@ public class ExternalAPIParams extends UntzDBObject {
 		return getString("publicKey");
 	}
 	
+	public String getKeyData() {
+		return getString("keyData");
+	}
+	
+	public InputStream getKeyDataStream() throws UnsupportedEncodingException {
+		return new ByteArrayInputStream((byte[])get("keyData"));
+	}
+	
+	public void setKeyData(byte[] kd) {
+		put("keyData", kd);
+	}
+	
+	public void setKeyData(ByteArrayOutputStream out) throws UnsupportedEncodingException {
+		setKeyData(out.toByteArray());
+	}
+	
 	public String getPrivateKey() {
 		StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
 		encryptor.setPassword(bapw());
 		return encryptor.decrypt( getString("privateKey") );
+	}
+
+	public static ExternalAPIParams createExternalAPIParams(String name, ByteArrayOutputStream out) throws UnsupportedEncodingException
+	{
+		return createExternalAPIParams(name, out.toByteArray());
+	}
+	
+	public static ExternalAPIParams createExternalAPIParams(String name, byte[] keyData)
+	{
+		ExternalAPIParams branding = getByName(name);
+		if (branding == null)
+		{
+			branding = new ExternalAPIParams();
+			branding.put("name", name);
+		}
+		
+		branding.put("keyData", keyData);
+
+		return branding;
 	}
 	
 	public static ExternalAPIParams createExternalAPIParams(String name, String publicKey, String privateKey) throws IOException

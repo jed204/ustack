@@ -448,7 +448,7 @@ public class ResourceDefinition extends UntzDBObject {
 			String key = "urd-" + name.replaceAll(" ", "_");
 			logger.debug("Trying to find in cache [" + key + "]");
 			ResourceDefinition rd = (ResourceDefinition)UDataCache.getInstance().get(key);
-			if (rd != null)
+			if (rd != null && rd.get("_id") != null)
 				return rd;
 		}
 			
