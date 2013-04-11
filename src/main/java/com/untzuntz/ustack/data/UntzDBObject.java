@@ -85,6 +85,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 		put("updatedBy", actor);
 		put("updated", new Date());
 		coll.save(this);
+		cache();
 	}
 
 	/**
@@ -103,6 +104,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	public void delete()
 	{
 		getCollection().remove(this);
+		decache();
 	}
 
 	/**
@@ -1284,5 +1286,34 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	{
 		put(name, obj);
 	}
+	
+	protected void decache() {
+		// stub - implement in your class
+	}
 
+	protected void decache(String key)
+	{
+		if (UOpts.getCacheEnabled())
+			UDataCache.getInstance().delete(key);
+	}
+
+	protected void cache() {
+		// stub - implement in your class
+	}
+
+	protected void cache(String key)
+	{
+		cache(key, 1200);
+	}
+	
+	protected void cache(String key, int ttl)
+	{
+		if (UOpts.getCacheEnabled())
+		{
+			logger.debug(String.format("Caching Object [%s] for %d =>\n%s", key, ttl, this));
+			UDataCache.getInstance().set(key, ttl, this);
+		}
+	}
+
+	
 }

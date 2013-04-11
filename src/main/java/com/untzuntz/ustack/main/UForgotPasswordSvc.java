@@ -47,13 +47,25 @@ public class UForgotPasswordSvc {
 		}
 	}
 	
-	public static void sendForgotPassword(String requestedBy, DBObject extras, String urlPrefix, String userName, String toEmail, String toName, String templateName)
+	public static UniqueReference sendForgotPassword(String requestedBy, DBObject extras, String urlPrefix, String userName, String toEmail, String toName, String templateName)
 	{
+		NotificationTemplate template = NotificationTemplate.getNotificationTemplate(templateName);
+		if (template == null)
+		{
+			logger.error(String.format("Unknown forgot password template [%s]", templateName));
+			throw new IllegalArgumentException(String.format("Unknown forgot password template [%s]", templateName));
+		}
+
 		UniqueReference uniqRef = UniqueReference.createUniqRef("pwreset");
+		if (uniqRef == null)
+		{
+			logger.error(String.format("Unknown unique reference action [%s]", "pwreset"));
+			throw new IllegalArgumentException(String.format("Unknown unique reference action [%s]", "pwreset"));
+		}
 
 		// set expires
 		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MINUTE, 240);
+		cal.add(Calendar.HOUR, 24);
 		
 		uniqRef.put("name", toName);
 		uniqRef.put("userName", userName);
@@ -65,7 +77,6 @@ public class UForgotPasswordSvc {
 			uniqRef.putAll(extras);
 		uniqRef.save(requestedBy);
 
-		NotificationTemplate template = NotificationTemplate.getNotificationTemplate(templateName);
 		UNotificationSvc svc = new UNotificationSvc();
 		svc.setData("resetinfo", uniqRef);
 
@@ -74,7 +85,8 @@ public class UForgotPasswordSvc {
 		endpoint.put("destination", toEmail);
 
 		svc.sendEmail(null, template, endpoint);
-
+		
+		return uniqRef;
 	}
 	
 }

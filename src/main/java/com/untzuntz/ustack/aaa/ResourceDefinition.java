@@ -490,20 +490,18 @@ public class ResourceDefinition extends UntzDBObject {
 		return rd;
 	}
 	
-	private void cache()
+	protected void decache()
+	{
+		decache("urdi-" + getString("internalName").replaceAll(" ", "_"));
+		decache("urd-" + getString("name").replaceAll(" ", "_"));
+		decache("urdid-" + get("_id"));
+	}
+	
+	protected void cache()
 	{
 		cache("urdi-" + getString("internalName").replaceAll(" ", "_"));
 		cache("urd-" + getString("name").replaceAll(" ", "_"));
 		cache("urdid-" + get("_id"));
-	}
-	
-	private void cache(String key)
-	{
-		if (UOpts.getCacheEnabled())
-		{
-			logger.debug(String.format("Caching Object [%s] for 1200 =>\n%s", key, this));
-			UDataCache.getInstance().set(key, 1200, this);
-		}
 	}
 	
 	/**
@@ -544,11 +542,4 @@ public class ResourceDefinition extends UntzDBObject {
 		return ret;
 	}
 
-	@Override
-	public void save(String actor) {
-		cache();
-		super.save(actor);
-	}
-
-	
 }

@@ -1,9 +1,11 @@
 package com.untzuntz.ustack.data;
 
+import java.awt.Color;
 import java.net.URL;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
+import org.bson.BasicBSONObject;
 import org.bson.types.ObjectId;
 
 import com.mongodb.BasicDBObject;
@@ -43,6 +45,93 @@ public class Branding extends UntzDBObject {
 	/** Gets the DB Collection for the UserAccount object */
 	public static DBCollection getDBCollection() {
 		return new Branding().getCollection();
+	}
+	
+	public BrandingObject getBrandingByType(Class name)
+	{
+		if (name == null)
+			throw new IllegalArgumentException("You must provide a branding type");
+		
+		DBObject o = (DBObject)get(name.getSimpleName());
+		if (o == null)
+			return new BrandingObject();
+		
+		return new BrandingObject(o);
+	}
+	
+	public static interface ColorBranding {
+		public int getForegroundRGB();
+		public int getBackgroundRGB();
+	}
+	
+	/**
+	 * A section of the application branding
+	 * 
+	 * @author jdanner
+	 *
+	 */
+	public static class BrandingObject
+	{
+		private BasicBSONObject data;
+
+		public BrandingObject() {
+			data = new BasicBSONObject();
+		}
+		
+		public String toString() {
+			return data.toString();
+		}
+		
+		public BrandingObject(DBObject o) {
+			this();
+			data.putAll(o);
+		}
+		
+		public int getInt(Enum itemName) {
+			return data.getInt(itemName.name(), 0);
+		}
+		
+		public String getText(Enum itemName) {
+			return data.getString(itemName.name());
+		}
+		
+		public boolean isHidden(Enum itemName) {
+			return data.getBoolean(itemName.name(), false);
+		}
+		
+		public boolean isVisible(Enum itemName) {
+			return data.getBoolean(itemName.name(), true);
+		}
+		
+		public String getImageUrl(Enum itemName) {
+			return data.getString(itemName.name());
+		}
+		
+		public Color getColor(Enum itemName) {
+
+			String value = data.getString(itemName.name());
+			if (value == null)
+				return null;
+			
+			int r = 0;
+			int g = 0;
+			int b = 0;
+			
+			String[] rgb = value.split(",");
+			try {
+				r = Integer.valueOf(rgb[0]);
+				g = Integer.valueOf(rgb[1]);
+				b = Integer.valueOf(rgb[2]);
+			} catch (NumberFormatException nfe) {
+				return null;
+			}
+			
+			System.out.println(String.format("r,g,b = %d,%d,%d", r, g, b));
+			
+			return new Color(r, g, b);
+		}
+		
+		
 	}
 	
 	public static Branding createBranding(String appName, String host, String file) throws AccountExistsException
