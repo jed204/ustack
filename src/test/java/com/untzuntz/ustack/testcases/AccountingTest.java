@@ -66,9 +66,6 @@ public class AccountingTest extends UStackTestCaseBase {
 		acct1.addFundingSource(new FundingConfig("Customer Credit Card", "com.untzuntz.ustack.data.accting.TestCaseFunding"));
 		acct1.setFundingProductId("TESTADD-1" + runId);
 		acct1.save("testCreditAccount() Test Case");
-
-		// Try to create an invalid product
-		try { CreditAccount.createAccount(""); fail(); } catch (InvalidUserAccountName e) {}
 	}
 	
 	@Test public void testCreditsTracking() throws Exception

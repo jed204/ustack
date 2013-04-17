@@ -155,6 +155,18 @@ public class Branding extends UntzDBObject {
 		return branding;
 	}
 	
+	public static Branding getByAppName(String name) {
+		if (name == null)
+			return null;
+		
+		DBObject book = new Branding().getCollection().findOne(BasicDBObjectBuilder.start("applicationName", name).get());
+		
+		if (book == null)
+			return null;
+		
+		return new Branding(book);
+	}
+	
 	public static Branding getById(String id)
 	{
 		if (id == null)

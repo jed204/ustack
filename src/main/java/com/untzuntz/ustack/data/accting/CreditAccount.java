@@ -18,10 +18,7 @@ import com.mongodb.DBObject;
 import com.untzuntz.ustack.data.UntzDBObject;
 import com.untzuntz.ustack.exceptions.AccountExistsException;
 import com.untzuntz.ustack.exceptions.InvalidSiteAccountName;
-import com.untzuntz.ustack.exceptions.InvalidUserAccountName;
-import com.untzuntz.ustack.exceptions.PasswordException;
 import com.untzuntz.ustack.exceptions.PasswordLengthException;
-import com.untzuntz.ustack.main.Msg;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UNotificationSvc;
 import com.untzuntz.ustack.main.UOpts;
@@ -648,10 +645,10 @@ public class CreditAccount extends UntzDBObject {
 	 * @throws AccountExistsException
 	 * @throws PasswordLengthException
 	 */
-	public static CreditAccount createAccount(String name) throws AccountExistsException,PasswordException
+	public static CreditAccount createAccount(String name)
 	{
 		if (name == null || name.length() == 0)
-			throw new InvalidUserAccountName(Msg.getString("Invalid-Name"));
+			throw new IllegalArgumentException("Invalid account name");
 		
 		// create the actual account
 		CreditAccount acct = new CreditAccount();
