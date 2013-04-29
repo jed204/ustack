@@ -374,6 +374,9 @@ public class SiteAccount extends UntzDBObject {
 		for (int q = 0; q < resourceLinkList.size(); q++)
 		{
 			ResourceLink resourceLink = new ResourceLink( (DBObject)resourceLinkList.get(q) );
+			if (resourceLink == null || resourceLink.getResourceDefinition() == null)
+				continue;
+			
 			BasicDBList managedByList = resourceLink.getResourceDefinition().getManagedByList();
 			for (int i = 0; i < managedByList.size(); i++)
 				addManagedBy( (String)managedByList.get(i) );
