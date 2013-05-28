@@ -231,5 +231,49 @@ public class UniqueReference extends UntzDBObject {
 
 		return ref;
 	}
+	
+	/**
+	 * Returns the status of a unique reference URL (see @UniqueLinkStatus)
+	 * 
+	 * @param linkId
+	 * @return
+	 */
+	public static UniqueLinkStatus getLinkStatus(String linkId)
+	{
+		UniqueReference ref = UniqueReference.getByUID(linkId);
+		return getLinkStatus(ref);
+	}
+	
+	/**
+	 * Returns the status of a unique reference URL (see @UniqueLinkStatus)
+	 * 
+	 * @param ref
+	 * @return
+	 */
+	public static UniqueLinkStatus getLinkStatus(UniqueReference ref)
+	{
+		UniqueLinkStatus ret = UniqueLinkStatus.invalid;
+		if (ref != null)
+		{
+			Date d = (Date)ref.getDate("expires");
+			if (d != null && d.before(new Date()))
+				ret = UniqueLinkStatus.expired;
+			else if ("true".equals(ref.getString("used")))
+				ret = UniqueLinkStatus.used;
+			else
+				ret = UniqueLinkStatus.active;
+		}
+		return ret;
+	}
+	
+	public static enum UniqueLinkStatus {
+
+		invalid,
+		active,
+		used,
+		expired;
+		
+	}
+
 
 }

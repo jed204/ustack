@@ -72,7 +72,10 @@ public class UForgotPasswordSvc {
 		uniqRef.put("time", new Date());
 		uniqRef.put("expires", cal.getTime());
 		uniqRef.put("requestedBy", requestedBy);
-		uniqRef.put("url", urlPrefix + "/rdr?act=" + uniqRef.getString("actionName") + "&uid=" + uniqRef.getUid());
+		if (urlPrefix != null && urlPrefix.indexOf("%s") > -1)
+			uniqRef.put("url", String.format(urlPrefix, uniqRef.getUid()));
+		else
+			uniqRef.put("url", urlPrefix + "/rdr?act=" + uniqRef.getString("actionName") + "&uid=" + uniqRef.getUid());
 		if (extras != null)
 			uniqRef.putAll(extras);
 		uniqRef.save(requestedBy);
