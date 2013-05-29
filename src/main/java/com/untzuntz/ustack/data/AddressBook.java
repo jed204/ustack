@@ -304,6 +304,7 @@ public class AddressBook extends UntzDBObject {
 						DBObject chk = (DBObject)entryList.get(i);
 						if (entry.getMatch().equalsIgnoreCase( (String)chk.get("match") ))
 						{
+							chk.put("type", entry.get("type"));
 							chk.put("displayVal", entry.getString("displayVal"));
 							curEntry.setDisplayValue(entry.getString("displayVal"));
 						}
