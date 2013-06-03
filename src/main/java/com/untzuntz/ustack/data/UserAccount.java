@@ -8,10 +8,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.UUID;
 import java.util.Vector;
-
-import javax.mail.internet.AddressException;
 
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
@@ -34,8 +31,7 @@ import com.untzuntz.ustack.exceptions.InvalidAccessAttempt;
 import com.untzuntz.ustack.exceptions.InvalidUserAccountName;
 import com.untzuntz.ustack.exceptions.PasswordException;
 import com.untzuntz.ustack.exceptions.PasswordLengthException;
-import com.untzuntz.ustack.exceptions.RequiredAccountDataMissingException;
-import com.untzuntz.ustack.main.Emailer;
+import com.untzuntz.ustack.exceptions.PasswordPriorException;
 import com.untzuntz.ustack.main.Msg;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
@@ -136,6 +132,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setFirstName(String val)
 	{
+		if (AuditLog.changed(get("firstName"), val))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "firstName").append("original", get("firstName")).append("new", val));
+
 		put("firstName", val);
 	}
 	
@@ -146,6 +145,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setMiddleInitial(String val)
 	{
+		if (AuditLog.changed(get("middleInit"), val))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "middleInit").append("original", get("middleInit")).append("new", val));
+		
 		if (val == null || val.length() == 0)
 			removeField("middleInit");
 		else
@@ -159,6 +161,9 @@ public class UserAccount extends UntzDBObject {
 
 	public void setLastName(String val)
 	{
+		if (AuditLog.changed(get("lastName"), val))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "lastName").append("original", get("lastName")).append("new", val));
+		
 		put("lastName", val);
 	}
 
@@ -169,6 +174,9 @@ public class UserAccount extends UntzDBObject {
 
 	public void setSalutation(String val)
 	{
+		if (AuditLog.changed(get("salutation"), val))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "salutation").append("original", get("salutation")).append("new", val));
+
 		if (val == null || val.length() == 0)
 			removeField("salutation");
 		else
@@ -182,6 +190,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setSuffix(String val)
 	{
+		if (AuditLog.changed(get("suffix"), val))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "suffix").append("original", get("suffix")).append("new", val));
+
 		if (val == null || val.length() == 0)
 			removeField("suffix");
 		else
@@ -204,6 +215,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setTimeZone(String tz)
 	{
+		if (AuditLog.changed(get("timeZone"), tz))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "timeZone").append("original", get("timeZone")).append("new", tz));
+		
 		if (tz != null && tz.length() > 0)
 			put("timeZone", tz);
 		else
@@ -217,6 +231,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setCountry(String c)
 	{
+		if (AuditLog.changed(get("country"), c))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "country").append("original", get("country")).append("new", c));
+
 		if (c != null && c.length() > 0)
 			put("country", c);
 		else
@@ -243,6 +260,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setCreditAccount(String c)
 	{
+		if (AuditLog.changed(get("creditAccountId"), c))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "creditAccountId").append("original", get("creditAccountId")).append("new", c));
+		
 		if (c != null && c.length() > 0)
 			put("creditAccountId", c);
 		else
@@ -256,6 +276,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setAddress1(String data)
 	{
+		if (AuditLog.changed(get("address1"), data))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "address1").append("original", get("address1")).append("new", data));
+		
 		if (data != null && data.length() > 0)
 			put("address1", data);
 		else
@@ -269,6 +292,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setAddress2(String data)
 	{
+		if (AuditLog.changed(get("address2"), data))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "address2").append("original", get("address2")).append("new", data));
+		
 		if (data != null && data.length() > 0)
 			put("address2", data);
 		else
@@ -282,6 +308,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setCity(String data)
 	{
+		if (AuditLog.changed(get("city"), data))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "city").append("original", get("city")).append("new", data));
+		
 		if (data != null && data.length() > 0)
 			put("city", data);
 		else
@@ -295,6 +324,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setState(String data)
 	{
+		if (AuditLog.changed(get("state"), data))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "state").append("original", get("state")).append("new", data));
+		
 		if (data != null && data.length() > 0)
 			put("state", data);
 		else
@@ -308,6 +340,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setPostalCode(String data)
 	{
+		if (AuditLog.changed(get("postalCode"), data))
+			AuditLog.log("core", "core", "ChangeInfo", new BasicDBObject("userName", getUserName()).append("type", "postalCode").append("original", get("postalCode")).append("new", data));
+		
 		if (data != null && data.length() > 0)
 			put("postalCode", data);
 		else
@@ -337,7 +372,9 @@ public class UserAccount extends UntzDBObject {
 		put("passwordErrorCount", errCnt);
 		
 		logger.info("Password Error Cout: " + errCnt);
-		
+
+		AuditLog.log("core", UOpts.SUBSYS_AUTH, "PasswordError", new BasicDBObject("userName", getUserName()).append("errorCount", errCnt));
+
 		if (errCnt >= UOpts.getInt(UAppCfg.PASSWORD_ERROR_LIMIT)) // we hit the max - lock it up!
 			lockAccount();
 		
@@ -349,6 +386,8 @@ public class UserAccount extends UntzDBObject {
 	{
 		removeField("passwordErrorCount");
 		save(UOpts.SUBSYS_AUTH);
+		
+		AuditLog.log("core", UOpts.SUBSYS_AUTH, "PasswordErrorCountReset", new BasicDBObject("userName", getUserName()));
 	}
 	
 	/** Returns the number of failed password attempts */
@@ -369,6 +408,8 @@ public class UserAccount extends UntzDBObject {
 		Calendar now = Calendar.getInstance();
 		now.add(Calendar.SECOND, lockSec);
 		put("locked", now.getTime());		
+		
+		AuditLog.log("core", UOpts.SUBSYS_AUTH, "LockedAccount", new BasicDBObject("userName", getUserName()).append("lockedUntil", now.getTime()));
 	}
 	
 	/**
@@ -379,22 +420,62 @@ public class UserAccount extends UntzDBObject {
 	public void setPassword(String actor, String password) throws PasswordException
 	{
 		if (password.length() < UOpts.getInt(UAppCfg.PASSWORD_MIN_LENGTH)) // verify password length
+		{
+			AuditLog.log("core", actor, "SetPasswordError", new BasicDBObject("userName", getUserName()).append("reason", String.format("Minimum Length (%d) not met - attempted %d", UOpts.getInt(UAppCfg.PASSWORD_MIN_LENGTH), password.length())));
 			throw new PasswordLengthException(UOpts.getInt(UAppCfg.PASSWORD_MIN_LENGTH));
+		}
 		
 		if (isDisabled())
+		{
+			AuditLog.log("core", actor, "SetPasswordError", new BasicDBObject("userName", getUserName()).append("reason", "Account is disabled"));
 			return;
+		}
+		
+		/*
+		 * Check for prior password usage
+		 */
+		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
+		BasicDBList past = (BasicDBList)get("past");
+		for (int i = 0; past != null && i < past.size(); i++)
+		{
+			DBObject p = (DBObject)past.get(i);
+			
+			if (encryptor.checkPassword(p.get("s") + password, (String)p.get("p")))
+			{
+				AuditLog.log("core", actor, "SetPasswordError", new BasicDBObject("userName", getUserName()).append("reason", String.format("User tried to set password to a prior password [idx: %d]", i)));
+				throw new PasswordPriorException();
+			}
+		}
 
+		/*
+		 * Update prior password listing
+		 */
+		if (past == null)
+			past = new BasicDBList();
+
+		past.add(new BasicDBObject("s", get("salt")).append("p", get("password")));
+		
+		if (past.size() > 5)
+			past.remove(0);
+		
+		put("past", past);
+
+		
 		// salt + password setup
 		RandomSaltGenerator rsg = new RandomSaltGenerator();
 		String saltStr = new String(rsg.generateSalt(10));
 		
+		int passwordLength = password.length();
+		
 		put("salt", saltStr);
 		password = saltStr + password; // salt the password for enhanced one-way hash
 		
-		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
 		String encPassword = encryptor.encryptPassword(password); // encrypt
 		put("password", encPassword);
 		put("passwordChangeDate", new Date());
+
+		
+		AuditLog.log("core", UOpts.SUBSYS_AUTH, "SetPassword", new BasicDBObject("userName", getUserName()).append("length", passwordLength));
 
 		setPasswordExpiration();
 		
@@ -433,6 +514,9 @@ public class UserAccount extends UntzDBObject {
 			put("passwordExpirationDate", now.getTime());
 			
 			logger.info("Setting Password Expiration to '" + now.getTime() + "' for user '" + getUserName() + "' ==> " + pwExpDays + " days from now");
+			
+			AuditLog.log("core", UOpts.SUBSYS_AUTH, "SetPasswordExpiration", new BasicDBObject("userName", getUserName()).append("passwordExpirationDate", now.getTime()));
+			
 			return now.getTime();
 		}
 		else if (get("passwordExpirationDate") != null)
@@ -497,6 +581,9 @@ public class UserAccount extends UntzDBObject {
 	/** Sets the user's status */
 	public void setStatus(String status)
 	{
+		if (AuditLog.changed(get("status"), status))
+			AuditLog.log("core", "core", "ChangeUserStatus", new BasicDBObject("userName", getUserName()).append("oldStatus", getString("status")).append("newStatus", status));
+		
 		put("status", status);
 	}
 
@@ -540,12 +627,15 @@ public class UserAccount extends UntzDBObject {
 	 */
 	public void unlock()
 	{
+		if (isLocked())
+			AuditLog.log("core", UOpts.SUBSYS_AUTH, "UnlockedUserAccount", new BasicDBObject("userName", getUserName()));
+		
 		removeField("locked");
 		removeField("passwordErrorCount");
 		
 		// clear forgot password values
 		removeField("forgotPassExpiration");
-		removeField("forgotPassUid");
+		removeField("forgotPassUid");		
 	}
 	
 	/**
@@ -556,6 +646,13 @@ public class UserAccount extends UntzDBObject {
 		unlock();
 		put("lastLogin", new Date());
 		save();
+		
+		AuditLog.log("core", UOpts.SUBSYS_AUTH, "Login", new BasicDBObject("userName", getUserName()));
+	}
+
+	public void loggedOut()
+	{
+		AuditLog.log("core", UOpts.SUBSYS_AUTH, "Logout", new BasicDBObject("userName", getUserName()).append("type", "explicit"));
 	}
 	
 	/**
@@ -568,6 +665,8 @@ public class UserAccount extends UntzDBObject {
 		
 		put("lastLoginHost", hostName);
 		save();
+		
+		AuditLog.log("core", UOpts.SUBSYS_AUTH, "LoginHost", new BasicDBObject("userName", getUserName()).append("host", hostName));
 	}
 
 	/**
@@ -628,6 +727,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setPrimaryTelephone(DBObject phone)
 	{
+		if (AuditLog.changed(get("primaryTelephone"), phone))
+			AuditLog.log("core", UOpts.SUBSYS_AUTH, "ChangePhoneNumber", new BasicDBObject("userName", getUserName()).append("original", get("primaryTelephone")).append("new", phone));
+
 		if (phone == null)
 			removeField("primaryTelephone");
 		else
@@ -648,6 +750,9 @@ public class UserAccount extends UntzDBObject {
 	
 	public void setFaxNumber(DBObject phone)
 	{
+		if (AuditLog.changed(get("faxNumber"), phone))
+			AuditLog.log("core", UOpts.SUBSYS_AUTH, "ChangeFaxNumber", new BasicDBObject("userName", getUserName()).append("original", get("faxNumber")).append("new", phone));
+		
 		if (phone == null)
 			removeField("faxNumber");
 		else
@@ -666,28 +771,28 @@ public class UserAccount extends UntzDBObject {
 		return (String)phone.get("countryCode") + " " + (String)phone.get("phoneNumber");
 	}
 	
-	/**
-	 * Sends a forgot password link via email to the user
-	 */
-	public void sendForgotPassword(String from) throws RequiredAccountDataMissingException,AddressException
-	{
-		if (getPrimaryEmail() == null)
-			throw new RequiredAccountDataMissingException("Email Address");
-		
-		int fgpwExpireHours = UOpts.getInt(UAppCfg.PASSWORD_FORGOT_LINK_IN_HOURS);
-		
-		String linkUid = UUID.randomUUID().toString();
-		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
-		String encLink = encryptor.encryptPassword(linkUid); // encrypt
-		
-		Calendar now = Calendar.getInstance();
-		now.add(Calendar.HOUR, fgpwExpireHours);
-		put("forgotPassExpiration", now.getTime());
-		put("forgotPassUid", encLink);
-
-		String url = "http://localhost:8080/TProject/setup/rdr?act=forgotpw&user=" + getUserName() + "&uid=" + linkUid;
-		Emailer.postMail(getPrimaryEmail(), from, null, Msg.getString("PasswordReset-EmailSubject"), Msg.getString("PasswordReset-Email", url), null);
-	}
+//	/**
+//	 * Sends a forgot password link via email to the user
+//	 */
+//	public void sendForgotPassword(String from) throws RequiredAccountDataMissingException,AddressException
+//	{
+//		if (getPrimaryEmail() == null)
+//			throw new RequiredAccountDataMissingException("Email Address");
+//		
+//		int fgpwExpireHours = UOpts.getInt(UAppCfg.PASSWORD_FORGOT_LINK_IN_HOURS);
+//		
+//		String linkUid = UUID.randomUUID().toString();
+//		StrongPasswordEncryptor encryptor = new StrongPasswordEncryptor();
+//		String encLink = encryptor.encryptPassword(linkUid); // encrypt
+//		
+//		Calendar now = Calendar.getInstance();
+//		now.add(Calendar.HOUR, fgpwExpireHours);
+//		put("forgotPassExpiration", now.getTime());
+//		put("forgotPassUid", encLink);
+//
+//		String url = "http://localhost:8080/TProject/setup/rdr?act=forgotpw&user=" + getUserName() + "&uid=" + linkUid;
+//		Emailer.postMail(getPrimaryEmail(), from, null, Msg.getString("PasswordReset-EmailSubject"), Msg.getString("PasswordReset-Email", url), null);
+//	}
 
 	/**
 	 * Determines if the provided uid is valid for this user
@@ -892,6 +997,8 @@ public class UserAccount extends UntzDBObject {
 		user.setPassword(actor, password);
 		logger.info("Creating user account '" + userName + "'");
 		
+		AuditLog.log("core", actor, "CreateUser", new BasicDBObject("userName", userName));
+
 		return user;
 	}
 

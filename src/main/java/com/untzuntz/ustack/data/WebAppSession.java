@@ -12,6 +12,7 @@ import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.untzuntz.ustack.main.UOpts;
 
 /**
  * A session (for long term tracking)
@@ -67,11 +68,11 @@ public class WebAppSession extends UntzDBObject {
 		return session;
 	}
 	
-	public static void endSession(String sessionId, String endReason, String actor) {
-		endSession(null, sessionId, endReason, actor);
+	public static void endSession(String sessionId, String endReason, String actor, boolean audit) {
+		endSession(null, sessionId, endReason, actor, audit);
 	}
 	
-	public static void endSession(String appServer, String sessionId, String endReason, String actor) {
+	public static void endSession(String appServer, String sessionId, String endReason, String actor, boolean audit) {
 		
 		if (appServer == null)
 			appServer = System.getProperty("ApplicationServer.Name", "PrimaryServer");
@@ -79,7 +80,7 @@ public class WebAppSession extends UntzDBObject {
 		WebAppSession session = WebAppSession.getRecentSessionByServerSessionIdUser(appServer, sessionId);
 		if (session != null)
 		{
-			endSession(session, endReason);
+			endSession(session, endReason, audit);
 			session.save(actor);
 		}
 		else
@@ -87,7 +88,7 @@ public class WebAppSession extends UntzDBObject {
 		
 	}
 	
-	private static void endSession(DBObject session, String endReason) {
+	private static void endSession(DBObject session, String endReason, boolean audit) {
 		
 		if (session.get("endTime") != null)
 		{
@@ -103,14 +104,16 @@ public class WebAppSession extends UntzDBObject {
 		session.put("duration", (long)((float)durMs / 1000.0f / 60.0f));
 		session.put("reason", endReason);
 		
+		if (audit && session.get("userName") != null)
+			AuditLog.log("core", UOpts.SUBSYS_AUTH, "Logout", new BasicDBObject("userName", session.get("userName")).append("type", "sessionTimeout"));
 	}
 	
-	public static void endSessionById(String id, String endReason, String actor) {
+	public static void endSessionById(String id, String endReason, String actor, boolean audit) {
 		
 		WebAppSession session = getById(id);
 		if (session != null)
 		{
-			endSession(session, endReason);
+			endSession(session, endReason, audit);
 			session.save(actor);
 		}
 		
@@ -137,7 +140,7 @@ public class WebAppSession extends UntzDBObject {
 		while (cur.hasNext())
 		{
 			DBObject session = (DBObject)cur.next();
-			endSession(session, "Closed Outstanding");
+			endSession(session, "Closed Outstanding", true);
 			col.save(session);
 			idx++;
 			if (idx % 10 == 0)

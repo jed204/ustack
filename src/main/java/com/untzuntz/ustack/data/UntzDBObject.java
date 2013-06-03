@@ -273,7 +273,22 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 		resourceLinkList.add(resourceLink);
 		setResourceLinkList(resourceLinkList);
 
+		DBObject event = new BasicDBObject("link", resourceLink);
+		addIdentifier(event);
+		AuditLog.log("core", "core", "AddResourceLink", event);
+
+
 		calculateManageLists();
+	}
+	
+	public void addIdentifier(DBObject auditLogEvent)
+	{
+		if (get("userName") != null)
+			auditLogEvent.put("userName", get("userName"));
+		if (get("siteId") != null)
+			auditLogEvent.put("siteId", get("siteId"));
+		if (get("clientId") != null)
+			auditLogEvent.put("clientId", get("clientId"));
 	}
 	
 	public void clearManagedBy()
@@ -601,6 +616,11 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 			if (checkContext(resourceLink, context))
 			{
 				logger.info("Removing Resource Link: " + resourceLink);
+
+				DBObject event = new BasicDBObject("link", resourceLink);
+				addIdentifier(event);
+				AuditLog.log("core", "core", "RemoveResourceLink", event);
+
 				resourceLinkList.remove(i);
 				i--;
 			}
@@ -626,6 +646,11 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 				if (checkContext(resourceLink, context))
 				{
 					logger.info("Removing Resource Link: " + resourceLink);
+					
+					DBObject event = new BasicDBObject("link", resourceLink);
+					addIdentifier(event);
+					AuditLog.log("core", "core", "RemoveResourceLink", event);
+
 					resourceLinkList.remove(i);
 					i--;
 				}
@@ -1199,6 +1224,10 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 			chk.putAll(obj);
 		else
 		{
+			DBObject event = new BasicDBObject("mapping", obj.get("name"));
+			addIdentifier(event);
+			AuditLog.log("core", "core", "AddAPIMapping", event);
+
 			BasicDBList list = getAPIMappingList();
 			list.add(obj);
 			setAPIMappingList(list);
