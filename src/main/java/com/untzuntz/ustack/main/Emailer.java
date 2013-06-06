@@ -133,7 +133,7 @@ public class Emailer {
 			msg.setSentDate(new Date());
 			
 			if (htmlMessage == null && (attachments == null || attachments.size() == 0))
-				msg.setContent(message, "text/plain");
+				msg.setContent(message, "text/plain; charset=UTF-8");
 			else
 			{
 				Multipart mp = new MimeMultipart("alternative");
@@ -142,7 +142,7 @@ public class Emailer {
 				MimeBodyPart text = new MimeBodyPart();
 			    text.setText(message);
 			    text.setHeader("MIME-Version" , "1.0" );
-			    text.setHeader("Content-Type" , "text/plain" );
+			    text.setHeader("Content-Type" , "text/plain; charset=UTF-8");
 		        mp.addBodyPart(text);
 
 			    if (htmlMessage != null)
