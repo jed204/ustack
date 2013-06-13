@@ -27,7 +27,7 @@ public class AccessToken {
 		StringBuffer buf = new StringBuffer();
 		buf.append(clientId).append("|");
 		buf.append(userName).append("|");
-		buf.append(expirationAge);
+		buf.append((System.currentTimeMillis() + expirationAge));
 		
 		return Base64.encode(at.getEncryptor().encrypt(buf.toString()));
 	}
@@ -59,7 +59,7 @@ public class AccessToken {
 		AccessTokenDetails ret = new AccessTokenDetails();
 		ret.clientId = spl[0];
 		ret.userName = spl[1];
-		ret.expirationAge = System.currentTimeMillis() + Long.valueOf(spl[2]);
+		ret.expirationAge = Long.valueOf(spl[2]);
 		
 		return ret;
 
