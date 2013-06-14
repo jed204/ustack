@@ -627,7 +627,8 @@ public class UserAccount extends UntzDBObject {
 	 */
 	public void unlock()
 	{
-		if (isLocked())
+		Date lockDate = (Date)get("locked");
+		if (lockDate.before(new Date()))
 			AuditLog.log("core", UOpts.SUBSYS_AUTH, "UnlockedUserAccount", new BasicDBObject("userName", getUserName()));
 		
 		removeField("locked");
