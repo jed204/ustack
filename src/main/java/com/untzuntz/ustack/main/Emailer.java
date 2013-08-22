@@ -20,6 +20,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimeUtility;
 
 import org.apache.log4j.Logger;
 
@@ -129,7 +130,7 @@ public class Emailer {
 	
 			// Setting the Subject and Content Type
 			msg.addHeader("X-UStack", "1.0");
-			msg.setSubject(subject);
+			msg.setSubject(MimeUtility.encodeText(subject, "utf-8", "B"));
 			msg.setSentDate(new Date());
 			
 			if (htmlMessage == null && (attachments == null || attachments.size() == 0))

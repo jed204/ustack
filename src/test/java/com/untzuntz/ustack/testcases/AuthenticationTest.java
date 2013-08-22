@@ -79,6 +79,30 @@ public class AuthenticationTest extends UStackTestCaseBase {
 		}
 	}
 	
+	/** Tests the ability to authenticate a user and the blocking of invalid pw - confirming with UTF-8 codes */
+	@Test public void testAuthenticationNonUS()
+	{
+		// upon creation
+		UserAccount testUser = null;
+		try {
+			testUser = UserAccount.createUser("testcase", "testUser5" + runId, "湘南鎌倉総合病");
+			testUser.save("TestCase");
+		} 
+		catch (PasswordException er) {}
+		catch (AccountExistsException er) { fail(); }
+		
+		try { 
+			Authentication.authenticateUser(testUser.getUserName(), "湘南鎌倉総合病");
+		} catch (AuthenticationException err) {
+			fail();
+		}
+
+		try { 
+			Authentication.authenticateUser(testUser.getUserName(), "合倉鎌総院湘南");
+			fail();
+		} catch (AuthenticationException err) {}
+	}
+
 	/** Tests the account locking on too many failed attempts */
 	@Test public void testAccountLock()
 	{
