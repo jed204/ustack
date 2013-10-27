@@ -470,8 +470,6 @@ public class SiteAccount extends UntzDBObject {
 	public static SiteAccount getByField(String field, String value)
 	{
 		DBObject search = BasicDBObjectBuilder.start(field, value).get();
-		logger.info("getByField -> Search: " + search);
-		
 		DBObject site = new SiteAccount().getCollection().findOne(search);
 		
 		if (site == null)
