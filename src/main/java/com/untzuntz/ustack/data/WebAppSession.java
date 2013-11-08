@@ -83,8 +83,8 @@ public class WebAppSession extends UntzDBObject {
 			endSession(session, endReason, audit);
 			session.save(actor);
 		}
-		else
-			logger.info("Session not found in session database - too old? : " + appServer + "/" + sessionId);
+//		else
+//			logger.info("Session not found in session database - too old? : " + appServer + "/" + sessionId);
 		
 	}
 	
@@ -92,7 +92,7 @@ public class WebAppSession extends UntzDBObject {
 		
 		if (session.get("endTime") != null)
 		{
-			logger.info("Session already ended (" + session.get("endTime") + ") : => " + session.get("_id"));
+//			logger.info("Session already ended (" + session.get("endTime") + ") : => " + session.get("_id"));
 			return;
 		}
 		
@@ -163,7 +163,7 @@ public class WebAppSession extends UntzDBObject {
 		BasicDBObject sort = new BasicDBObject("startTime", -1);
 		BasicDBObject search = new BasicDBObject("appServer", appServer).append("sessionId", sessionId).append("startTime", new BasicDBObject("$gte", c.getTime()));
 	
-		logger.info("Session Search: " + search);
+//		logger.info("Session Search: " + search);
 		
 		DBCursor cur = new WebAppSession().getCollection().find(search).sort(sort);
 		if (cur != null && cur.hasNext())

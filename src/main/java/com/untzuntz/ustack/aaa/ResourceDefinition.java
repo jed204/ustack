@@ -94,6 +94,81 @@ public class ResourceDefinition extends UntzDBObject {
 		return (String)get("internalName");
 	}
 	
+	public void setPartners(String p)
+	{
+		if (p == null || p.length() == 0)
+		{
+			removeField("partner");
+			return;
+		}
+	
+		BasicDBList ret = new BasicDBList();
+		String[] prts = p.split(",");
+		for (int i = 0; i < prts.length; i++)
+			ret.add(prts[i]);
+		
+		put("partner", ret);
+	}
+	
+	public String getPartnersCsv() {
+		
+		BasicDBList partners = getPartners();
+		if (partners == null)
+			return null;
+		
+		StringBuffer ret = new StringBuffer();
+		for (int i = 0; i < partners.size(); i++)
+		{
+			String p = (String)partners.get(i);
+			ret.append(p);
+			if ((i + 1) < partners.size())
+				ret.append(",");
+		}
+		return ret.toString();		
+	}
+
+	/** Returns the 'partner' value to restrict loading */
+	public BasicDBList getPartners()
+	{
+		BasicDBList ret = (BasicDBList)get("partner");
+		if (ret == null)
+			ret = new BasicDBList();
+		
+		return ret;
+	}
+
+	
+	/**
+	 * True if:
+	 *    - no partner provided
+	 *    - no partners defined
+	 *    - partner matches what is in the list
+	 *    
+	 *    
+	 * False if:
+	 *    - partner is not defined in the list
+	 * 
+	 * 
+	 * 
+	 * @param p
+	 * @return
+	 */
+	public boolean partnerMatch(String p) {
+		
+		if (p == null)
+			return true;
+		
+		BasicDBList partners = getPartners();
+		if (partners == null || partners.size() == 0)
+			return true;
+		
+		List<String> prts = new ArrayList<String>();
+		for (int i = 0; i < partners.size(); i++)
+			prts.add( (String)partners.get(i) );
+		
+		return prts.contains(p);
+	}
+	
 	private void setType(String type)
 	{
 		put("type", type);

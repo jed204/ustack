@@ -238,17 +238,11 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 								Object val2 = obj.get(key);
 								if (!val1.equals(val2))
 								{
-									logger.info("\t- MIS-MATCH [" + val1 + " ==> " + val2 + "]");
 									return false;
 								}
 								
-								logger.info("\t- Match [" + val1 + " ==> " + val2 + "]");
 							}
-							else
-								logger.info("\t- Skipping 'created'");
 						}
-
-						logger.info("\t- Match [ALL ITEMS]");
 
 						return true;
 					}
@@ -1058,6 +1052,26 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	 */
 	public List<String> getPluginsByContainer(String containerName)
 	{
+		return getPluginsByContainer(containerName, null);
+	}
+
+	/**
+	 * Returns a list of plugins based on the provided container name - removes potential dupes
+	 * @param containerName
+	 * @return
+	 */
+	public List<String> getPluginsByContainerMerged(String containerName)
+	{
+		return getPluginsByContainerMerged(containerName, null);
+	}
+	
+	/**
+	 * Returns a list of plugins based on the provided container name
+	 * @param containerName
+	 * @return
+	 */
+	public List<String> getPluginsByContainer(String containerName, String partner)
+	{
 		List<String> ret = new Vector<String>();
 		BasicDBList resourceLinkList = getResourceLinkList();
 		for (int i = 0; i < resourceLinkList.size(); i++)
@@ -1066,6 +1080,9 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 			ResourceDefinition def = ResourceDefinition.getByName( link.getName() );
 			if (def != null)
 			{
+				if (!def.partnerMatch(partner))
+					continue;
+				
 				RoleDefinition role = def.getRoleByName(link.getRoleName());
 	
 				if (role != null)
@@ -1088,7 +1105,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	 * @param containerName
 	 * @return
 	 */
-	public List<String> getPluginsByContainerMerged(String containerName)
+	public List<String> getPluginsByContainerMerged(String containerName, String partner)
 	{
 		List<String> ret = new Vector<String>();
 		List<String> pluginClassList = getPluginsByContainer(containerName);
