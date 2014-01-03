@@ -302,6 +302,41 @@ public class Authorization {
 		
 	}
 	
+	/**
+	 * Provided a ResourceLink check if there is a permission
+	 * 
+	 * @param resLink
+	 * @param perm
+	 * @return
+	 */
+	public static boolean hasPermission(ResourceLink resLink, UStackPermissionEnum perm)
+	{
+		try {
+			hasPermission(resLink.getResourceDefinition(), resLink.getRoleName(), perm);
+			return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}	
+	
+	/**
+	 * Check a permission of a resource definition and role
+	 * 
+	 * @param resource
+	 * @param roleName
+	 * @param perm
+	 * @throws InvalidAuthorizationConfig
+	 * @throws InvalidAccessAttempt
+	 */
+	public static void hasPermission(ResourceDefinition resource, String roleName, UStackPermissionEnum perm) throws InvalidAuthorizationConfig, InvalidAccessAttempt
+	{
+		RoleDefinition role = resource.getRoleByName(roleName);
+		if (role == null)
+			throw new InvalidAuthorizationConfig("No role named '" + roleName + "' for resource '" + resource + "'");
+
+		if (!role.hasPermission(perm.getPermission()))
+			throw new InvalidAccessAttempt();
+	}
 	
 	/**
 	 * Returns a list of ResourceLink objects the user is allowed to complete the permission requested upon
