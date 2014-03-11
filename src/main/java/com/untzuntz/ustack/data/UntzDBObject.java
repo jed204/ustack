@@ -211,42 +211,48 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 			DBObject obj = (DBObject)resList.get(i);
 			
 			String linkResDefId = (String)obj.get("resDefId");
-			if (linkResDefId.equalsIgnoreCase(resDefId))
-			{
-				if (role.equalsIgnoreCase( (String)obj.get("role") ))
-				{
-					if (siteId != null && siteId.equalsIgnoreCase( (String)obj.get("siteId") ))
-					{
-						logger.debug("\t- Matched [" + obj + "  ==>  " + ((DBObject)resourceLink).toString());
-						return true;
-					}
-					else if (userName != null && userName.equalsIgnoreCase( (String)obj.get("userName") ))
-					{
-						logger.debug("\t- Matched [" + obj + "  ==>  " + ((DBObject)resourceLink).toString());
-						return true;
-					}
-					else
-					{
-						// compare all items on the incoming resource link object to the existing object -- match?
-						Iterator<String> it = resourceLink.keySet().iterator();
-						while (it.hasNext())
-						{
-							String key = it.next();
-							if (!"created".equalsIgnoreCase(key))
-							{
-								Object val1 = resourceLink.get(key);
-								Object val2 = obj.get(key);
-								if (!val1.equals(val2))
-								{
-									return false;
-								}
-								
-							}
-						}
+			if (!linkResDefId.equalsIgnoreCase(resDefId))
+				continue;
+			
+			if (!role.equalsIgnoreCase( (String)obj.get("role") ))
+				continue;
 
-						return true;
+			if (siteId != null && siteId.equalsIgnoreCase( (String)obj.get("siteId") ))
+			{
+				logger.debug("\t- Matched [" + obj + "  ==>  " + ((DBObject)resourceLink).toString());
+				return true;
+			}
+
+			if (userName != null && userName.equalsIgnoreCase( (String)obj.get("userName") ))
+			{
+				logger.debug("\t- Matched [" + obj + "  ==>  " + ((DBObject)resourceLink).toString());
+				return true;
+			}
+			
+			// compare all items on the incoming resource link object to the existing object -- match?
+			Iterator<String> it = resourceLink.keySet().iterator();
+			boolean match = false;
+			if (it.hasNext())
+				match = true;
+			
+			while (it.hasNext() && match)
+			{
+				String key = it.next();
+				if (!"created".equalsIgnoreCase(key))
+				{
+					Object val1 = resourceLink.get(key);
+					Object val2 = obj.get(key);
+					if (!val1.equals(val2))
+					{
+						match = false;
 					}
+								
 				}
+			}
+
+			if (match){
+				logger.debug("\t- Matched [" + obj + "  ==>  " + ((DBObject)resourceLink).toString());
+				return true;
 			}
 		}
 
