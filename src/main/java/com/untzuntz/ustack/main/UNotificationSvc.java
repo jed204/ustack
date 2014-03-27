@@ -444,6 +444,9 @@ public class UNotificationSvc {
 		String emailFromAddr = processTemplate( (String)typeData.get("fromAddress"), notif );
 		String subject = processTemplate( (String)typeData.get("subject"), notif );
 		String emailBody = processTemplate( (String)typeData.get("templateText"), notif );
+		String campaignId = null;
+		if (typeData.get("campaignId") != null)
+			campaignId = processTemplate( (String)typeData.get("campaignId"), notif );
 		String htmlEmailBody = null;
 		if (typeData.get("htmlTemplateText") != null)
 			htmlEmailBody = processTemplate( (String)typeData.get("htmlTemplateText"), notif );
@@ -459,7 +462,7 @@ public class UNotificationSvc {
 		else
 		{
 			try {
-				Emailer.postMail(emailToAddr, emailFromAddr, emailFromName, subject, emailBody, htmlEmailBody, attachments);
+				Emailer.postMail(emailToAddr, emailFromAddr, emailFromName, subject, emailBody, htmlEmailBody, attachments, campaignId);
 			} catch (AddressException err) {
 				logger.error("Invalid Address : " + err);
 				return false;
