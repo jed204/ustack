@@ -153,7 +153,7 @@ public class LinkActionHelper {
 			if ("add/replace".equalsIgnoreCase(op))
 			{
 				// try to replace site id's and usernames if we can...
-				if ("resourceLink".equalsIgnoreCase(field) && val instanceof BasicDBList)
+				if ("resourceLinkList".equalsIgnoreCase(field) && val instanceof BasicDBList)
 				{
 					BasicDBList list = (BasicDBList)val;
 					for (i = 0; i < list.size(); i++)
