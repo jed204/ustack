@@ -83,6 +83,8 @@ public class UAppCfg {
 	
 	public static final String MAILGUN_KEY = "MailGun.APIKey";
 	
+	public static final String MAILGUN_DOMAIN = "MailGun.Domain";
+	
 	/** Enable SSL Connection */
 	public static final String EMAIL_SECURE_SSL = "Email.Secure";
 	

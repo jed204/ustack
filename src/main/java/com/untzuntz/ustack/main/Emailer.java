@@ -213,11 +213,11 @@ public class Emailer {
 	public static void mailGun(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId) throws AddressException
 	{
 		Client client = Client.create();
-	    client.addFilter(new HTTPBasicAuthFilter("api",UOpts.getString(UAppCfg.MAILGUN_KEY)));
+	    client.addFilter(new HTTPBasicAuthFilter("api", UOpts.getString(UAppCfg.MAILGUN_KEY)));
 	 
 	    MultivaluedMapImpl formData = new MultivaluedMapImpl();
 	 
-	    WebResource webResource = client.resource("https://api.mailgun.net/v2/textrecruit.com/messages");
+	    WebResource webResource = client.resource(String.format("https://api.mailgun.net/v2/%s/messages", UOpts.getString(UAppCfg.MAILGUN_DOMAIN)));
 
 	    String toStr = getList(to);
 	    String ccStr = getList(cc);
@@ -243,6 +243,8 @@ public class Emailer {
 	    ClientResponse clientResponse = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
 	    String output = clientResponse.getEntity(String.class);
 	    
+		logger.info("Sending Email [" + from + " => " + to[0] + "] // Subj: '" + subject + "' // " + message + " via MAILGUN");
+
 	    logger.info(String.format("MailGun Response: %s", output));
 	}
 	

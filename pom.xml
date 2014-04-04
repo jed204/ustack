@@ -4,7 +4,7 @@
 	<groupId>com.untzuntz.ustack</groupId>
 	<artifactId>ustack-core</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.32</version>
+	<version>1.0.35</version>
 	<name>UntzUntz UStack Core</name>
 	<licenses>
 		<license>
