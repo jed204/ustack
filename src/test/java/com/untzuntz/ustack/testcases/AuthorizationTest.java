@@ -6,11 +6,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 import com.untzuntz.ustack.aaa.Authorization;
@@ -19,6 +22,7 @@ import com.untzuntz.ustack.aaa.ResourceLink;
 import com.untzuntz.ustack.aaa.RoleDefinition;
 import com.untzuntz.ustack.aaa.UBasePermission;
 import com.untzuntz.ustack.data.TermsConditions;
+import com.untzuntz.ustack.data.UntzDBObjectTemplate;
 import com.untzuntz.ustack.data.UserAccount;
 import com.untzuntz.ustack.exceptions.AccountExistsException;
 import com.untzuntz.ustack.exceptions.AuthorizationException;
@@ -182,6 +186,92 @@ public class AuthorizationTest extends UStackTestCaseBase {
 			fail();
 		} 
 		
+	}
+	
+	/** Verify we can link users and resource that contain templates */
+	@Test public void testResourceUserTemplate()
+	{
+		// Generate a dummy resource + roles + permissions
+		String resourceName = "Site User" + runId;
+		ResourceDefinition res = null;
+		try {
+			res = ResourceDefinition.createResource(resourceName, ResourceDefinition.TYPE_USERACCESS);
+			
+			RoleDefinition role = new RoleDefinition("General");
+			role.addPermission("Login");
+
+			res.addRole(role);
+			
+			res.save("TestCase");
+		} catch (ObjectExistsException err) { fail(); }		
+		
+		// Generate a dummy template
+		String templName = "Site User Template" + runId;
+		try{
+			UntzDBObjectTemplate templ = UntzDBObjectTemplate.createTemplate(templName);
+			
+			BasicDBList l = new BasicDBList();
+			DBObject dbobj = new BasicDBObject();
+			dbobj.put("op", "add/replace");
+			dbobj.put("field", "resourceLinkList");
+			
+			BasicDBList vl = new BasicDBList();
+			DBObject v = new BasicDBObject();
+			v.put("internalName", resourceName);
+			v.put("name", resourceName);
+			v.put("resDefId", (res.get("_id") + ""));
+			v.put("role", "Templ");
+			v.put("created", new Date());
+			
+			vl.add(v);
+			dbobj.put("value", vl);	
+			
+			l.add(dbobj);
+			templ.setTemplateObjectList(l);
+			
+			templ.save("TestCase");
+		} catch (Exception err) { fail(); }		
+		
+		try {
+			RoleDefinition linkRole = new RoleDefinition("Link");
+			linkRole.addPermission("Login");
+			linkRole.setObjectTemplate(templName);
+			
+			RoleDefinition templRole = new RoleDefinition("Templ");
+			templRole.addPermission("Login");
+			
+			res.addRole(linkRole);
+			res.addRole(templRole);
+			
+			res.save("TestCase");
+		} catch (ObjectExistsException err) { fail(); }	
+				
+		UserAccount testUser = null;
+		try {
+			testUser = UserAccount.createUser("testcase", "testUser9" + runId, "123567890");
+			testUser.save("TestCase");
+		} catch (Exception er) { fail(); }
+		
+		testUser.addResourceLink(new ResourceLink(res, "General"));
+		
+		//Verify user has the General Role
+		try {
+			List<ResourceLink> links = testUser.getResourceLinksByName(resourceName, new BasicDBObject("role", "General"));
+			assertTrue(links.size() == 1);
+		} catch (Exception err) { fail(); }		
+		
+		testUser.addResourceLink(new ResourceLink(res, "Link"));
+		//Verify user has the General, Link, and Templ Roles
+		try {
+			List<ResourceLink> links = testUser.getResourceLinksByName(resourceName, new BasicDBObject("role", "General"));
+			assertTrue(links.size() == 1);
+			
+			List<ResourceLink> lLinks = testUser.getResourceLinksByName(resourceName, new BasicDBObject("role", "Link"));
+			assertTrue(lLinks.size() == 1);
+			
+			List<ResourceLink> tLinks = testUser.getResourceLinksByName(resourceName, new BasicDBObject("role", "Templ"));
+			assertTrue(tLinks.size() == 1);
+		} catch (Exception err) { fail(); }			
 	}
 	
 	@Test public void testPlugins()
