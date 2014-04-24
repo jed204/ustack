@@ -57,8 +57,6 @@ public class APIMapping extends BasicDBObject {
 			Base64 base = new Base64();
 			saltStr = new String(base.encode(rsg.generateSalt(10)));
 			
-			logger.info("Salt Str: " + saltStr);
-			
 			put("s2", saltStr);
 		}
 		else

@@ -21,8 +21,15 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class Emailer {
 
@@ -39,12 +46,12 @@ public class Emailer {
 	 */
 	public static void postMail(String to, String from, String fromName, String subject, String message, String htmlMessage) throws AddressException
 	{
-		postMail(new InternetAddress[] { new InternetAddress(to) }, null, null, from, fromName, subject, message, htmlMessage, null);
+		postMail(new InternetAddress[] { new InternetAddress(to) }, null, null, from, fromName, subject, message, htmlMessage, null, null);
 	}
 	
-	public static void postMail(String to, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments) throws AddressException
+	public static void postMail(String to, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId) throws AddressException
 	{
-		postMail(new InternetAddress[] { new InternetAddress(to) }, null, null, from, fromName, subject, message, htmlMessage, attachments);
+		postMail(new InternetAddress[] { new InternetAddress(to) }, null, null, from, fromName, subject, message, htmlMessage, attachments, campaignId);
 	}
 	
 	
@@ -61,11 +68,17 @@ public class Emailer {
 	 */
 	public static void postMail(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage) throws AddressException
 	{
-		postMail(to, cc, bcc, from, fromName, subject, message, htmlMessage, null);
+		postMail(to, cc, bcc, from, fromName, subject, message, htmlMessage, null, null);
 	}
 	
-	public static void postMail(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments) throws AddressException
+	public static void postMail(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId) throws AddressException
 	{
+		if ("mailgun".equalsIgnoreCase(UOpts.getString(UAppCfg.EMAIL_MODE)))
+		{
+			mailGun(to, cc, bcc, from, fromName, subject, message, htmlMessage, attachments, campaignId);
+			return;
+		}
+		
 		boolean debug = false;
 		String emailHost = UOpts.getString(UAppCfg.EMAIL_HOST);
 		String emailPort = UOpts.getString(UAppCfg.EMAIL_PORT);
@@ -195,5 +208,59 @@ public class Emailer {
 			// TODO: Save message and resend later
 			logger.error("Email delivery failed", err);
 		}
+	}
+	
+	public static void mailGun(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId) throws AddressException
+	{
+		Client client = Client.create();
+	    client.addFilter(new HTTPBasicAuthFilter("api", UOpts.getString(UAppCfg.MAILGUN_KEY)));
+	 
+	    MultivaluedMapImpl formData = new MultivaluedMapImpl();
+	 
+	    WebResource webResource = client.resource(String.format("https://api.mailgun.net/v2/%s/messages", UOpts.getString(UAppCfg.MAILGUN_DOMAIN)));
+
+	    String toStr = getList(to);
+	    String ccStr = getList(cc);
+	    String bccStr = getList(bcc);
+	    
+	    formData = new MultivaluedMapImpl();
+	    formData.add("from", String.format("%s <%s>", fromName ,from));
+	    formData.add("to", toStr);
+	    if (cc != null)
+	    	formData.add("cc", ccStr);
+	    if (bcc != null)
+	    	formData.add("bcc", bccStr);
+	    formData.add("subject", subject);
+	    formData.add("text", message);
+	    if (htmlMessage != null)
+	    	formData.add("html", htmlMessage);
+	    if (campaignId != null)
+	    	formData.add("o:campaign", campaignId);
+	    
+//	    MultiPart multiPart = new MultiPart();
+//	    multiPart.bodyPart(new BodyPart(project, MediaType.APPLICATION_XML_TYPE)).
+	    
+	    ClientResponse clientResponse = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
+	    String output = clientResponse.getEntity(String.class);
+	    
+		logger.info("Sending Email [" + from + " => " + to[0] + "] // Subj: '" + subject + "' // " + message + " via MAILGUN");
+
+	    logger.info(String.format("MailGun Response: %s", output));
+	}
+	
+	private static String getList(InternetAddress[] addrs)
+	{
+		if (addrs == null || addrs.length == 0)
+			return null;
+		
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < addrs.length; i++)
+		{
+			InternetAddress addr = addrs[i];
+			buf.append(addr.toString());
+			if ((i + 1) < addrs.length)
+				buf.append(",");
+		}
+		return buf.toString();
 	}
 }

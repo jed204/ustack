@@ -28,6 +28,7 @@ import javapns.notification.ResponsePacket;
 import javapns.notification.transmission.PushQueue;
 
 import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -444,9 +445,44 @@ public class UNotificationSvc {
 		String emailFromAddr = processTemplate( (String)typeData.get("fromAddress"), notif );
 		String subject = processTemplate( (String)typeData.get("subject"), notif );
 		String emailBody = processTemplate( (String)typeData.get("templateText"), notif );
+		String campaignId = null;
+		if (typeData.get("campaignId") != null)
+			campaignId = processTemplate( (String)typeData.get("campaignId"), notif );
 		String htmlEmailBody = null;
 		if (typeData.get("htmlTemplateText") != null)
 			htmlEmailBody = processTemplate( (String)typeData.get("htmlTemplateText"), notif );
+		
+		InternetAddress[] ccArray = null;
+		if (typeData.get("cc") != null)
+		{
+			List<InternetAddress> ccList = new ArrayList<InternetAddress>();
+			String cc = processTemplate( (String)typeData.get("bcc"), notif );
+			String[] ccAddrs = cc.split(",");
+			for (String ccAddr : ccAddrs)
+				try { ccList.add(new InternetAddress(ccAddr)); } catch (AddressException ae) {}
+
+			if (ccList.size() > 0)
+			{
+				ccArray = new InternetAddress[ccList.size()];
+				ccList.toArray(ccArray);
+			}
+		}
+		
+		InternetAddress[] bccArray = null;
+		if (typeData.get("bcc") != null)
+		{
+			List<InternetAddress> bccList = new ArrayList<InternetAddress>();
+			String bcc = processTemplate( (String)typeData.get("bcc"), notif );
+			String[] bccAddrs = bcc.split(",");
+			for (String bccAddr : bccAddrs)
+				try { bccList.add(new InternetAddress(bccAddr)); } catch (AddressException ae) {}
+
+			if (bccList.size() > 0)
+			{
+				bccArray = new InternetAddress[bccList.size()];
+				bccList.toArray(bccArray);
+			}
+		}
 		
 		if (emailToAddr == null)
 		{
@@ -459,7 +495,7 @@ public class UNotificationSvc {
 		else
 		{
 			try {
-				Emailer.postMail(emailToAddr, emailFromAddr, emailFromName, subject, emailBody, htmlEmailBody, attachments);
+				Emailer.postMail(new InternetAddress[] { new InternetAddress(emailToAddr) }, null, bccArray, emailFromAddr, emailFromName, subject, emailBody, htmlEmailBody, attachments, campaignId);
 			} catch (AddressException err) {
 				logger.error("Invalid Address : " + err);
 				return false;
