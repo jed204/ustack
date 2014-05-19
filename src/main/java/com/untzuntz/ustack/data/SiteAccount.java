@@ -389,6 +389,11 @@ public class SiteAccount extends UntzDBObject {
 			}
 		}
 	}
+
+	public static SiteAccount createSite(String siteName) throws AccountExistsException,InvalidSiteAccountName
+	{
+		return createSite(siteName, true);
+	}
 	
 	/**
 	 * Create a new site account
@@ -399,12 +404,16 @@ public class SiteAccount extends UntzDBObject {
 	 * @throws AccountExistsException
 	 * @throws PasswordLengthException
 	 */
-	public static SiteAccount createSite(String siteName) throws AccountExistsException,InvalidSiteAccountName
+	public static SiteAccount createSite(String siteName, boolean checkForDupe) throws AccountExistsException,InvalidSiteAccountName
 	{
 		if (siteName == null || siteName.length() == 0)
 			throw new InvalidSiteAccountName("Site");
 		
-		SiteAccount site = getSite(siteName);
+		SiteAccount site = null;
+		
+		if (checkForDupe)
+			site = getSite(siteName);
+		
 		if (site != null) // already exists
 			throw new AccountExistsException("Site");
 		
