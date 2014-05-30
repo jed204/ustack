@@ -31,6 +31,19 @@ public class Authorization {
 	 */
 	public static boolean authorizeUserBool(UserAccount user, String resource, UStackPermissionEnum perm)
 	{
+		return authorizeUserBool(user, resource, perm, null);
+	}
+	
+	/**
+	 * Verify authorization filtered by partner, return a boolean
+	 * @param user
+	 * @param resource
+	 * @param perm
+	 * @param partner
+	 * @return
+	 */
+	public static boolean authorizeUserBool(UserAccount user, String resource, UStackPermissionEnum perm, String partner)
+	{
 		try {
 			
 			authorizeUser(user, resource, null, perm);
@@ -51,9 +64,23 @@ public class Authorization {
 	 */
 	public static boolean authorizeUserBool(UserAccount user, String resource, DBObject context, UStackPermissionEnum perm)
 	{
+		return authorizeUserBool(user, resource, context, perm, null);
+	}
+	
+	/**
+	 * Verify authorization filtered by partner, return a boolean
+	 * @param user
+	 * @param resource
+	 * @param context
+	 * @param perm
+	 * @param partner
+	 * @return
+	 */
+	public static boolean authorizeUserBool(UserAccount user, String resource, DBObject context, UStackPermissionEnum perm, String partner)
+	{
 		try {
 			
-			authorizeUser(user, resource, context, perm);
+			authorizeUser(user, resource, context, perm, partner);
 			return true;
 			
 		} catch (AuthorizationException exp) {}
@@ -71,9 +98,23 @@ public class Authorization {
 	 */
 	public static boolean authorizeUserBool(UserAccount user, String resource, DBObject context, String perm)
 	{
+		return authorizeUserBool(user, resource, context, perm, null);
+	}
+	
+	/**
+	 * Verify authorization filtered by partner, return a boolean
+	 * @param user
+	 * @param resource
+	 * @param context
+	 * @param perm
+	 * @param partner
+	 * @return
+	 */
+	public static boolean authorizeUserBool(UserAccount user, String resource, DBObject context, String perm, String partner)
+	{
 		try {
 			
-			authorizeUser(user, resource, context, perm);
+			authorizeUser(user, resource, context, perm, partner);
 			return true;
 			
 		} catch (AuthorizationException exp) {}
@@ -112,12 +153,30 @@ public class Authorization {
 	
 	/**
 	 * Verify authorization, throw an exception
-	 * 
+	 * @param user
+	 * @param resource
+	 * @param context
+	 * @param perm
+	 * @param partner
 	 * @throws AuthenticationException
 	 */
 	public static void authorizeUser(UserAccount user, String resource, DBObject context, UStackPermissionEnum perm) throws AuthorizationException
+	{
+		authorizeUser(user, resource, context, perm, null);
+	}
+	
+	/**
+	 * Verify authorization filterd by partner, throw an exception
+	 * 	@param user
+	 * @param resource
+	 * @param context
+	 * @param perm
+	 * @param partner
+	 * @throws AuthenticationException
+	 */
+	public static void authorizeUser(UserAccount user, String resource, DBObject context, UStackPermissionEnum perm, String partner) throws AuthorizationException
 	{		
-		authorizeUser(user, resource, context, perm.getPermission());
+		authorizeUser(user, resource, context, perm.getPermission(), partner);
 	}
 	
 	/**
@@ -229,6 +288,21 @@ public class Authorization {
 	 * @throws AuthorizationException
 	 */
 	public static void authorizeUser(UserAccount user, String resource, DBObject context, String perm) throws AuthorizationException
+	{
+		authorizeUser(user, resource, context, perm, null);
+	}
+	
+	/**
+	 * Verify authorization filtered by partner, throw an exception
+	 * 
+	 * @param user
+	 * @param resource
+	 * @param context
+	 * @param perm
+	 * @param partner
+	 * @throws AuthorizationException
+	 */
+	public static void authorizeUser(UserAccount user, String resource, DBObject context, String perm, String partner) throws AuthorizationException
 	{		
 		try {
 	
@@ -272,6 +346,9 @@ public class Authorization {
 				if (def == null)
 					throw new InvalidAuthorizationConfig("No resource named '" + resource + "'");
 				
+				if (!def.partnerMatch(partner))
+					continue;
+				
 				RoleDefinition role = def.getRoleByName(link.getRoleName());
 				if (role == null)
 					throw new InvalidAuthorizationConfig("No role named '" + link.getRoleName() + "' for resource '" + resource + "'");
@@ -301,7 +378,7 @@ public class Authorization {
 		logger.debug("Authorization Success (DIRECT): [" + user.getUserName() + "/" + resource + "/" + context + "/" + perm + "]");
 		
 	}
-	
+		
 	/**
 	 * Provided a ResourceLink check if there is a permission
 	 * 
