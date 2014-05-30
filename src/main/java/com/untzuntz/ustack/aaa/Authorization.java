@@ -31,29 +31,9 @@ public class Authorization {
 	 */
 	public static boolean authorizeUserBool(UserAccount user, String resource, UStackPermissionEnum perm)
 	{
-		return authorizeUserBool(user, resource, perm, null);
+		return authorizeUserBool(user, resource, null, perm, null);
 	}
-	
-	/**
-	 * Verify authorization filtered by partner, return a boolean
-	 * @param user
-	 * @param resource
-	 * @param perm
-	 * @param partner
-	 * @return
-	 */
-	public static boolean authorizeUserBool(UserAccount user, String resource, UStackPermissionEnum perm, String partner)
-	{
-		try {
-			
-			authorizeUser(user, resource, null, perm);
-			return true;
-			
-		} catch (AuthorizationException exp) {}
 		
-		return false;
-	}
-	
 	/**
 	 * Verify authorization, return a boolean
 	 * @param user
