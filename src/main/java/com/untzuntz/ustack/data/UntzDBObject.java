@@ -1010,7 +1010,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 							buf.append(",");
 					}
 					buf.append("\n");
-					out.write(buf.toString().getBytes());
+					out.write(buf.toString().getBytes("UTF-8"));
 				}
 				count++;
 			}
