@@ -1010,7 +1010,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 							buf.append(",");
 					}
 					buf.append("\n");
-					out.write(buf.toString().getBytes());
+					out.write(buf.toString().getBytes("UTF-8"));
 				}
 				count++;
 			}
@@ -1114,7 +1114,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	public List<String> getPluginsByContainerMerged(String containerName, String partner)
 	{
 		List<String> ret = new Vector<String>();
-		List<String> pluginClassList = getPluginsByContainer(containerName);
+		List<String> pluginClassList = getPluginsByContainer(containerName, partner);
 		Hashtable<String,String> track = new Hashtable<String,String>();
 
 		for (int i = 0; i <  pluginClassList.size(); i++)
