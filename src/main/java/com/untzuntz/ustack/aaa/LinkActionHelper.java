@@ -62,7 +62,7 @@ public class LinkActionHelper {
 	 * @param resourceLink
 	 * @param user
 	 */
-	public static void handleLinkAddAction(ResourceLink resourceLink, UntzDBObject obj)
+	public static void handleLinkAddAction(String actor,ResourceLink resourceLink, UntzDBObject obj)
 	{
 		ResourceDefinition def = ResourceDefinition.getByName( resourceLink.getName() );
 		
@@ -82,7 +82,7 @@ public class LinkActionHelper {
 		{
 			UntzDBObjectTemplate templ = UntzDBObjectTemplate.getTemplate(roleDef.getObjectTemplate());
 			if (templ != null)
-				applyTemplate(resourceLink, templ, obj);
+				applyTemplate(actor, resourceLink, templ, obj);
 		}
 		
 		BasicDBList list = roleDef.getAdditionalResRolesList();
@@ -98,7 +98,7 @@ public class LinkActionHelper {
 			newLink.loadData(rdef, role);
 			
 			logger.info("Attempting to add new link [" + resName + "/" + role + "]");
-			obj.addResourceLinkIfNeeded(newLink);
+			obj.addResourceLinkIfNeeded(actor, newLink);
 		}
 
 		if (obj instanceof UserAccount)
@@ -139,7 +139,7 @@ public class LinkActionHelper {
 		}
 	}
 	
-	public static void applyTemplate(ResourceLink resourceLink, UntzDBObjectTemplate templ, UntzDBObject target)
+	public static void applyTemplate(String actor, ResourceLink resourceLink, UntzDBObjectTemplate templ, UntzDBObject target)
 	{
 		BasicDBList tObjectList = templ.getTemplateObjectList();
 		for (int i = 0; i < tObjectList.size(); i++)
@@ -175,7 +175,7 @@ public class LinkActionHelper {
 							}
 						}
 						
-						target.addResourceLink(new ResourceLink(item));
+						target.addResourceLink(actor, new ResourceLink(item));
 					}
 				}
 				else

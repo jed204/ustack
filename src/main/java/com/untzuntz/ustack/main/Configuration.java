@@ -179,7 +179,7 @@ public class Configuration {
 			if (user == null)
 				user = UserAccount.createUser("app setup", userName, password); 
 
-			user.addResourceLinkIfNeeded(new ResourceLink(res, "General"));
+			user.addResourceLinkIfNeeded("Setup", new ResourceLink(res, "General"));
 			user.save(AppName);
 
 			/*
@@ -204,7 +204,7 @@ public class Configuration {
 			{
 				selectedAPI = APIClient.createAPI(AppName, clientId);
 				selectedAPI.addManagedBy("app");
-				selectedAPI.addResourceLink(new ResourceLink(res, "Admin"));
+				selectedAPI.addResourceLink("Core", new ResourceLink(res, "Admin"));
 				selectedAPI.save(AppName);
 			}
 			

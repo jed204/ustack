@@ -68,6 +68,7 @@ public class UForgotPasswordSvc {
 		cal.add(Calendar.HOUR, 24);
 		
 		uniqRef.put("name", toName);
+		uniqRef.put("email", toEmail);
 		uniqRef.put("userName", userName);
 		uniqRef.put("time", new Date());
 		uniqRef.put("expires", cal.getTime());

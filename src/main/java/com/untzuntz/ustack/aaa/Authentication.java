@@ -80,7 +80,7 @@ public class Authentication {
 		}
 	}
 
-	private static void checkAccountBasics(UserAccount user) throws AuthenticationException
+	public static void checkAccountBasics(UserAccount user) throws AuthenticationException
 	{
 		if (user == null) // user doesn't exist
 			throw new AuthExceptionUserPasswordMismatch();

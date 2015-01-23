@@ -56,6 +56,18 @@ public class UDataCache {
 
 	}
 	
+	public long incr(String key, int ttl, final long o) {
+		
+		MemcachedClient client = getCache();
+		if (client != null)
+		{
+			try {
+				return client.incr(key, 1, 0, ttl);
+			} catch (Exception er) {}
+		}
+		return 0L;
+	}
+	
 	public void set(String key, int ttl, final Object o) {
 		
 		MemcachedClient client = getCache();

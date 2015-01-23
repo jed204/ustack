@@ -1135,7 +1135,7 @@ public class UserAccount extends UntzDBObject {
 							link.put("linkText", check.getSiteName());
 						}
 						
-						user.addResourceLink(link);
+						user.addResourceLink(actor, link);
 					}
 					else if ("resourceName".equalsIgnoreCase(hdr))
 					{
@@ -1144,7 +1144,7 @@ public class UserAccount extends UntzDBObject {
 							def = ResourceDefinition.getByName(val);
 
 						ResourceLink link = new ResourceLink(def, myParser.getValueByLabel("resourceRole"));
-						user.addResourceLink(link);
+						user.addResourceLink(actor, link);
 					}
 					else if ("stateAbbrev".equalsIgnoreCase(hdr))
 					{

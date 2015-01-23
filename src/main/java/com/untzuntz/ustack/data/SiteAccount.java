@@ -591,7 +591,7 @@ public class SiteAccount extends UntzDBObject {
 							def = ResourceDefinition.getByName(val);
 
 						ResourceLink link = new ResourceLink(def, myParser.getValueByLabel("resourceRole"));
-						site.addResourceLink(link);
+						site.addResourceLink(userName, link);
 					}
 					else if ("stateAbbrev".equalsIgnoreCase(hdr))
 					{

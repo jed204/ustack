@@ -40,12 +40,15 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 
 import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.twilio.sdk.TwilioRestClient;
 import com.twilio.sdk.TwilioRestResponse;
+import com.untzuntz.ustack.data.EmailLog;
 import com.untzuntz.ustack.data.NotificationInst;
 import com.untzuntz.ustack.data.NotificationTemplate;
 import com.untzuntz.ustack.data.PushQueueInstance;
+import com.untzuntz.ustack.data.Unsubscribe;
 import com.untzuntz.ustack.util.BasicUtils;
 
 public class UNotificationSvc {
@@ -444,6 +447,10 @@ public class UNotificationSvc {
 		String emailFromName = processTemplate( (String)typeData.get("fromName"), notif );
 		String emailFromAddr = processTemplate( (String)typeData.get("fromAddress"), notif );
 		String subject = processTemplate( (String)typeData.get("subject"), notif );
+		
+		EmailLog log = EmailLog.logEmail(emailToAddr, emailFromName, emailFromAddr, subject);
+		supportingData.put("email", new BasicDBObject("id", log.get("_id") + ""));
+		
 		String emailBody = processTemplate( (String)typeData.get("templateText"), notif );
 		String campaignId = null;
 		if (typeData.get("campaignId") != null)
@@ -494,6 +501,16 @@ public class UNotificationSvc {
 			logger.info("TESTMODE ==> From: " + emailFromAddr + " | To: " + emailToAddr + " | Subj: " + subject + " ==> " + emailBody);
 		else
 		{
+			boolean uns = Unsubscribe.getByEmail(emailToAddr);
+			if (uns)
+			{
+				log.put("unsubscribed", true);
+				EmailLog.save(log, "NotificationSvc");
+
+				logger.info(String.format("%s is on the unsubscribe list, ignoring [Skipped Email ID: %s]", emailToAddr, log.get("_id") + ""));
+				return false;
+			}
+			
 			try {
 				Emailer.postMail(new InternetAddress[] { new InternetAddress(emailToAddr) }, null, bccArray, emailFromAddr, emailFromName, subject, emailBody, htmlEmailBody, attachments, campaignId);
 			} catch (AddressException err) {

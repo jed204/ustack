@@ -118,13 +118,19 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	}
 	
 	/** Remove a resource link by index */
-	public void removeResourceLinkIdx(int idx)
+	public void removeResourceLinkIdx(String actor, int idx)
 	{
 		BasicDBList list = getResourceLinkList();
-		LinkActionHelper.handleLinkRemoveAction(new ResourceLink((DBObject)list.get(idx)), this);
+		DBObject resourceLink = (DBObject)list.get(idx);
+		
+		LinkActionHelper.handleLinkRemoveAction(new ResourceLink(resourceLink), this);
 		list.remove(idx);
 		setResourceLinkList(list);
 		calculateManageLists();
+
+		DBObject event = new BasicDBObject("link", resourceLink);
+		addIdentifier(event);
+		AuditLog.log("core", actor, "RemoveResourceLink", event);
 	}
 
 	/** Returns the list of resource links */
@@ -142,7 +148,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 		put("resourceLinkList", list);
 	}
 	
-	public void removeResourceLinks(ResourceDefinition resDef, String role)
+	public void removeResourceLinks(String actor, ResourceDefinition resDef, String role)
 	{
 		BasicDBList list = getResourceLinkList();
 		for (int i = 0; i < list.size(); i++)
@@ -158,6 +164,10 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 					LinkActionHelper.handleLinkRemoveAction(new ResourceLink(resLink), this);
 					list.remove(i);
 					i--;
+					
+					DBObject event = new BasicDBObject("link", resLink);
+					addIdentifier(event);
+					AuditLog.log("core", actor, "RemoveResourceLink", event);
 				}
 			}
 		}
@@ -165,7 +175,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 		calculateManageLists();
 	}
 	
-	public void removeResourceLinks(ResourceDefinition resDef)
+	public void removeResourceLinks(String actor, ResourceDefinition resDef)
 	{
 		BasicDBList list = getResourceLinkList();
 		for (int i = 0; i < list.size(); i++)
@@ -179,6 +189,10 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 				LinkActionHelper.handleLinkRemoveAction(new ResourceLink(resLink), this);
 				list.remove(i);
 				i--;
+				
+				DBObject event = new BasicDBObject("link", resLink);
+				addIdentifier(event);
+				AuditLog.log("core", actor, "RemoveResourceLink", event);
 			}
 		}
 		setResourceLinkList(list);
@@ -189,13 +203,13 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	 * Adds a resourceLink to the current definition if the object doesn't have a matching resource link already
 	 * @param resourceLink
 	 */
-	public void addResourceLinkIfNeeded(ResourceLink resourceLink) {
+	public void addResourceLinkIfNeeded(String actor, ResourceLink resourceLink) {
 		
 		if (hasResourceLink(resourceLink))
 			return;
 
 		logger.debug("Adding ResourceLink => " + ((DBObject)resourceLink).toString());
-		addResourceLink(resourceLink);
+		addResourceLink(actor, resourceLink);
 	}
 	
 	public boolean hasResourceLink(ResourceLink resourceLink) {
@@ -265,9 +279,9 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	 * @param resourceLink
 	 * @throws ObjectExistsException
 	 */
-	public void addResourceLink(ResourceLink resourceLink) {
+	public void addResourceLink(String actor, ResourceLink resourceLink) {
 
-		LinkActionHelper.handleLinkAddAction(resourceLink, this);
+		LinkActionHelper.handleLinkAddAction(actor, resourceLink, this);
 
 		BasicDBList resourceLinkList = getResourceLinkList();
 		resourceLinkList.add(resourceLink);
@@ -275,7 +289,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 
 		DBObject event = new BasicDBObject("link", resourceLink);
 		addIdentifier(event);
-		AuditLog.log("core", "core", "AddResourceLink", event);
+		AuditLog.log("core", actor, "AddResourceLink", event);
 
 
 		calculateManageLists();
@@ -607,7 +621,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	 * Removes ALL resource links that match the context
 	 * @param context
 	 */
-	public void removeResourceLinksByContext(DBObject context)
+	public void removeResourceLinksByContext(String actor, DBObject context)
 	{
 		BasicDBList resourceLinkList = getResourceLinkList();
 		for (int i = 0; i < resourceLinkList.size(); i++)
@@ -619,7 +633,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 
 				DBObject event = new BasicDBObject("link", resourceLink);
 				addIdentifier(event);
-				AuditLog.log("core", "core", "RemoveResourceLink", event);
+				AuditLog.log("core", actor, "RemoveResourceLink", event);
 
 				resourceLinkList.remove(i);
 				i--;
@@ -633,7 +647,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 	 * @param resourceLinkName
 	 * @param context
 	 */
-	public void removeResourceLinksByName(String resourceLinkName, DBObject context)
+	public void removeResourceLinksByName(String actor, String resourceLinkName, DBObject context)
 	{
 		BasicDBList resourceLinkList = getResourceLinkList();
 		for (int i = 0; i < resourceLinkList.size(); i++)
@@ -649,7 +663,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 					
 					DBObject event = new BasicDBObject("link", resourceLink);
 					addIdentifier(event);
-					AuditLog.log("core", "core", "RemoveResourceLink", event);
+					AuditLog.log("core", actor, "RemoveResourceLink", event);
 
 					resourceLinkList.remove(i);
 					i--;

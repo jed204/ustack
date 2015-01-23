@@ -120,7 +120,7 @@ public class AuthorizationTest extends UStackTestCaseBase {
 		res.save("Test");
 
 		UserAccount nUser = UserAccount.createUser("testcase", "testuser99" + runId, "thisisatestaccountpass");
-		nUser.addResourceLink(new ResourceLink(res, "role98"));
+		nUser.addResourceLink("TestCase", new ResourceLink(res, "role98"));
 		nUser.save("Test");
 		
 		assertFalse(nUser.isTOSAgreed("TestTOS" + runId));
@@ -160,7 +160,7 @@ public class AuthorizationTest extends UStackTestCaseBase {
 			fail();
 		} catch (AuthorizationException err) {} 
 		
-		testUser.addResourceLink(new ResourceLink(res, "General"));
+		testUser.addResourceLink("TestCase", new ResourceLink(res, "General"));
 		
 		// Try the authorization again
 		try {
@@ -252,7 +252,7 @@ public class AuthorizationTest extends UStackTestCaseBase {
 			testUser.save("TestCase");
 		} catch (Exception er) { fail(); }
 		
-		testUser.addResourceLink(new ResourceLink(res, "General"));
+		testUser.addResourceLink("TestCase", new ResourceLink(res, "General"));
 		
 		//Verify user has the General Role
 		try {
@@ -260,7 +260,7 @@ public class AuthorizationTest extends UStackTestCaseBase {
 			assertTrue(links.size() == 1);
 		} catch (Exception err) { fail(); }		
 		
-		testUser.addResourceLink(new ResourceLink(res, "Link"));
+		testUser.addResourceLink("TestCase", new ResourceLink(res, "Link"));
 		//Verify user has the General, Link, and Templ Roles
 		try {
 			List<ResourceLink> links = testUser.getResourceLinksByName(resourceName, new BasicDBObject("role", "General"));
@@ -302,7 +302,7 @@ public class AuthorizationTest extends UStackTestCaseBase {
 		assertEquals( 0, testUser.getPluginsByContainer("TestContainer").size() );
 
 		// add the user to this resource & general role
-		testUser.addResourceLink(new ResourceLink(res, "General"));
+		testUser.addResourceLink("TestCase", new ResourceLink(res, "General"));
 		
 		assertEquals( 1, testUser.getPluginsByContainer("TestContainer").size() );
 	}
@@ -335,7 +335,7 @@ public class AuthorizationTest extends UStackTestCaseBase {
 		
 		ResourceLink link = new ResourceLink(res, "General");
 		link.put("partnerId", "ozzy");
-		testUser.addResourceLink(link);
+		testUser.addResourceLink("TestCase", link);
 		
 		
 		DBObject goodContext = BasicDBObjectBuilder.start("partnerId", "ozzy").get();
