@@ -6,13 +6,6 @@
 	<packaging>jar</packaging>
 	<version>1.0.40</version>
 	<name>UntzUntz UStack Core</name>
-	<licenses>
-		<license>
-			<name>The Apache Software License, Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -114,14 +107,14 @@
 	</dependencies>
 	<description>UntzUntz UStack Core</description>
 	<organization>
-		<url>http://www.untzuntz.com</url>
-		<name>UntzUntz, LLC.</name>
+		<url>http://www.intelemage.com</url>
+		<name>Intelemage, LLC.</name>
 	</organization>
 	<developers>
 		<developer>
 			<id>jed204</id>
 			<name>Jed Danner</name>
-			<email>jdanner@untzuntz.com</email>
+			<email>jdanner@intelemage.com</email>
 		</developer>
 	</developers>
 	<build>
@@ -177,18 +170,12 @@
 			</plugin>
 		</plugins>
 	</build>
-	<url>www.untzuntz.com</url>
+	<url>www.intelemage.com</url>
 	<scm>
-		<url>git@github.com:jed204/ustack.git</url>
-		<connection>scm:git:git@github.com:jed204/ustack.git</connection>
-		<developerConnection>scm:git:git@github.com:jed204/tags</developerConnection>
+		<url>git@github.com:intelemage/ustack.git</url>
+		<connection>scm:git:git@github.com:intelemage/ustack.git</connection>
+		<developerConnection>scm:git:git@github.com:intelemage/tags</developerConnection>
 	</scm>
-	<distributionManagement>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>spy</id>
