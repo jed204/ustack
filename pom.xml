@@ -121,20 +121,6 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.4</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
@@ -165,6 +151,9 @@
 						<goals>
 							<goal>jar</goal>
 						</goals>
+<configuration>
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -179,7 +168,7 @@
 	<distributionManagement>
 		<repository>
 			<id>intelemage</id>
-			<url>http://mvn.intelegrid.net/nexus/content/repositories/snapshots</url>
+			<url>http://mvn.intelegrid.net/nexus/content/repositories/releases</url>
 		</repository>
 	</distributionManagement>
 	<repositories>
