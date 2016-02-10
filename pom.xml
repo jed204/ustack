@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.untzuntz.ustack</groupId>
+	<groupId>com.intelemage.ustack</groupId>
 	<artifactId>ustack-core</artifactId>
 	<packaging>jar</packaging>
 	<version>1.0.40</version>
-	<name>UntzUntz UStack Core</name>
+	<name>UStack Core</name>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -105,7 +105,7 @@
 	      <version>1.17.1</version>
 	    </dependency>				
 	</dependencies>
-	<description>UntzUntz UStack Core</description>
+	<description>UStack Core</description>
 	<organization>
 		<url>http://www.intelemage.com</url>
 		<name>Intelemage, LLC.</name>
