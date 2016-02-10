@@ -176,6 +176,12 @@
 		<connection>scm:git:git@github.com:intelemage/ustack.git</connection>
 		<developerConnection>scm:git:git@github.com:intelemage/tags</developerConnection>
 	</scm>
+	<distributionManagement>
+		<repository>
+			<id>intelemage</id>
+			<url>http://mvn.intelegrid.net/nexus/content/repositories/snapshots</url>
+		</repository>
+	</distributionManagement>
 	<repositories>
 		<repository>
 			<id>spy</id>
