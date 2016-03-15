@@ -11,6 +11,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoOptions;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
 
@@ -63,7 +64,9 @@ public class MongoDB {
 					options.connectionsPerHost = UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST);
 				if (UOpts.getBool(UAppCfg.MONGO_DB_AUTORETRY))
 					options.autoConnectRetry = true;
-
+				
+				options.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+				
 				// setup the actual mongo object
 				m = new Mongo(addrs, options);
 				

@@ -10,7 +10,7 @@ public class UStackTestCaseBase {
 	{
 		System.setProperty("TestCase", "true");
 		System.setProperty(UAppCfg.CACHE_HOST_STRING, "localhost:11211");
-		System.setProperty(UAppCfg.MONGO_DB_HOST, "localhost");
+		System.setProperty(UAppCfg.MONGO_DB_HOST, "localhost:27018");
 		System.setProperty(UAppCfg.DIRECTORY_SCRATCH, "/tmp/");
 	}
 	
