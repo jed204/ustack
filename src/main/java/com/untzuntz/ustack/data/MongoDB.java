@@ -8,10 +8,10 @@ import org.apache.log4j.Logger;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
-import com.mongodb.MongoOptions;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
-import com.mongodb.WriteConcern;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
 
@@ -57,18 +57,16 @@ public class MongoDB {
 					}
 				}
 				
-				MongoOptions options = new MongoOptions(); 
+				MongoClientOptions.Builder clientOpts = MongoClientOptions.builder();
 				if (UOpts.getBool(UAppCfg.MONGO_DB_KEEPALIVE))
-					options.socketKeepAlive = true;
+					clientOpts.socketKeepAlive(true);
 				if (UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST) > 0)
-					options.connectionsPerHost = UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST);
+					clientOpts.connectionsPerHost(UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST));
 				if (UOpts.getBool(UAppCfg.MONGO_DB_AUTORETRY))
-					options.autoConnectRetry = true;
-				
-				options.setWriteConcern(WriteConcern.ACKNOWLEDGED);
+					clientOpts.autoConnectRetry(true);
 				
 				// setup the actual mongo object
-				m = new Mongo(addrs, options);
+				m = new MongoClient(addrs, clientOpts.build());
 				
 				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null)
 				{
