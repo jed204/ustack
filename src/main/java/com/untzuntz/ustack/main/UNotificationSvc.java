@@ -1,6 +1,5 @@
 package com.untzuntz.ustack.main;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,15 +16,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import javapns.Push;
-import javapns.communication.exceptions.CommunicationException;
-import javapns.communication.exceptions.KeystoreException;
-import javapns.devices.Device;
-import javapns.notification.PushNotificationPayload;
-import javapns.notification.PushedNotification;
-import javapns.notification.ResponsePacket;
-import javapns.notification.transmission.PushQueue;
 
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -54,7 +44,6 @@ import com.untzuntz.ustack.util.BasicUtils;
 public class UNotificationSvc {
 
 	protected static Logger logger = Logger.getLogger(UNotificationSvc.class);
-	private static final Hashtable<String,PushQueue> iosPushQueues = new Hashtable<String,PushQueue>();
 	
 	private boolean testMode;
 	private Hashtable<String,DBObject> supportingData;
@@ -90,35 +79,6 @@ public class UNotificationSvc {
 		keyStore = KeyStore.getInstance("PKCS12");
 		keyStore.load(keystoreStream, password);
 		return keyStore;
-	}
-	
-	public static PushQueue getIOSPushQueue(String name) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, KeystoreException
-	{
-		if (name == null)
-			return null;
-		
-		PushQueue queue = iosPushQueues.get(name);
-		if (queue == null)
-		{
-			PushQueueInstance ksd = PushQueueInstance.getByName(name);
-			if (ksd != null)
-			{
-		        String password = ksd.getPassword();
-		        
-		        logger.info("Loading Push Queue [" + name + "]");
-		        
-		        queue = Push.queue(loadKeystore(new ByteArrayInputStream(ksd.getBinaryData()), password.toCharArray()), password, ksd.isProduction(), ksd.getThreads());
-		        queue.start();
-		        
-		        iosPushQueues.put(name, queue);
-			}
-			else
-				logger.error("Failed to find ios push queue config => " + name);
-		}
-		else
-	        logger.info("Found Push Queue [" + name + "]");
-		
-		return queue;
 	}
 	
 	/**
@@ -240,8 +200,6 @@ public class UNotificationSvc {
 			return sendEmail(notif, template, endpointConfig);
 		else if ("sms".equalsIgnoreCase(type))
 			return sendSMS(notif, template, endpointConfig);
-		else if ("ios-push".equalsIgnoreCase(type))
-			return sendIOSPush(notif, template, endpointConfig);
 		else if ("facebook".equalsIgnoreCase(type))
 			return sendFacebook(notif, template, endpointConfig);
 		else
@@ -343,101 +301,7 @@ public class UNotificationSvc {
 	        client.getConnectionManager().shutdown();     
 		} catch (Exception e) {}
 	}
-
-	public boolean sendIOSPush(NotificationInst notif, NotificationTemplate template, DBObject endpointConfig)
-	{
-		if (notif.get("invalid") != null)
-		{
-			logger.info("Skipping iOS push for notification id [" + notif.getNotificationId() + "] => Reason: " + notif.get("invalid"));
-			return false;
-		}
-		
-		DBObject templ = template.getType("ios-push");
-		if (templ == null)
-		{
-			logger.info("Unknown template type [ios-push] for notification id [" + notif.getNotificationId() + "]");
-			return false;
-		}
-
-		String alert = processTemplate( (String)templ.get("templateText"), notif );
-		String iosPushQueueName = (String)templ.get("iosPushQueueName");
-		String destination = (String)endpointConfig.get("destination");
-		
-		return sendIOSPush(destination, alert, iosPushQueueName, notif);
-	}
 	
-	public boolean sendIOSPush(String destination, String alert, String iosPushQueueName, NotificationInst notif)
-	{		
-		if (iosPushQueueName == null)
-		{
-			logger.error("Invalid iosPushQueueName value - null!");
-			return false;
-		}
-		
-		if (destination.startsWith("<"))
-		{
-			destination = destination.substring(1, destination.length() - 1);
-			destination = destination.replaceAll(" ", "");
-			logger.info("Adjust Device ID: " + destination);
-		}
-		
-		boolean ret = false;
-		
-		try {
-			
-	        PushNotificationPayload payload = PushNotificationPayload.complex();
-	        payload.addAlert(alert);
-	        
-	        PushQueue queue = getIOSPushQueue(iosPushQueueName);
-	        if (queue != null)	
-	        {
-	        	logger.info("Adding payload to queue [" + iosPushQueueName + "]");
-	        	queue.add(payload, destination);
-	        	
-	        }
-
-//			List<PushedNotification> notifications = Push.alert(alert, "pushtest-push.p12", "Jedman123!", false, new String[] { destination }); 
-//	
-//			for (PushedNotification notification : notifications) 
-//			{	
-//			}	
-	        
-		} catch (KeystoreException e) {
-            /* A critical problem occurred while trying to use your keystore */  
-            logger.error("Error while communicating with iOS Push [CERT]", e);
-	    } catch (Exception e) {
-            logger.warn("Error while with iOS Push [OTHER]", e);
-	    }			
-		
-		return ret;
-	}
-	
-	@SuppressWarnings("unused")
-	private void handlePushedNotification(PushedNotification notification, NotificationInst notif)
-	{
-		if (!notification.isSuccessful()) 
-		{
-			String reason = null;
-			String invalidToken = notification.getDevice().getToken();
-
-            /* Find out more about what the problem was */  
-            Exception theProblem = notification.getException();
-            reason = theProblem.getMessage();
-            logger.warn("Failed to push message to iOS device[" + invalidToken + "]", theProblem);
-
-            /* If the problem was an error-response packet returned by Apple, get it */  
-            ResponsePacket theErrorResponse = notification.getResponse();
-            if (theErrorResponse != null) {
-            	reason = theErrorResponse.getMessage();
-                logger.warn("Failed to push message to iOS device[" + invalidToken + "] => " + reason);
-            }
-            
-            if (notif != null)
-            	notif.disable(reason);
-		}
-
-	}
-
 	/** Send an Email */
 	public boolean sendEmail(NotificationInst notif, NotificationTemplate template, DBObject endpointConfig)
 	{
@@ -611,28 +475,6 @@ public class UNotificationSvc {
 		}
 		
 		return (text == null ? "" : text);
-	}
-	
-	public static void processAppleFeedbackService()
-	{
-		try {
-			List<Device> inactiveDevices = Push.feedback("pushtest-push.p12", "Jedman123!", false);
-			logger.info(inactiveDevices.size() + " devices inactive - flushing...");
-			for (Device dev : inactiveDevices)
-			{
-				List<NotificationInst> notifList = NotificationInst.getNotification("ios-push", dev.getDeviceId());
-				for (NotificationInst notif : notifList)
-                	notif.disable("Feedback Service Disabled");
-			}
-
-		} catch (KeystoreException e) {
-            /* A critical problem occurred while trying to use your keystore */  
-            logger.error("Error while communicating with iOS Push [CERT]", e);
-	    } catch (CommunicationException e) {
-	    	/* A critical communication error occurred while trying to contact Apple servers */  
-            logger.warn("Error while communicating with iOS Push [COMMS]", e);
-	    }			
-
 	}
 	
 }
