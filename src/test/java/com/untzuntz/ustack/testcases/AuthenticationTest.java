@@ -24,7 +24,7 @@ public class AuthenticationTest extends UStackTestCaseBase {
 		super();
 		System.setProperty(UAppCfg.PASSWORD_MIN_LENGTH, "6");
 	}
-	
+
 	/** Tests the minimium length requirement */
 	@Test public void testPasswordLength()
 	{
