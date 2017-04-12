@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.UUID;
+
 import org.apache.log4j.Logger;
 import org.junit.Test;
 
@@ -28,8 +30,9 @@ public class APIClientTest extends UStackTestCaseBase {
 	
 	@Test public void testAPIClientCreate() throws AccountExistsException, PasswordException
 	{
-		APIClient ret = APIClient.createAPI("TestCase", "testapi1" + runId);
-		assertEquals("testapi1" + runId, ret.getClientId());
+		String clientId = "testapi1" + runId + UUID.randomUUID();
+		APIClient ret = APIClient.createAPI("TestCase", clientId);
+		assertEquals(clientId, ret.getClientId());
 		assertEquals(1, ret.getAPIKeys().size());
 	}
 
@@ -62,6 +65,8 @@ public class APIClientTest extends UStackTestCaseBase {
 		
 		String key = "apitestApi11355884578251315948fdc17b4dffffbe6538d7dac187";
 		UDataCache.getInstance().set(key, 300, "Hello");
+		
+		try { Thread.sleep(3000); } catch (Exception e) {}
 		
 		assertNotNull( UDataCache.getInstance().get(key) );
 		assertEquals("Hello", (String)UDataCache.getInstance().get(key));

@@ -38,30 +38,24 @@ public class AddressBookTest extends UStackTestCaseBase {
 		myBook1.save("Test Case");
 		
 		assertEquals(2, myBook1.getEntryList().size()); // only 2 are expected because 'entry3' should no add due to matching entry1
-	}
-	
-	@Test public void testSearch() throws Exception
-	{
-		AddressBook myBook1 = AddressBook.getByName("test@testy.com" + runId);
-		assertEquals(2, myBook1.getEntryList().size()); // we should have values from the last test
 		
-		assertEquals(1, AddressBookSearch.search(myBook1, "Johnny", null, null).size());
-		assertEquals(1, AddressBookSearch.search(myBook1, "David Davies", null, null).size());
-		assertEquals(0, AddressBookSearch.search(myBook1, "INVALID", null, null).size());
-		assertEquals(1, AddressBookSearch.search(myBook1, "Johnny", null, "user").size());
-		assertEquals(1, AddressBookSearch.search(myBook1, "David Davies", null, "user").size());
-		assertEquals(2, AddressBookSearch.search(myBook1, null, null, "user").size());
-		assertEquals(0, AddressBookSearch.search(myBook1, null, null, "site").size());
-	}
-	
-	@Test public void testRemoveLogic() throws Exception
-	{
-		AddressBook myBook1 = AddressBook.getByName("test@testy.com" + runId);
-		assertEquals(2, myBook1.getEntryList().size()); // we should have values from the last test
+		AddressBook myBook2 = AddressBook.getByName("test@testy.com" + runId);
+		assertEquals(2, myBook2.getEntryList().size()); // we should have values from the last test
+		
+		assertEquals(1, AddressBookSearch.search(myBook2, "Johnny", null, null).size());
+		assertEquals(1, AddressBookSearch.search(myBook2, "David Davies", null, null).size());
+		assertEquals(0, AddressBookSearch.search(myBook2, "INVALID", null, null).size());
+		assertEquals(1, AddressBookSearch.search(myBook2, "Johnny", null, "user").size());
+		assertEquals(1, AddressBookSearch.search(myBook2, "David Davies", null, "user").size());
+		assertEquals(2, AddressBookSearch.search(myBook2, null, null, "user").size());
+		assertEquals(0, AddressBookSearch.search(myBook2, null, null, "site").size());
+		
+		AddressBook myBook3 = AddressBook.getByName("test@testy.com" + runId);
+		assertEquals(2, myBook3.getEntryList().size()); // we should have values from the last test
 
 		AddressBookEntry removeEntry1 = new AddressBookEntry("dave@untzuntz.com" + runId);
-		myBook1.removeEntry(removeEntry1);
-		myBook1.save("Test Case");
+		myBook3.removeEntry(removeEntry1);
+		myBook3.save("Test Case");
 	}
 	
 	@Test public void testSubscriptions() throws Exception

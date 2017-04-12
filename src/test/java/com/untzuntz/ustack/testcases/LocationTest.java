@@ -28,21 +28,4 @@ public class LocationTest extends UStackTestCaseBase {
 		assertEquals(272, Country.getCountryCount());
 	}
 	
-	@Test public void testLatLongLookup()
-	{
-		DBObject addr = new BasicDBObject();
-		addr.put("address1", "700 West Pete Rose Way");
-		addr.put("address2", "Suite 436");
-		addr.put("city", "Cincinnati");
-		addr.put("state", "Ohio");
-		addr.put("postalCode", "45203");
-		addr.put("country", "United States");
-		
-		UDataMgr.calculateLatLong(addr);
-		DBObject loc = (DBObject)addr.get("loc");
-		assertNotNull( loc );
-		assertEquals( Double.valueOf(39.0955948d), (Double)loc.get("lat") );
-		assertEquals( Double.valueOf(-84.523511d), (Double)loc.get("lng") );
-	}
-	
 }

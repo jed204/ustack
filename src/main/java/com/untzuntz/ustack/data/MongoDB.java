@@ -61,7 +61,10 @@ public class MongoDB {
 				if (UOpts.getBool(UAppCfg.MONGO_DB_KEEPALIVE))
 					clientOpts.socketKeepAlive(true);
 				if (UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST) > 0)
+				{
 					clientOpts.connectionsPerHost(UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST));
+					logger.info(String.format("MongoDB Connections Per Host: %d", UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST)));
+				}
 				if (UOpts.getBool(UAppCfg.MONGO_DB_AUTORETRY))
 					clientOpts.autoConnectRetry(true);
 				

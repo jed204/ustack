@@ -62,7 +62,7 @@ public class UDataCache {
 		if (client != null)
 		{
 			try {
-				return client.incr(key, 1, 0, ttl);
+				return client.incr(key.replace((char)' ', (char)'_'), 1, 0, ttl);
 			} catch (Exception er) {}
 		}
 		return 0L;
@@ -75,7 +75,7 @@ public class UDataCache {
 			return;
 
 		try {
-			client.set(NAMESPACE + key, ttl, o);
+			client.set(NAMESPACE + key.replace((char)' ', (char)'_'), ttl, o);
 		} catch (Exception e) {}
 		
 	}
@@ -87,7 +87,7 @@ public class UDataCache {
 			return null;
 		
 		try {
-			Object o = client.get(NAMESPACE + key);
+			Object o = client.get(NAMESPACE + key.replace((char)' ', (char)'_'));
 			if(o == null) {
 				logger.debug("Cache MISS for KEY: " + key);
 			} else {
@@ -109,7 +109,7 @@ public class UDataCache {
 			return null;
 		
 		try {
-			return client.delete(NAMESPACE + key);
+			return client.delete(NAMESPACE + key.replace((char)' ', (char)'_'));
 		} catch (Exception e) {}
 	
 		return null;

@@ -22,16 +22,6 @@ public class AccountingTest extends UStackTestCaseBase {
 	public AccountingTest()
 	{
 		super();
-//		BasicTextEncryptor textEncryptor = new BasicTextEncryptor();
-//		textEncryptor.setPassword(AuthorizeNetFunding.SB_ENC);
-//		
-//		String login = textEncryptor.encrypt("3gZrV955G7");
-//		String key = textEncryptor.encrypt("8W2CmG7h4Vf259dD");
-//		
-//		//MpKSItay8lSjMXbo5lvuDpOoPUY99YUGYT5arjs=
-//
-//		System.setProperty(UAppCfg.AUTHNET_SANDBOX_LOGINID, login);
-//		System.setProperty(UAppCfg.AUTHNET_SANDBOX_TRANSACTIONKEY, key);
 	}
 	
 	@Test public void testProduct() throws Exception

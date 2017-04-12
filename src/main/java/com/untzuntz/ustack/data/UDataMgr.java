@@ -14,8 +14,8 @@ import org.bson.BSONObject;
 import org.bson.BasicBSONDecoder;
 import org.bson.BasicBSONEncoder;
 import org.bson.types.BasicBSONList;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.json.simple.JSONValue;
 
 import com.mongodb.BasicDBList;
@@ -90,7 +90,7 @@ public class UDataMgr {
 			if ("OK".equalsIgnoreCase((String)tgt.get("status")))
 			{
 				JSONArray results = (JSONArray)tgt.get("results");
-				if (results != null && results.size() > 0)
+				if (results != null && results.length() > 0)
 				{
 					JSONObject result = (JSONObject)results.get(0);
 					JSONObject geom = (JSONObject)result.get("geometry");
