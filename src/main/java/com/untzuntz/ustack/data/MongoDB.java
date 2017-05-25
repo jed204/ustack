@@ -1,19 +1,12 @@
 package com.untzuntz.ustack.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.Mongo;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.ReadPreference;
-import com.mongodb.ServerAddress;
+import com.mongodb.*;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Singleton for access to MongoDB
@@ -114,4 +107,7 @@ public class MongoDB {
 		return db.getCollection(collection);
 	}
 
+	public static void setMongo(Mongo m) {
+		MongoDB.m = m;
+	}
 }
