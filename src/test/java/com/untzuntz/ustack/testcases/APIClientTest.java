@@ -1,23 +1,19 @@
 package com.untzuntz.ustack.testcases;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import java.util.UUID;
-
-import org.apache.log4j.Logger;
-import org.junit.Test;
-
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
 import com.untzuntz.ustack.aaa.Authentication;
 import com.untzuntz.ustack.data.APIClient;
-import com.untzuntz.ustack.data.UDataCache;
 import com.untzuntz.ustack.exceptions.AccountExistsException;
 import com.untzuntz.ustack.exceptions.AuthenticationException;
 import com.untzuntz.ustack.exceptions.PasswordException;
-import com.untzuntz.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+import org.junit.Test;
+
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class APIClientTest extends UStackTestCaseBase {
 
@@ -58,20 +54,4 @@ public class APIClientTest extends UStackTestCaseBase {
 		}
 		
 	}
-	
-	@Test public void testCache() 
-	{
-		UOpts.setCacheFlag(true);
-		
-		String key = "apitestApi11355884578251315948fdc17b4dffffbe6538d7dac187";
-		UDataCache.getInstance().set(key, 300, "Hello");
-		
-		try { Thread.sleep(3000); } catch (Exception e) {}
-		
-		assertNotNull( UDataCache.getInstance().get(key) );
-		assertEquals("Hello", (String)UDataCache.getInstance().get(key));
-	}
-
-	
-
 }

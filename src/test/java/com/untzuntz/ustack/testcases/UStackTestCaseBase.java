@@ -2,7 +2,11 @@ package com.untzuntz.ustack.testcases;
 
 import com.github.fakemongo.Fongo;
 import com.untzuntz.ustack.data.MongoDB;
+import com.untzuntz.ustack.data.UDataCache;
 import com.untzuntz.ustack.main.UAppCfg;
+import net.spy.memcached.MemcachedClientIF;
+
+import static org.mockito.Mockito.mock;
 
 public class UStackTestCaseBase {
 
@@ -16,6 +20,10 @@ public class UStackTestCaseBase {
 		System.setProperty(UAppCfg.DIRECTORY_SCRATCH, "/tmp/");
 
 		MongoDB.setMongo(new Fongo("TestCase").getMongo());
+
+		MemcachedClientIF[] clients = {mock(MemcachedClientIF.class)};
+
+		UDataCache.setMemcacheClients(clients);
 	}
 	
 }
