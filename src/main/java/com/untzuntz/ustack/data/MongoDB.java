@@ -58,23 +58,31 @@ public class MongoDB {
 					clientOpts.connectionsPerHost(UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST));
 					logger.info(String.format("MongoDB Connections Per Host: %d", UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST)));
 				}
-				if (UOpts.getBool(UAppCfg.MONGO_DB_AUTORETRY))
-					clientOpts.autoConnectRetry(true);
+//				if (UOpts.getBool(UAppCfg.MONGO_DB_AUTORETRY)) {
+//					clientOpts.autoConnectRetry(true);
+//				}
 				
 				// setup the actual mongo object
-				m = new MongoClient(addrs, clientOpts.build());
-				
-				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null)
-				{
-					DB db = m.getDB(UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE));
-					boolean auth = db.authenticate(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray());
-					logger.info("Database Authentication Status: " + auth + " [" + UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME) + "@" + UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) + "]");
+
+
+				List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null) {
+					credentials.add(MongoCredential.createCredential(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray()));
 				}
+
+				m = new MongoClient(addrs, credentials, clientOpts.build());
+				
+//				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null)
+//				{
+//					DB db = m.getDB(UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE));
+//					boolean auth = db.authenticate(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray());
+//					logger.info("Database Authentication Status: " + auth + " [" + UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME) + "@" + UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) + "]");
+//				}
 				
 				if (UOpts.getBool(UAppCfg.MONGO_DB_READS_OK))
 				{
-					logger.info("Setting Read Preference: SECONDARY");
-					m.setReadPreference(ReadPreference.SECONDARY);
+					logger.info("Setting Read Preference: NEAREST");
+					m.setReadPreference(ReadPreference.nearest());
 				}
 				
 				logger.info("MongoDB Singleton Setup Complete - " + (System.currentTimeMillis() - start) + " ms ==> " + addrs);
