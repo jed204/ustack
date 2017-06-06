@@ -1,6 +1,7 @@
 package com.untzuntz.ustack.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -10,7 +11,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.ReadPreference;
+import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
@@ -65,23 +66,20 @@ public class MongoDB {
 					clientOpts.connectionsPerHost(UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST));
 					logger.info(String.format("MongoDB Connections Per Host: %d", UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST)));
 				}
-				if (UOpts.getBool(UAppCfg.MONGO_DB_AUTORETRY))
-					clientOpts.autoConnectRetry(true);
 				
 				// setup the actual mongo object
-				m = new MongoClient(addrs, clientOpts.build());
 				
 				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null)
 				{
-					DB db = m.getDB(UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE));
-					boolean auth = db.authenticate(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray());
-					logger.info("Database Authentication Status: " + auth + " [" + UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME) + "@" + UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) + "]");
+					MongoCredential credential = MongoCredential.createCredential(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), 
+							UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray());
+					
+					logger.info("U: " + credential.getUserName() + " / " + UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE));
+					
+					m = new MongoClient(addrs, Arrays.asList(credential), clientOpts.build());
 				}
-				
-				if (UOpts.getBool(UAppCfg.MONGO_DB_READS_OK))
-				{
-					logger.info("Setting Read Preference: SECONDARY");
-					m.setReadPreference(ReadPreference.SECONDARY);
+				else {
+					m = new MongoClient(addrs, clientOpts.build());
 				}
 				
 				logger.info("MongoDB Singleton Setup Complete - " + (System.currentTimeMillis() - start) + " ms ==> " + addrs);

@@ -158,11 +158,6 @@ public class Analytics {
 			DBCollection coll = getCollection();
 			WriteResult wr = coll.update(q, incQuery, true, false);
 			
-			String err = wr.getError();
-			
-			if (err != null)
-				logger.warn("Error trying to update metrics.  Name: " + name + " Error: " + err);
-			
 		} catch (Exception er) {
 			// TODO: Do something!
 		}
