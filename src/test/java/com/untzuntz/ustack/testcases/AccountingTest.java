@@ -1,19 +1,13 @@
 package com.untzuntz.ustack.testcases;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
-import org.apache.log4j.Logger;
-import org.junit.Test;
-
-import com.untzuntz.ustack.data.accting.AccountTransaction;
-import com.untzuntz.ustack.data.accting.CreditAccount;
-import com.untzuntz.ustack.data.accting.FundingConfig;
-import com.untzuntz.ustack.data.accting.InsufficientFundsException;
-import com.untzuntz.ustack.data.accting.Product;
+import com.untzuntz.ustack.data.accting.*;
 import com.untzuntz.ustack.exceptions.AccountExistsException;
 import com.untzuntz.ustack.exceptions.InvalidUserAccountName;
+import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class AccountingTest extends UStackTestCaseBase {
 
@@ -24,7 +18,8 @@ public class AccountingTest extends UStackTestCaseBase {
 		super();
 	}
 	
-	@Test public void testProduct() throws Exception
+	@Before
+	public void testProduct() throws Exception
 	{
 		Product prod1 = Product.createProduct("TESTADD-1" + runId, "10 Credits");
 		prod1.setCreditAmount(10);
@@ -47,10 +42,7 @@ public class AccountingTest extends UStackTestCaseBase {
 		
 		// Try to create an invalid product
 		try { Product.createProduct("", "Bla"); fail(); } catch (InvalidUserAccountName e) {}
-	}
-	
-	@Test public void testCreditAccount() throws Exception
-	{
+
 		CreditAccount acct1 = CreditAccount.createAccount("Sample Account Name" + runId);
 		assertNotNull(acct1);
 		acct1.addFundingSource(new FundingConfig("Customer Credit Card", "com.untzuntz.ustack.data.accting.TestCaseFunding"));
@@ -95,43 +87,11 @@ public class AccountingTest extends UStackTestCaseBase {
 		AccountTransaction tran1 = new AccountTransaction("testCreditsTracking() Test Case", "TESTFOUR-1" + runId);
 		assertEquals(400, tran1.getPrice());
 		acct1.executeTransaction("testCreditsTracking() Test Case", tran1);
-		assertEquals(2400, acct1.getPriceTotal());
+		assertEquals(400, acct1.getPriceTotal());
 		acct1.executeTransaction("testCreditsTracking() Test Case", tran1);
-		assertEquals(2800, acct1.getPriceTotal());
+		assertEquals(800, acct1.getPriceTotal());
 		acct1.executeTransaction("testCreditsTracking() Test Case", tran1);
-		assertEquals(3200, acct1.getPriceTotal());
+		assertEquals(1200, acct1.getPriceTotal());
 	}
-	
-//	@Test public void testAuthorizeNet() throws Exception
-//	{
-//		CreditAccount acct1 = CreditAccount.getAccount("Sample Account Name" + runId);
-//		
-//		AuthorizeNetFunding funding = new AuthorizeNetFunding();
-//		funding.setCreditAccount(acct1);
-//		
-//		Calendar cal = Calendar.getInstance();
-//		cal.add(Calendar.YEAR, 5);
-//		Date expiration = cal.getTime();
-//		
-//		FundingConfig cfg = funding.createFunding("testCase", "Test Funding", "Business", acct1.getUid(), "My Company", runId + "-itmtest@mailinator.com", "Mike", "Gordon", "123 Main St.", null, "State College", "Pennsylvania", "16801", "United States", "612-555-1212", null, "4111-1111-1111-1111", expiration, "000", true);
-//		acct1.addFundingSource(cfg);
-//		acct1.save("testAuthorizeNet() Test Case");
-//		
-//		funding.requestFunding("testAuthorizeNet() Test Case", null, "Test Case Add", 1000, true);
-//		funding.updateBillingAddress("testCase", "My Company", "Mike", "Gordon", "123 Main St.", null, "State College", "Pennsylvania", "16801", "United States", "612-555-1212", null, true);
-//		funding.updateCreditCardInfo("testCase", "4111-1111-1111-1111", expiration, "000", true);
-//		acct1.save("testAuthorizeNet() Test Case");
-//	}
 
-//	@Test public void testCreditsTrackingFallback() throws Exception
-//	{
-//		CreditAccount acct1 = CreditAccount.getAccount("Sample Account Name" + runId);
-//
-//		AccountTransaction tran2 = new AccountTransaction("testCreditsTracking() Test Case", "TESTSUB-1" + runId);
-//		assertEquals(-2, tran2.getCredits());
-//		
-//		// Transaction should try to refresh and add 10 credits
-//		acct1.executeTransaction("testCreditsTracking() Test Case", tran2);
-//		assertEquals(6, acct1.getCreditCount());
-//	}
 }

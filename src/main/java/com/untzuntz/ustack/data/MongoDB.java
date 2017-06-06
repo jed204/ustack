@@ -15,6 +15,10 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Singleton for access to MongoDB
@@ -66,20 +70,18 @@ public class MongoDB {
 					clientOpts.connectionsPerHost(UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST));
 					logger.info(String.format("MongoDB Connections Per Host: %d", UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST)));
 				}
-				
-				// setup the actual mongo object
-				
-				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null)
-				{
-					MongoCredential credential = MongoCredential.createCredential(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), 
-							UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray());
-					
-					logger.info("U: " + credential.getUserName() + " / " + UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE));
-					
-					m = new MongoClient(addrs, Arrays.asList(credential), clientOpts.build());
+        
+				List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null) {
+					credentials.add(MongoCredential.createCredential(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray()));
 				}
-				else {
-					m = new MongoClient(addrs, clientOpts.build());
+
+				m = new MongoClient(addrs, credentials, clientOpts.build());
+				
+				if (UOpts.getBool(UAppCfg.MONGO_DB_READS_OK))
+				{
+					logger.info("Setting Read Preference: NEAREST");
+					m.setReadPreference(ReadPreference.nearest());
 				}
 				
 				logger.info("MongoDB Singleton Setup Complete - " + (System.currentTimeMillis() - start) + " ms ==> " + addrs);
@@ -112,4 +114,7 @@ public class MongoDB {
 		return db.getCollection(collection);
 	}
 
+	public static void setMongo(Mongo m) {
+		MongoDB.m = m;
+	}
 }

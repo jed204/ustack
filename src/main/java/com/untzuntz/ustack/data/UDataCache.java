@@ -1,16 +1,15 @@
 package com.untzuntz.ustack.data;
 
-import java.net.InetSocketAddress;
-import java.util.List;
-
+import com.untzuntz.ustack.main.UAppCfg;
+import com.untzuntz.ustack.main.UOpts;
 import net.spy.memcached.AddrUtil;
 import net.spy.memcached.BinaryConnectionFactory;
 import net.spy.memcached.MemcachedClient;
-
+import net.spy.memcached.MemcachedClientIF;
 import org.apache.log4j.Logger;
 
-import com.untzuntz.ustack.main.UAppCfg;
-import com.untzuntz.ustack.main.UOpts;
+import java.net.InetSocketAddress;
+import java.util.List;
 
 /**
  * Memcache data cache interface 
@@ -24,17 +23,19 @@ public class UDataCache {
 
 	private static final String NAMESPACE = "UST_n7zv1";
 	private static UDataCache instance = null;
-	private static MemcachedClient[] m = null;
-	private static final int CLIENT_COUNT = 20;
+	private static MemcachedClientIF[] m = null;
+	private static int CLIENT_COUNT = 20;
 	 
 	private UDataCache() {
 		
 		try {
-			List<InetSocketAddress> addrList = AddrUtil.getAddresses(UOpts.getString(UAppCfg.CACHE_HOST_STRING));
-			m = new MemcachedClient[CLIENT_COUNT + 1];
-			for (int i = 0; i <= CLIENT_COUNT; i ++) {
-				MemcachedClient c =  new MemcachedClient(new BinaryConnectionFactory(), addrList);
-				m[i] = c;
+			if (m == null) {
+				List<InetSocketAddress> addrList = AddrUtil.getAddresses(UOpts.getString(UAppCfg.CACHE_HOST_STRING));
+				m = new MemcachedClientIF[CLIENT_COUNT + 1];
+				for (int i = 0; i <= CLIENT_COUNT; i++) {
+					MemcachedClientIF c = new MemcachedClient(new BinaryConnectionFactory(), addrList);
+					m[i] = c;
+				}
 			}
 		} catch (Exception e) {
 			logger.warn("Failed to setup clients", e);
@@ -57,32 +58,36 @@ public class UDataCache {
 	}
 	
 	public long incr(String key, int ttl, final long o) {
-		
-		MemcachedClient client = getCache();
+
+		MemcachedClientIF client = getCache();
 		if (client != null)
 		{
 			try {
 				return client.incr(key.replace((char)' ', (char)'_'), 1, 0, ttl);
-			} catch (Exception er) {}
+			} catch (Exception e) {
+				logger.error("unable to incr key from memcache server", e);
+			}
 		}
 		return 0L;
 	}
 	
 	public void set(String key, int ttl, final Object o) {
-		
-		MemcachedClient client = getCache();
+
+		MemcachedClientIF client = getCache();
 		if (client == null)
 			return;
 
 		try {
 			client.set(NAMESPACE + key.replace((char)' ', (char)'_'), ttl, o);
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.warn("unable to set key from memcache server", e);
+		}
 		
 	}
 	
 	public Object get(String key) {
-		
-		MemcachedClient client = getCache();
+
+		MemcachedClientIF client = getCache();
 		if (client == null)
 			return null;
 		
@@ -95,7 +100,7 @@ public class UDataCache {
 			}
 			return o;	
 		} catch (Exception e) {
-			logger.warn("unable to get key from memcache server", e);
+			logger.error("unable to get key from memcache server", e);
 		}
 		
 		return null;
@@ -103,24 +108,26 @@ public class UDataCache {
 	}
 	 
 	public Object delete(String key) {
-		
-		MemcachedClient client = getCache();
+
+		MemcachedClientIF client = getCache();
 		if (client == null)
 			return null;
 		
 		try {
 			return client.delete(NAMESPACE + key.replace((char)' ', (char)'_'));
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			logger.error("unable to delete key from memcache server", e);
+		}
 	
 		return null;
 	}
 	
-	public MemcachedClient getCache() {
+	public MemcachedClientIF getCache() {
 		
 		if (!UOpts.getCacheEnabled())
 			return null;
 
-		MemcachedClient c = null;
+		MemcachedClientIF c = null;
 		
 		try {
 
@@ -128,11 +135,15 @@ public class UDataCache {
 			c = m[i];
 			
 		} catch(Exception e) {
-			logger.warn("Failed to get memcache client", e);
+			logger.error("Failed to get memcache client", e);
 		}
 		
 		return c;
 		
 	}
-	
+
+	public static void setMemcacheClients(MemcachedClientIF[] clients) {
+		UDataCache.m = clients;
+		UDataCache.CLIENT_COUNT = clients.length;
+	}
 }

@@ -1,25 +1,25 @@
 package com.untzuntz.ustack.testcases;
 
-import static org.junit.Assert.assertEquals;
-
-import org.apache.log4j.Logger;
-import org.junit.Test;
-
 import com.untzuntz.ustack.data.AddressBook;
 import com.untzuntz.ustack.data.AddressBookEntry;
 import com.untzuntz.ustack.util.AddressBookSearch;
+import org.apache.log4j.Logger;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class AddressBookTest extends UStackTestCaseBase {
 
-	protected static Logger logger = Logger.getLogger(AccountingTest.class);
+	protected static Logger logger = Logger.getLogger(AddressBookTest.class);
 
 	public AddressBookTest()
 	{
 		super();
 	}
-	
-	@Test public void testAddLogic() throws Exception
-	{
+
+	@Before
+	public void setUp() throws Exception {
 		AddressBook myBook1 = AddressBook.getByName("test@testy.com" + runId);
 		assertEquals(0, myBook1.getEntryList().size());
 
@@ -31,13 +31,17 @@ public class AddressBookTest extends UStackTestCaseBase {
 		entry2.setDisplayValue("David Davies");
 		entry2.setType("user");
 		entry3.setDisplayValue("Johnny Same");
-		
+
 		myBook1.addEntry(entry1);
 		myBook1.addEntry(entry2);
 		myBook1.addEntry(entry3);
 		myBook1.save("Test Case");
-		
+
 		assertEquals(2, myBook1.getEntryList().size()); // only 2 are expected because 'entry3' should no add due to matching entry1
+	}
+
+	@Test public void testAddLogic() throws Exception
+	{
 		
 		AddressBook myBook2 = AddressBook.getByName("test@testy.com" + runId);
 		assertEquals(2, myBook2.getEntryList().size()); // we should have values from the last test
@@ -61,7 +65,7 @@ public class AddressBookTest extends UStackTestCaseBase {
 	@Test public void testSubscriptions() throws Exception
 	{
 		AddressBook myBook1 = AddressBook.getByName("test@testy.com" + runId);
-		assertEquals(1, myBook1.getEntryList().size()); // we should have values from the last test
+		assertEquals(2, myBook1.getEntryList().size());
 
 		AddressBookEntry entry1 = new AddressBookEntry("john@untzuntz.com" + runId);
 		AddressBookEntry entry2 = new AddressBookEntry("dave@untzuntz.com" + runId);
@@ -90,7 +94,7 @@ public class AddressBookTest extends UStackTestCaseBase {
 		
 		// Unsubscribe
 		myBookReload1.unsubscribeFrom(mySiteBook1);
-		assertEquals(1, myBookReload1.getEntries().size()); // we should have values from the last test
+		assertEquals(2, myBookReload1.getEntries().size());
 		myBookReload1.save("Test Case");
 	}
 
