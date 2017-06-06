@@ -1,6 +1,18 @@
 package com.untzuntz.ustack.data;
 
-import com.mongodb.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientOptions;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
 import org.apache.log4j.Logger;
@@ -58,26 +70,13 @@ public class MongoDB {
 					clientOpts.connectionsPerHost(UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST));
 					logger.info(String.format("MongoDB Connections Per Host: %d", UOpts.getInt(UAppCfg.MONGO_DB_CONNECTIONS_PER_HOST)));
 				}
-//				if (UOpts.getBool(UAppCfg.MONGO_DB_AUTORETRY)) {
-//					clientOpts.autoConnectRetry(true);
-//				}
-				
-				// setup the actual mongo object
-
-
+        
 				List<MongoCredential> credentials = new ArrayList<MongoCredential>();
 				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null) {
 					credentials.add(MongoCredential.createCredential(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray()));
 				}
 
 				m = new MongoClient(addrs, credentials, clientOpts.build());
-				
-//				if (UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) != null)
-//				{
-//					DB db = m.getDB(UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE));
-//					boolean auth = db.authenticate(UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME), UOpts.getString(UAppCfg.MONGO_DB_AUTH_PASSWORD).toCharArray());
-//					logger.info("Database Authentication Status: " + auth + " [" + UOpts.getString(UAppCfg.MONGO_DB_AUTH_USERNAME) + "@" + UOpts.getString(UAppCfg.MONGO_DB_AUTH_DATABASE) + "]");
-//				}
 				
 				if (UOpts.getBool(UAppCfg.MONGO_DB_READS_OK))
 				{
