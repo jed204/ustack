@@ -10,6 +10,8 @@ package com.untzuntz.ustack.main;
  */
 public class UAppCfg {
 
+	private UAppCfg() {}
+
 	/** Boolean flag to determine if we should try to pull data from memcache */
 	public static final String CACHE_ENABLED_FLAG = "UAppCfg.CacheEnabled";
 	
@@ -18,7 +20,7 @@ public class UAppCfg {
 	
 	/** Default hostname for the mongodb cluster */
 	public static final String MONGO_DB_HOST = "MongoDB.DefaultHost";
-	
+	public static final String MONGO_DB_CONN_STRING= "MongoDB.ConnectionURI";
 	public static final String MONGO_DB_AUTH_DATABASE = "MongoDB.Auth.Database";
 	public static final String MONGO_DB_AUTH_USERNAME = "MongoDB.Auth.UserName";
 	public static final String MONGO_DB_AUTH_PASSWORD = "MongoDB.Auth.Password";

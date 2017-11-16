@@ -164,7 +164,7 @@ public class UOpts {
 	{
 		String retVal = getProperty(propertyName);
 		
-		if (!retVal.endsWith("/"))
+		if (retVal != null && !retVal.endsWith("/"))
 			retVal += "/";
 		
 		return new UFile(retVal, true);

@@ -19,7 +19,7 @@ public class APIMapping extends BasicDBObject {
 	protected static Logger   	logger           = Logger.getLogger(APIMapping.class);
 
 	private static final long serialVersionUID = 1L;
-	public static String INTERNAL_KEY;
+	private static String INTERNAL_KEY;
 	
 	private BasicTextEncryptor textEncryptor;
 	

@@ -18,7 +18,9 @@ public class ConfigEnc {
 	public String decrypt(InputStream in) throws IOException
 	{
 		// read data
-		in.skip(293);
+		if (in.skip(293) != 293) {
+			throw new IOException("Short Read");
+		}
 		
 		int hLen = in.read() << 8;
 		int lLen = in.read();

@@ -26,7 +26,7 @@ public class APIClient extends UntzDBObject {
 	
 	public static final String STATUS_DISABLED = "Disabled";
 	public static final String STATUS_ACTIVE = "Active";
-	public static String INTERNAL_KEY;
+	private static String INTERNAL_KEY;
 	
 	public String getCollectionName() { return "apiClients"; }
 

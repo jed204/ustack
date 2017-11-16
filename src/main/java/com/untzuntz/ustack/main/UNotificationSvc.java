@@ -415,10 +415,10 @@ public class UNotificationSvc {
 
     		toPhone = trimPhoneNumber(toPhone);
 
-    		if (toPhone.length() == 10 && !toPhone.startsWith("1"))
+    		if (toPhone != null && toPhone.length() == 10 && !toPhone.startsWith("1"))
     			toPhone = "1" + toPhone;
 
-    		if (!toPhone.startsWith("+"))
+    		if (toPhone != null && !toPhone.startsWith("+"))
     			toPhone = "+" + toPhone;
 			
 			logger.info("Sending SMS [" + UOpts.getProperty("EvenFlow.Twillio.SMSPhoneNumber") + " => " + toPhone + "] // " + smsMsg + " via Twilio");

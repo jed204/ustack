@@ -862,7 +862,7 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 			while (enu.hasMoreElements())
 			{
 				String field = enu.nextElement();
-				Object value = fields.get(field).value;
+				Object value = fields.get(field).getValue();
 				if (value instanceof String)
 				{
 					if (((String)value).length() > 0)

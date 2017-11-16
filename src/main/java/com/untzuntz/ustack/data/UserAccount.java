@@ -114,6 +114,9 @@ public class UserAccount extends UntzDBObject {
 	/** Sets the username */
 	private void setUserName(String userName)
 	{
+		if (userName == null) {
+			return;
+		}
 		userName = userName.toLowerCase();
 		put("userName", userName);
 	}
@@ -1051,10 +1054,6 @@ public class UserAccount extends UntzDBObject {
 		
 		return new UserAccount(user);
 	}
-	
-	public final static String[] SULATATIONS = new String[] { "Mr.", "Mrs.", "Ms.", "Dr.", "Drs." };
-	public final static String[] SUFFIXS = new String[] { "D.C.", "D.O.", "J.D.", "M.D.", "Ph.D.", "D.P.M." };
-	
 	
 	/**
 	 * Import Data

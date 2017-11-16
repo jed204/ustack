@@ -23,26 +23,29 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Logger;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import org.apache.log4j.Logger;
 
 public class Emailer {
+
+	private Emailer() {}
 
 	private static Logger logger = Logger.getLogger(Emailer.class);
 
 	/**
 	 * Handles sending an email from the application
-	 * 
+	 *
+	 * @param to
 	 * @param from
+	 * @param fromName
 	 * @param subject
 	 * @param message
-	 * @param recipients
-	 * @throws MessagingException
+	 * @param htmlMessage
+	 * @throws AddressException
 	 */
 	public static void postMail(String to, String from, String fromName, String subject, String message, String htmlMessage) throws AddressException
 	{
@@ -70,12 +73,15 @@ public class Emailer {
 	{
 		postMail(to, cc, bcc, from, fromName, subject, message, htmlMessage, null, null);
 	}
-	
+
+	private static final String MAIL_SMTP_HOST = "mail.smtp.host";
+	private static final String MAIL_SMTP_PORT = "mail.smtp.port";
+
 	public static void postMail(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId) throws AddressException
 	{
 		if ("mailgun".equalsIgnoreCase(UOpts.getString(UAppCfg.EMAIL_MODE)))
 		{
-			mailGun(to, cc, bcc, from, fromName, subject, message, htmlMessage, attachments, campaignId);
+			mailGun(to, cc, bcc, from, fromName, subject, message, htmlMessage, campaignId);
 			return;
 		}
 		
@@ -93,9 +99,11 @@ public class Emailer {
 
 		// Set the host smtp address
 		Properties props = new Properties();
-		props.put("mail.smtp.host", emailHost);
-	    props.put("mail.smtp.port", emailPort);
-	    
+		if (emailHost != null) {
+			props.put(MAIL_SMTP_HOST, emailHost);
+		}
+		props.put(MAIL_SMTP_PORT, emailPort);
+		
 	    if (UOpts.getBool(UAppCfg.EMAIL_TLS))
 	    {
 	    	props.put("mail.smtp.starttls.enable","true");
@@ -114,6 +122,7 @@ public class Emailer {
 	    {
 	    	props.put("mail.smtp.auth", "true");
 	    	Authenticator auth = new Authenticator() {
+	    		@Override
 	    		public PasswordAuthentication getPasswordAuthentication() {
 	    			return new PasswordAuthentication(UOpts.getString(UAppCfg.EMAIL_AUTH_USER), UOpts.getString(UAppCfg.EMAIL_AUTH_PASS));
 	    		}
@@ -197,10 +206,10 @@ public class Emailer {
 			
 			msg.saveChanges();
 
-			logger.info("Sending Email [" + from + " => " + to[0] + "] // Subj: '" + subject + "' // " + message + " via " + props.get("mail.smtp.host") + ":" + props.get("mail.smtp.port"));
+			logger.info("Sending Email [" + from + " => " + to[0] + "] // Subj: '" + subject + "' // " + message + " via " + props.get(MAIL_SMTP_HOST) + ":" + props.get(MAIL_SMTP_PORT));
 			
 			Transport transport = session.getTransport("smtp");
-			transport.connect((String)props.get("mail.smtp.host"), Integer.valueOf((String)props.get("mail.smtp.port")), null, null);
+			transport.connect((String)props.get(MAIL_SMTP_HOST), Integer.valueOf((String)props.get(MAIL_SMTP_PORT)), null, null);
 			transport.sendMessage(msg, msg.getAllRecipients());
 			transport.close();
 		    
@@ -210,20 +219,22 @@ public class Emailer {
 		}
 	}
 	
-	public static void mailGun(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId) throws AddressException
+	public static void mailGun(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, String campaignId)
 	{
+		if (to == null) {
+			logger.warn("No 'to' address to send the message to, skipping");
+			return;
+		}
 		Client client = Client.create();
 	    client.addFilter(new HTTPBasicAuthFilter("api", UOpts.getString(UAppCfg.MAILGUN_KEY)));
-	 
-	    MultivaluedMapImpl formData = new MultivaluedMapImpl();
-	 
+
 	    WebResource webResource = client.resource(String.format("https://api.mailgun.net/v2/%s/messages", UOpts.getString(UAppCfg.MAILGUN_DOMAIN)));
 
 	    String toStr = getList(to);
 	    String ccStr = getList(cc);
 	    String bccStr = getList(bcc);
-	    
-	    formData = new MultivaluedMapImpl();
+
+		MultivaluedMapImpl formData = new MultivaluedMapImpl();
 	    formData.add("from", String.format("%s <%s>", fromName ,from));
 	    formData.add("to", toStr);
 	    if (cc != null)
@@ -237,9 +248,6 @@ public class Emailer {
 	    if (campaignId != null)
 	    	formData.add("o:campaign", campaignId);
 	    
-//	    MultiPart multiPart = new MultiPart();
-//	    multiPart.bodyPart(new BodyPart(project, MediaType.APPLICATION_XML_TYPE)).
-	    
 	    ClientResponse clientResponse = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
 	    String output = clientResponse.getEntity(String.class);
 	    
@@ -252,8 +260,8 @@ public class Emailer {
 	{
 		if (addrs == null || addrs.length == 0)
 			return null;
-		
-		StringBuffer buf = new StringBuffer();
+
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < addrs.length; i++)
 		{
 			InternetAddress addr = addrs[i];

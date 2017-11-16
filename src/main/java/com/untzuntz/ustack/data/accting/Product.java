@@ -102,7 +102,7 @@ public class Product extends UntzDBObject {
 	public void setCreditAmount(Integer credits)
 	{
 		if (credits != null)
-			put("creditAmount", credits.intValue());
+			put("creditAmount", credits);
 		else
 			removeField("creditAmount");
 	}
@@ -120,7 +120,7 @@ public class Product extends UntzDBObject {
 	public void setDefaultPrice(Integer price)
 	{
 		if (price != null)
-			put("defaultPrice", price.intValue());
+			put("defaultPrice", price);
 		else
 			removeField("defaultPrice");
 	}

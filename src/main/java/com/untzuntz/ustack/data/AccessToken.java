@@ -6,7 +6,7 @@ import com.Ostermiller.util.Base64;
 
 public class AccessToken {
 
-	public static String INTERNAL_KEY;
+	private static String INTERNAL_KEY;
 
 	private BasicTextEncryptor textEncryptor;
 	private BasicTextEncryptor getEncryptor()
@@ -67,10 +67,33 @@ public class AccessToken {
 	
 	public class AccessTokenDetails {
 		
-		public String clientId;
-		public String userName;
-		public long expirationAge;
-		
+		private String clientId;
+		private String userName;
+		private long expirationAge;
+
+		public String getClientId() {
+			return clientId;
+		}
+
+		public void setClientId(String clientId) {
+			this.clientId = clientId;
+		}
+
+		public String getUserName() {
+			return userName;
+		}
+
+		public void setUserName(String userName) {
+			this.userName = userName;
+		}
+
+		public long getExpirationAge() {
+			return expirationAge;
+		}
+
+		public void setExpirationAge(long expirationAge) {
+			this.expirationAge = expirationAge;
+		}
 	}
 	
 }

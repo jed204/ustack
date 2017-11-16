@@ -196,7 +196,9 @@ public class NotificationInst extends UntzDBObject {
 	public static NotificationInst subscribe(NotificationTemplate template, String eventName, String userName) 
 	{
 		NotificationInst notif = subscribe(template, eventName);
-		notif.setUserName(userName);
+		if (notif != null) {
+			notif.setUserName(userName);
+		}
 		return notif;
 	}
 	
