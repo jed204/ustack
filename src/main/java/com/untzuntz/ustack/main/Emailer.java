@@ -23,6 +23,9 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 import javax.ws.rs.core.MediaType;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
@@ -47,14 +50,14 @@ public class Emailer {
 	 * @param htmlMessage
 	 * @throws AddressException
 	 */
-	public static void postMail(String to, String from, String fromName, String subject, String message, String htmlMessage) throws AddressException
+	public static void postMail(String to, String from, String fromName, String subject, String message, String htmlMessage, boolean transactional) throws AddressException
 	{
-		postMail(new InternetAddress[] { new InternetAddress(to) }, null, null, from, fromName, subject, message, htmlMessage, null, null);
+		postMail(new InternetAddress[] { new InternetAddress(to) }, null, null, from, fromName, subject, message, htmlMessage, null, null, transactional);
 	}
 	
-	public static void postMail(String to, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId) throws AddressException
+	public static void postMail(String to, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId, boolean transactional) throws AddressException
 	{
-		postMail(new InternetAddress[] { new InternetAddress(to) }, null, null, from, fromName, subject, message, htmlMessage, attachments, campaignId);
+		postMail(new InternetAddress[] { new InternetAddress(to) }, null, null, from, fromName, subject, message, htmlMessage, attachments, campaignId, transactional);
 	}
 	
 	
@@ -69,22 +72,27 @@ public class Emailer {
 	 * @param message
 	 * @throws MessagingException
 	 */
-	public static void postMail(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage) throws AddressException
+	public static void postMail(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, boolean transactional) throws AddressException
 	{
-		postMail(to, cc, bcc, from, fromName, subject, message, htmlMessage, null, null);
+		postMail(to, cc, bcc, from, fromName, subject, message, htmlMessage, null, null, transactional);
 	}
 
 	private static final String MAIL_SMTP_HOST = "mail.smtp.host";
 	private static final String MAIL_SMTP_PORT = "mail.smtp.port";
 
-	public static void postMail(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId) throws AddressException
+	public static void postMail(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, Hashtable<String,File> attachments, String campaignId, boolean transactional) throws AddressException
 	{
 		if ("mailgun".equalsIgnoreCase(UOpts.getString(UAppCfg.EMAIL_MODE)))
 		{
 			mailGun(to, cc, bcc, from, fromName, subject, message, htmlMessage, campaignId);
 			return;
 		}
-		
+		if ("sparkpost".equalsIgnoreCase(UOpts.getString(UAppCfg.EMAIL_MODE)))
+		{
+			sparkpost(to, cc, bcc, from, fromName, subject, message, htmlMessage, campaignId, transactional);
+			return;
+		}
+
 		boolean debug = false;
 		String emailHost = UOpts.getString(UAppCfg.EMAIL_HOST);
 		String emailPort = UOpts.getString(UAppCfg.EMAIL_PORT);
@@ -218,7 +226,7 @@ public class Emailer {
 			logger.error("Email delivery failed", err);
 		}
 	}
-	
+
 	public static void mailGun(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, String campaignId)
 	{
 		if (to == null) {
@@ -226,36 +234,85 @@ public class Emailer {
 			return;
 		}
 		Client client = Client.create();
-	    client.addFilter(new HTTPBasicAuthFilter("api", UOpts.getString(UAppCfg.MAILGUN_KEY)));
+		client.addFilter(new HTTPBasicAuthFilter("api", UOpts.getString(UAppCfg.MAILGUN_KEY)));
 
-	    WebResource webResource = client.resource(String.format("https://api.mailgun.net/v2/%s/messages", UOpts.getString(UAppCfg.MAILGUN_DOMAIN)));
+		WebResource webResource = client.resource(String.format("https://api.mailgun.net/v2/%s/messages", UOpts.getString(UAppCfg.MAILGUN_DOMAIN)));
 
-	    String toStr = getList(to);
-	    String ccStr = getList(cc);
-	    String bccStr = getList(bcc);
+		String toStr = getList(to);
+		String ccStr = getList(cc);
+		String bccStr = getList(bcc);
 
 		MultivaluedMapImpl formData = new MultivaluedMapImpl();
-	    formData.add("from", String.format("%s <%s>", fromName ,from));
-	    formData.add("to", toStr);
-	    if (cc != null)
-	    	formData.add("cc", ccStr);
-	    if (bcc != null)
-	    	formData.add("bcc", bccStr);
-	    formData.add("subject", subject);
-	    formData.add("text", message);
-	    if (htmlMessage != null)
-	    	formData.add("html", htmlMessage);
-	    if (campaignId != null)
-	    	formData.add("o:campaign", campaignId);
-	    
-	    ClientResponse clientResponse = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
-	    String output = clientResponse.getEntity(String.class);
-	    
+		formData.add("from", String.format("%s <%s>", fromName ,from));
+		formData.add("to", toStr);
+		if (cc != null)
+			formData.add("cc", ccStr);
+		if (bcc != null)
+			formData.add("bcc", bccStr);
+		formData.add("subject", subject);
+		formData.add("text", message);
+		if (htmlMessage != null)
+			formData.add("html", htmlMessage);
+		if (campaignId != null)
+			formData.add("o:campaign", campaignId);
+
+		ClientResponse clientResponse = webResource.type(MediaType.APPLICATION_FORM_URLENCODED).post(ClientResponse.class, formData);
+		String output = clientResponse.getEntity(String.class);
+
 		logger.info("Sending Email [" + from + " => " + to[0] + "] // Subj: '" + subject + "' // " + message + " via MAILGUN");
 
-	    logger.info(String.format("MailGun Response: %s", output));
+		logger.info(String.format("MailGun Response: %s", output));
 	}
-	
+
+	public static void sparkpost(InternetAddress[] to, InternetAddress[] cc, InternetAddress[] bcc, String from, String fromName, String subject, String message, String htmlMessage, String campaignId, boolean transactional)
+	{
+		if (to == null) {
+			logger.warn("No 'to' address to send the message to, skipping");
+			return;
+		}
+		Client client = Client.create();
+
+		WebResource webResource = client.resource(String.format("https://api.sparkpost.com/api/v1/transmissions", UOpts.getString(UAppCfg.SPARKPOST_DOMAIN)));
+
+		String toStr = getList(to);
+
+		DBObject options = new BasicDBObject();
+		DBObject content = new BasicDBObject();
+		BasicDBList recipients = new BasicDBList();
+
+		DBObject sendObj = new BasicDBObject();
+		sendObj.put("options", options);
+		sendObj.put("content", content);
+		sendObj.put("recipients", recipients);
+		if (UOpts.getString(UAppCfg.SPARKPOST_RETURN_PATH) != null) {
+			sendObj.put("return_path", UOpts.getString(UAppCfg.SPARKPOST_RETURN_PATH));
+		}
+
+		options.put("transactional", transactional);
+
+		content.put("from", new BasicDBObject("email", from).append("name", fromName));
+		content.put("subject", subject);
+		content.put("text", message);
+		if (htmlMessage != null) {
+			content.put("html", htmlMessage);
+		}
+
+		for (InternetAddress toAddr : to) {
+			recipients.add(new BasicDBObject("address", new BasicDBObject("email", toAddr.getAddress()).append("name", toAddr.getPersonal())));
+		}
+
+		if (campaignId != null) {
+			content.put("campaign_id", campaignId);
+		}
+
+		ClientResponse clientResponse = webResource.header("Authorization", UOpts.getString(UAppCfg.SPARKPOST_KEY)).type(MediaType.APPLICATION_JSON_TYPE).post(ClientResponse.class, sendObj.toString());
+		String output = clientResponse.getEntity(String.class);
+
+		logger.info("Sending Email [" + from + " => " + to[0] + "] // Subj: '" + subject + "' // " + message + " via SPARKPOST");
+
+		logger.info(String.format("Sparkpost Response: %s", output));
+	}
+
 	private static String getList(InternetAddress[] addrs)
 	{
 		if (addrs == null || addrs.length == 0)

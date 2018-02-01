@@ -82,11 +82,17 @@ public class UAppCfg {
 	public static final String DATABASE_IN_THE_FUTURE_COL = "Database.InTheFuture";
 	
 	public static final String EMAIL_MODE = "Email.Mode";
-	
+
 	public static final String MAILGUN_KEY = "MailGun.APIKey";
-	
+
 	public static final String MAILGUN_DOMAIN = "MailGun.Domain";
-	
+
+	public static final String SPARKPOST_KEY = "SparkPost.APIKey";
+
+	public static final String SPARKPOST_DOMAIN = "SparkPost.Domain";
+
+	public static final String SPARKPOST_RETURN_PATH = "SparkPost.ReturnPath";
+
 	/** Enable SSL Connection */
 	public static final String EMAIL_SECURE_SSL = "Email.Secure";
 	

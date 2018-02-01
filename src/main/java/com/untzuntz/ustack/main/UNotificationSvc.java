@@ -317,8 +317,11 @@ public class UNotificationSvc {
 		
 		String emailBody = processTemplate( (String)typeData.get("templateText"), notif );
 		String campaignId = null;
+		boolean transactional = false;
 		if (typeData.get("campaignId") != null)
 			campaignId = processTemplate( (String)typeData.get("campaignId"), notif );
+		if (typeData.get("transactional") != null)
+			transactional = (Boolean)typeData.get("transactional");
 		String htmlEmailBody = null;
 		if (typeData.get("htmlTemplateText") != null)
 			htmlEmailBody = processTemplate( (String)typeData.get("htmlTemplateText"), notif );
@@ -376,7 +379,7 @@ public class UNotificationSvc {
 			}
 			
 			try {
-				Emailer.postMail(new InternetAddress[] { new InternetAddress(emailToAddr) }, null, bccArray, emailFromAddr, emailFromName, subject, emailBody, htmlEmailBody, attachments, campaignId);
+				Emailer.postMail(new InternetAddress[] { new InternetAddress(emailToAddr) }, null, bccArray, emailFromAddr, emailFromName, subject, emailBody, htmlEmailBody, attachments, campaignId, transactional);
 			} catch (AddressException err) {
 				logger.error("Invalid Address : " + err);
 				return false;
