@@ -333,8 +333,11 @@ public class Authorization {
 				if (role == null)
 					throw new InvalidAuthorizationConfig("No role named '" + link.getRoleName() + "' for resource '" + resource + "'");
 	
-				if (role.hasPermission(perm))
+				if (role.hasPermission(perm)) {
 					passed = true;
+				} else {
+					logger.info(role.getName() + " does not have " + perm);
+				}
 			}
 			
 			if (!passed)

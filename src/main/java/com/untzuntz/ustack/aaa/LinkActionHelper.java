@@ -65,6 +65,9 @@ public class LinkActionHelper {
 	public static void handleLinkAddAction(String actor,ResourceLink resourceLink, UntzDBObject obj)
 	{
 		ResourceDefinition def = ResourceDefinition.getByName( resourceLink.getName() );
+		if (def == null) {
+			logger.error("Cannot find resource link: " + resourceLink.getName());
+		}
 		
 		LinkActionInterface linkAction = getLinkAction(def.getLinkActionClass());
 		if (linkAction != null)
