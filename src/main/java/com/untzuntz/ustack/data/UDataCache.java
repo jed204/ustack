@@ -124,7 +124,7 @@ public class UDataCache {
 	
 	public MemcachedClientIF getCache() {
 		
-		if (!UOpts.getCacheEnabled())
+		if (!UOpts.getCacheEnabled() || m == null)
 			return null;
 
 		MemcachedClientIF c = null;

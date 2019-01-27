@@ -75,7 +75,8 @@ public class AccessToken {
 					.withClaim("userName", userName);
 
 			if (StringUtils.isNotEmpty(ipAddress)) {
-				tokenBuilder.withClaim("ipAddress", ipAddress);
+				String[] ips = ipAddress.split(", ");
+				tokenBuilder.withClaim("ipAddress", ips[0]);
 			}
 
 			if (custom != null) {
@@ -114,8 +115,19 @@ public class AccessToken {
 	{
 		if (value == null)
 			return null;
-		
+
 		AccessToken at = new AccessToken();
+		if (value.startsWith("JWT_")) {
+			DecodedJWT jwt = null;
+			try {
+				jwt = decodeJwt(value.substring(4));
+			} catch (AuthExceptionAuthError e) {
+				return null;
+			}
+			return at.getAccessDetails(jwt);
+
+		}
+
 		String decrypted = null;
 		try {
 			decrypted = at.getEncryptor().decrypt(Base64.decode(value));
@@ -130,6 +142,16 @@ public class AccessToken {
 			return null;
 		
 		return at.getAccessDetails(spl);
+	}
+
+	private AccessTokenDetails getAccessDetails(DecodedJWT jwt) {
+
+		AccessTokenDetails ret = new AccessTokenDetails();
+		ret.clientId = jwt.getClaim("clientId").asString();
+		ret.userName = jwt.getClaim("userName").asString();
+		ret.expirationAge = jwt.getExpiresAt().getTime();
+
+		return ret;
 	}
 	
 	private AccessTokenDetails getAccessDetails(String[] spl) {
