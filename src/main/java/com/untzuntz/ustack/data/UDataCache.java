@@ -25,7 +25,7 @@ public class UDataCache {
 	private static final String NAMESPACE = "UST_n7zv1";
 	private static UDataCache instance = null;
 	private static MemcachedClient mc = null;
-	private static int CLIENT_COUNT = 20;
+	private static int CLIENT_COUNT = 1;
 	 
 	private UDataCache() {
 		
