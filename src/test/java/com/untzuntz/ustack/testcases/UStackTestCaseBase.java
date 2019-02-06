@@ -4,7 +4,12 @@ import com.github.fakemongo.Fongo;
 import com.untzuntz.ustack.data.MongoDB;
 import com.untzuntz.ustack.data.UDataCache;
 import com.untzuntz.ustack.main.UAppCfg;
-import net.spy.memcached.MemcachedClientIF;
+import com.untzuntz.ustack.main.UOpts;
+import net.rubyeye.xmemcached.MemcachedClient;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
 
@@ -21,9 +26,32 @@ public class UStackTestCaseBase {
 
 		MongoDB.setMongo(new Fongo("TestCase").getMongo());
 
-		MemcachedClientIF[] clients = {mock(MemcachedClientIF.class)};
+		MemcachedClient clients = mock(MemcachedClient.class);
 
-		UDataCache.setMemcacheClients(clients);
+		UDataCache.setMemcacheClient(clients);
 	}
-	
+
+	@Ignore
+	@Test public void testConnect() throws Exception
+	{
+		int i = 0;
+		UOpts.setCacheFlag(true);
+		do {
+			String uid = "hello-" + UUID.randomUUID().toString();
+			UDataCache.getInstance().set("hi", 100, uid);
+
+			Thread.sleep(1000);
+
+			String pUid = (String) UDataCache.getInstance().get("hi");
+			//assertEquals(uid, pUid);
+
+			i++;
+			if (uid.equals(pUid)) {
+				System.out.println("Excellent: " + i);
+			}
+			else {
+				System.out.println("Awww, man: " + i);
+			}
+		} while (true);
+	}
 }
