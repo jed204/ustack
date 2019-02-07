@@ -1,0 +1,10 @@
+package com.untzuntz.ustack.data;
+
+public interface UDataCacheClientInt {
+
+    long incr(String key, int ttl);
+    void set(final String key, final int exp, final Object value);
+    Object get(final String key);
+    boolean delete(final String key);
+
+}

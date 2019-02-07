@@ -3,6 +3,7 @@ package com.untzuntz.ustack.testcases;
 import com.github.fakemongo.Fongo;
 import com.untzuntz.ustack.data.MongoDB;
 import com.untzuntz.ustack.data.UDataCache;
+import com.untzuntz.ustack.data.UMemcachedClient;
 import com.untzuntz.ustack.main.UAppCfg;
 import com.untzuntz.ustack.main.UOpts;
 import net.rubyeye.xmemcached.MemcachedClient;
@@ -26,9 +27,10 @@ public class UStackTestCaseBase {
 
 		MongoDB.setMongo(new Fongo("TestCase").getMongo());
 
-		MemcachedClient clients = mock(MemcachedClient.class);
+		MemcachedClient mc = mock(MemcachedClient.class);
+		UMemcachedClient client = new UMemcachedClient(mc);
 
-		UDataCache.setMemcacheClient(clients);
+		UDataCache.setCacheClient(client);
 	}
 
 	@Ignore
