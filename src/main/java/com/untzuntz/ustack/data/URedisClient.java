@@ -40,7 +40,7 @@ public class URedisClient implements UDataCacheClientInt {
     public long incr(String key, int timeout) {
 
         try {
-            return jc.incr(key.getBytes());
+            return jc.incr(key.getBytes(), timeout);
         } catch (Exception e) {
             logger.error("Unable to get key from redis server", e);
         }

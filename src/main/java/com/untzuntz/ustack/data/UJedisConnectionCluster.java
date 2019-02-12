@@ -33,9 +33,11 @@ public class UJedisConnectionCluster implements UJedisConnectionInt {
     }
 
     @Override
-    public Long incr(byte[] key) {
+    public Long incr(byte[] key, int timeout) {
 
-        return jc.incr(key);
+        Long ret = jc.incr(key);
+        jc.expire(key, timeout);
+        return ret;
 
     }
 

@@ -28,9 +28,11 @@ public class UJedisConnectionSingle implements UJedisConnectionInt {
     }
 
     @Override
-    public Long incr(byte[] key) {
+    public Long incr(byte[] key, int timeout) {
 
-        return jedis.incr(key);
+        Long ret = jedis.incr(key);
+        jedis.expire(key, timeout);
+        return ret;
 
     }
 
