@@ -55,10 +55,10 @@ public class UMemcachedClient implements UDataCacheClientInt {
     }
 
     @Override
-    public long incr(String key, int timeout) {
+    public long incr(String key, int exp) {
 
         try {
-            return mc.incr(key, 1, 0, timeout);
+            return mc.incr(key, 1, 0, exp);
         } catch (Exception e) {
             logger.error("Unable to incr key from memcache server", e);
         }

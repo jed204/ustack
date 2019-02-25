@@ -1,15 +1,18 @@
 package com.untzuntz.ustack.data;
 
 import org.apache.log4j.Logger;
-import redis.clients.jedis.HostAndPort;
-
-import java.io.*;
+import org.redisson.Redisson;
+import org.redisson.api.RAtomicLong;
+import org.redisson.api.RBucket;
+import org.redisson.api.RKeys;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 public class URedisClient implements UDataCacheClientInt {
 
     static Logger logger = Logger.getLogger(URedisClient.class);
 
-    UJedisConnectionInt jc;
+    private RedissonClient redisson;
 
     public URedisClient(String connectionString) {
 
@@ -19,16 +22,26 @@ public class URedisClient implements UDataCacheClientInt {
 
     public void connect(String connectionString) {
 
-        HostAndPort server = HostAndPort.parseString(connectionString);
-
         try {
-            jc = new UJedisConnectionCluster(server);
+
+            Config config = new Config();
+            config.useSentinelServers()
+                    .setMasterName("mymaster")
+                    .addSentinelAddress(connectionString);
+
+            redisson = Redisson.create(config);
+
         } catch (Exception e) {
             logger.error("Unable to connect to redis in cluster mode", e);
         }
-        if (jc == null || !jc.isConnected()) {
+
+        if (redisson == null || !isConnected()) {
             try {
-                jc = new UJedisConnectionSingle(server);
+
+                Config config = new Config();
+                config.useSingleServer().setAddress(connectionString);
+                redisson = Redisson.create(config);
+
             } catch (Exception e) {
                 logger.error("Unable to connect to redis in single mode", e);
             }
@@ -36,11 +49,22 @@ public class URedisClient implements UDataCacheClientInt {
 
     }
 
+    public boolean isConnected() {
+
+        if (redisson.getClusterNodesGroup().pingAll()) {
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
-    public long incr(String key, int timeout) {
+    public long incr(String key, int exp) {
 
         try {
-            return jc.incr(key.getBytes(), timeout);
+            RAtomicLong val = redisson.getAtomicLong(key);
+            val.expireAt(exp);
+            return val.incrementAndGet();
         } catch (Exception e) {
             logger.error("Unable to get key from redis server", e);
         }
@@ -50,30 +74,13 @@ public class URedisClient implements UDataCacheClientInt {
 
     @Override
     public void set(String key, int exp, Object value) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutput out;
 
         try {
-
-            out = new ObjectOutputStream(bos);
-            out.writeObject(value);
-            out.flush();
-            byte[] bytes = bos.toByteArray();
-
-            jc.setex(key.getBytes(), exp, bytes);
-
+            RBucket val = redisson.getBucket(key);
+            val.set(value);
+            val.expireAt(exp);
         } catch (Exception e) {
-
             logger.warn("Unable to set key from redis server", e);
-
-        } finally {
-
-            try {
-                bos.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-
         }
 
     }
@@ -82,36 +89,11 @@ public class URedisClient implements UDataCacheClientInt {
     public Object get(String key) {
 
         Object result = null;
-        ObjectInput in = null;
 
         try {
-            byte[] obj = jc.get(key.getBytes());
-
-            if(obj == null) {
-                logger.debug("Redis Cache MISS for KEY: " + key);
-                return null;
-            } else {
-                logger.debug("Redis Cache HIT for KEY: " + key);
-            }
-
-            ByteArrayInputStream bis = new ByteArrayInputStream(obj);
-            in = new ObjectInputStream(bis);
-            result = in.readObject();
-
+            result = redisson.getBucket(key).get();
         } catch (Exception e) {
-
             logger.error("Unable to get key from redis server", e);
-
-        } finally {
-
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-
         }
 
         return result;
@@ -122,7 +104,8 @@ public class URedisClient implements UDataCacheClientInt {
     public boolean delete(String key) {
 
         try {
-            return jc.del(key.getBytes()) > 0;
+            RKeys keys = redisson.getKeys();
+            return keys.delete(key) > 0;
         } catch (Exception e) {
             logger.error("Unable to delete value from redis server", e);
         }
