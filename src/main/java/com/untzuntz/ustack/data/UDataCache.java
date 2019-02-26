@@ -16,28 +16,27 @@ public class UDataCache {
 
 	private static final String NAMESPACE = "UST_n7zv1";
 	private static UDataCache instance = null;
-	private static UDataCacheClientInt mc = null;
+	private static UDataCacheClientInt client = null;
 
 	private UDataCache() {
 		
 		try {
-			if (mc == null) {
+			if (client == null) {
 
 				String connString = UOpts.getString(UAppCfg.CACHE_HOST_STRING);
 
 				if (connString.startsWith("memcached:")) {
 
 					connString = connString.replaceFirst("^memcached:", "");
-					mc = new UMemcachedClient(connString);
+					client = new UMemcachedClient(connString);
 
 				} else if (connString.startsWith("redis:")) {
 
-					connString = connString.replaceFirst("^redis:", "");
-					mc = new URedisClient(connString);
+					client = new URedisClient(connString);
 
 				} else {
 
-					mc = new UMemcachedClient(connString);
+					client = new UMemcachedClient(connString);
 
 				}
 
@@ -110,16 +109,16 @@ public class UDataCache {
 	
 	public UDataCacheClientInt getCacheClient() {
 		
-		if (!UOpts.getCacheEnabled() || mc == null)
+		if (!UOpts.getCacheEnabled() || client == null)
 			return null;
 
-		return mc;
+		return client;
 		
 	}
 
 	public static void setCacheClient(UDataCacheClientInt client) {
 
-		UDataCache.mc = client;
+		UDataCache.client = client;
 
 	}
 }
