@@ -106,6 +106,8 @@ public class AuthenticationTest extends UStackTestCaseBase {
 	/** Tests the account locking on too many failed attempts */
 	@Test public void testAccountLock()
 	{
+		System.setProperty(UAppCfg.USER_ACCOUNT_LOCKTIME_SEC, "900");
+
 		// upon creation
 		UserAccount testUser = null;
 		try {
@@ -133,6 +135,15 @@ public class AuthenticationTest extends UStackTestCaseBase {
 		} 
 		catch (AuthExceptionUserLocked err) {}
 		catch (AuthenticationException err) {}
+
+		// good password should FAIL b/c we are locked
+		try {
+			Authentication.authenticateUser(testUser.getUserName(), "123567890");
+			fail();
+		}
+		catch (AuthExceptionUserLocked err) {}
+		catch (AuthenticationException err) {}
+
 	}
 	
 	/** Tests the failed password resets after successful */
