@@ -1,12 +1,12 @@
 package com.textrecruit.ustack.aaa;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 public class RoleDefinition extends BasicDBObject implements DBObject {
 
@@ -169,7 +169,7 @@ public class RoleDefinition extends BasicDBObject implements DBObject {
 
 	/**
 	 * Determines if the permission is defined for this
-	 * @param roleName
+	 * @param permissionName
 	 * @return
 	 */
 	public boolean hasPermission(String permissionName) {

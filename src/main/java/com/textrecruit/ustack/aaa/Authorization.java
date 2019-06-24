@@ -1,21 +1,16 @@
 package com.textrecruit.ustack.aaa;
 
-import java.util.List;
-import java.util.Vector;
-
-import com.textrecruit.ustack.data.APIClient;
-import com.textrecruit.ustack.data.UserAccount;
-import org.apache.log4j.Logger;
-
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
+import com.textrecruit.ustack.data.APIClient;
 import com.textrecruit.ustack.data.UDataCache;
-import com.textrecruit.ustack.exceptions.AuthenticationException;
-import com.textrecruit.ustack.exceptions.AuthorizationException;
-import com.textrecruit.ustack.exceptions.InvalidAccessAttempt;
-import com.textrecruit.ustack.exceptions.InvalidAuthorizationConfig;
-import com.textrecruit.ustack.exceptions.InvalidUserAuthException;
+import com.textrecruit.ustack.data.UserAccount;
+import com.textrecruit.ustack.exceptions.*;
 import com.textrecruit.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+
+import java.util.List;
+import java.util.Vector;
 
 public class Authorization {
 
@@ -137,7 +132,6 @@ public class Authorization {
 	 * @param resource
 	 * @param context
 	 * @param perm
-	 * @param partner
 	 * @throws AuthenticationException
 	 */
 	public static void authorizeUser(UserAccount user, String resource, DBObject context, UStackPermissionEnum perm) throws AuthorizationException
@@ -181,7 +175,7 @@ public class Authorization {
 	/**
 	 * Authorize the API client
 	 * 
-	 * @param apiClient
+	 * @param clientId
 	 * @param perm
 	 * @throws AuthorizationException
 	 */
@@ -397,12 +391,15 @@ public class Authorization {
 		if (!role.hasPermission(perm.getPermission()))
 			throw new InvalidAccessAttempt();
 	}
-	
+
 	/**
 	 * Returns a list of ResourceLink objects the user is allowed to complete the permission requested upon
-	 * 
-	 * @param userName
-	 * @throws AuthenticationException
+	 * @param user
+	 * @param resource
+	 * @param context
+	 * @param perm
+	 * @return
+	 * @throws AuthorizationException
 	 */
 	public static List<ResourceLink> getUserAuthList(UserAccount user, String resource, DBObject context, UStackPermissionEnum perm) throws AuthorizationException
 	{		

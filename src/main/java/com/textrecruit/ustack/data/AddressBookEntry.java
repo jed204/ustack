@@ -1,10 +1,10 @@
 package com.textrecruit.ustack.data;
 
-import java.util.Date;
-
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import java.util.Date;
 
 /**
  * A single address book entry
@@ -80,7 +80,8 @@ public class AddressBookEntry extends BasicDBObject {
 	/**
 	 * Only valid for 'group' types
 	 * @param display
-	 * @param name
+	 * @param internalId
+	 * @param internalLink
 	 */
 	public void addGroupMember(String display, String internalId, String internalLink)
 	{

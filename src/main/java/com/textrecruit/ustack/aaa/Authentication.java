@@ -1,26 +1,25 @@
 package com.textrecruit.ustack.aaa;
 
+import com.textrecruit.ustack.data.APIClient;
+import com.textrecruit.ustack.data.UDataCache;
+import com.textrecruit.ustack.data.UserAccount;
+import com.textrecruit.ustack.data.accting.CreditAccount;
+import com.textrecruit.ustack.exceptions.AuthExceptionUserDisabled;
+import com.textrecruit.ustack.exceptions.AuthExceptionUserLocked;
+import com.textrecruit.ustack.exceptions.AuthExceptionUserPasswordMismatch;
+import com.textrecruit.ustack.exceptions.AuthenticationException;
+import com.textrecruit.ustack.main.Msg;
+import com.textrecruit.ustack.main.UAppCfg;
+import com.textrecruit.ustack.main.UOpts;
+import com.textrecruit.ustack.uisupport.UEntryError;
+import org.apache.log4j.Logger;
+import org.jasypt.util.password.StrongPasswordEncryptor;
+
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
-
-import com.textrecruit.ustack.data.APIClient;
-import com.textrecruit.ustack.data.UserAccount;
-import com.textrecruit.ustack.exceptions.AuthExceptionUserDisabled;
-import com.textrecruit.ustack.exceptions.AuthExceptionUserLocked;
-import com.textrecruit.ustack.exceptions.AuthExceptionUserPasswordMismatch;
-import com.textrecruit.ustack.exceptions.AuthenticationException;
-import com.textrecruit.ustack.main.UAppCfg;
-import org.apache.log4j.Logger;
-import org.jasypt.util.password.StrongPasswordEncryptor;
-
-import com.textrecruit.ustack.data.UDataCache;
-import com.textrecruit.ustack.data.accting.CreditAccount;
-import com.textrecruit.ustack.main.Msg;
-import com.textrecruit.ustack.main.UOpts;
-import com.textrecruit.ustack.uisupport.UEntryError;
 
 /**
  * Autenticate user
@@ -32,7 +31,12 @@ public class Authentication {
 
 	private static Logger logger = Logger.getLogger(Authentication.class);
 
-	/** Verifies the password length and content */
+	/**
+	 * Verifies the password length and content
+	 * @param password1
+	 * @param password2
+	 * @return
+	 */
 	public static List<UEntryError> verifyPasswordRequirements(String password1, String password2)
 	{
 		List<UEntryError> ret = new Vector<UEntryError>();
@@ -58,7 +62,13 @@ public class Authentication {
 		
 		return ret;
 	}
-	
+
+	/**
+	 *
+	 * @param ca
+	 * @param pin
+	 * @throws AuthenticationException
+	 */
 	public static void authenticatePIN(CreditAccount ca, String pin) throws AuthenticationException
 	{
 		if (pin == null)
@@ -80,6 +90,11 @@ public class Authentication {
 		}
 	}
 
+	/**
+	 *
+	 * @param user
+	 * @throws AuthenticationException
+	 */
 	public static void checkAccountBasics(UserAccount user) throws AuthenticationException
 	{
 		if (user == null) // user doesn't exist
@@ -93,7 +108,13 @@ public class Authentication {
 		
 		// note: we don't check for password expiration - your app should (user.isPasswordExpired())
 	}
-	
+
+	/**
+	 *
+	 * @param clientId
+	 * @param apiKey
+	 * @throws AuthenticationException
+	 */
 	public static void authenticateAPI(String clientId, String apiKey) throws AuthenticationException
 	{
 		String cacheKey = "api" + clientId + apiKey.replace("-", "");
@@ -117,7 +138,14 @@ public class Authentication {
 		if (UDataCache.getInstance() != null)
 			UDataCache.getInstance().set(cacheKey, 1800, "t");
 	}
-	
+
+	/**
+	 *
+	 * @param userName
+	 * @param password
+	 * @return
+	 * @throws AuthenticationException
+	 */
 	public static UserAccount authenticateUserHash(String userName, String password) throws AuthenticationException
 	{
 		UserAccount user = null;

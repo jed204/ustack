@@ -1,24 +1,19 @@
 package com.textrecruit.ustack.data;
 
-import java.util.Date;
-import java.util.UUID;
-
+import com.mongodb.*;
 import com.textrecruit.ustack.exceptions.AccountExistsException;
 import com.textrecruit.ustack.exceptions.InvalidUserAccountName;
+import com.textrecruit.ustack.exceptions.PasswordException;
 import com.textrecruit.ustack.exceptions.PasswordLengthException;
+import com.textrecruit.ustack.main.Msg;
 import com.textrecruit.ustack.main.UAppCfg;
+import com.textrecruit.ustack.main.UOpts;
 import org.apache.commons.codec.binary.Base64;
 import org.jasypt.salt.RandomSaltGenerator;
 import org.jasypt.util.text.BasicTextEncryptor;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.textrecruit.ustack.exceptions.PasswordException;
-import com.textrecruit.ustack.main.Msg;
-import com.textrecruit.ustack.main.UOpts;
+import java.util.Date;
+import java.util.UUID;
 
 public class APIClient extends UntzDBObject {
 
@@ -62,7 +57,7 @@ public class APIClient extends UntzDBObject {
 
 	/**
 	 * Generate a APIClient object from the MongoDB object
-	 * @param user
+	 * @param client
 	 */
 	public APIClient(DBObject client) {
 		super(client);

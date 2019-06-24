@@ -1,25 +1,6 @@
 package com.textrecruit.ustack.data;
 
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.UUID;
-import java.util.Vector;
-import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
-
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import com.textrecruit.ustack.aaa.LinkActionHelper;
 import com.textrecruit.ustack.aaa.ResourceDefinition;
 import com.textrecruit.ustack.aaa.ResourceLink;
@@ -30,6 +11,12 @@ import com.textrecruit.ustack.main.UOpts;
 import com.textrecruit.ustack.uisupport.FieldValueMap;
 import com.textrecruit.ustack.uisupport.SearchTableHeaderInt;
 import com.textrecruit.ustack.uisupport.TablePagerInt;
+import org.apache.log4j.Logger;
+
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * Base Object
@@ -90,8 +77,6 @@ abstract public class UntzDBObject extends BasicDBObject implements DBObject {
 
 	/**
 	 * Save an object
-	 * 
-	 * @param actor
 	 */
 	protected void save()
 	{

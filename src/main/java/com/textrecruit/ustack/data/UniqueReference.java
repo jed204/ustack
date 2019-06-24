@@ -1,10 +1,5 @@
 package com.textrecruit.ustack.data;
 
-import java.util.Date;
-import java.util.UUID;
-
-import org.apache.log4j.Logger;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
@@ -16,6 +11,10 @@ import com.textrecruit.ustack.exceptions.PasswordLengthException;
 import com.textrecruit.ustack.main.Msg;
 import com.textrecruit.ustack.main.UAppCfg;
 import com.textrecruit.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+
+import java.util.Date;
+import java.util.UUID;
 
 /**
  * Unique reference / UID for use in emails or links
@@ -66,7 +65,7 @@ public class UniqueReference extends UntzDBObject {
 
 	/**
 	 * Generate a UniqueReference object from the MongoDB object
-	 * @param user
+	 * @param acct
 	 */
 	public UniqueReference(DBObject acct) {
 		super(acct);
@@ -121,8 +120,8 @@ public class UniqueReference extends UntzDBObject {
 	
 	/**
 	 * Get by a field on the unique reference and verify expiration
-	 * 
-	 * @param name
+	 * @param field
+	 * @param val
 	 * @return
 	 */
 	public static UniqueReference getByFieldCheckExpiration(String field, String val)
@@ -149,7 +148,7 @@ public class UniqueReference extends UntzDBObject {
 	/**
 	 * Get a uniq ref by uid
 	 * 
-	 * @param name
+	 * @param uid
 	 * @return
 	 */
 	public static UniqueReference getByUID(String uid)
@@ -175,7 +174,7 @@ public class UniqueReference extends UntzDBObject {
 	/**
 	 * Get a uniq ref by action
 	 * 
-	 * @param name
+	 * @param action
 	 * @return
 	 */
 	public static UniqueReference getByAction(String action)

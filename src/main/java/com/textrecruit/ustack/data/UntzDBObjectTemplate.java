@@ -1,20 +1,14 @@
 package com.textrecruit.ustack.data;
 
+import com.mongodb.*;
+import com.textrecruit.ustack.exceptions.ObjectExistsException;
+import com.textrecruit.ustack.main.UAppCfg;
+import com.textrecruit.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
-
-import com.textrecruit.ustack.exceptions.ObjectExistsException;
-import com.textrecruit.ustack.main.UAppCfg;
-import org.apache.log4j.Logger;
-
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.textrecruit.ustack.main.UOpts;
 
 /**
  * Template for loading new objects with existing data
@@ -60,7 +54,7 @@ public class UntzDBObjectTemplate extends UntzDBObject {
 
 	/**
 	 * Generate a NotificationTemplate object from the MongoDB object
-	 * @param user
+	 * @param templ
 	 */
 	public UntzDBObjectTemplate(DBObject templ) {
 		super(templ);
@@ -97,7 +91,7 @@ public class UntzDBObjectTemplate extends UntzDBObject {
 	/**
 	 * Create a new UntzDBObjectTemplate for an templateName
 	 * 
-	 * @param name
+	 * @param templateName
 	 * @return
 	 * @throws ObjectExistsException
 	 */
@@ -121,7 +115,7 @@ public class UntzDBObjectTemplate extends UntzDBObject {
 	/**
 	 * Get a template object by templateName
 	 * 
-	 * @param name
+	 * @param templateName
 	 * @return
 	 */
 	public static UntzDBObjectTemplate getTemplate(String templateName)

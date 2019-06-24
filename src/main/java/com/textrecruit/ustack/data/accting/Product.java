@@ -1,9 +1,6 @@
 package com.textrecruit.ustack.data.accting;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
+import com.mongodb.*;
 import com.textrecruit.ustack.data.UntzDBObject;
 import com.textrecruit.ustack.exceptions.AccountExistsException;
 import com.textrecruit.ustack.exceptions.InvalidUserAccountName;
@@ -14,11 +11,9 @@ import com.textrecruit.ustack.main.UAppCfg;
 import com.textrecruit.ustack.main.UOpts;
 import org.apache.log4j.Logger;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 public class Product extends UntzDBObject {
 	
@@ -64,7 +59,7 @@ public class Product extends UntzDBObject {
 
 	/**
 	 * Generate a Product object from the MongoDB object
-	 * @param user
+	 * @param acct
 	 */
 	public Product(DBObject acct) {
 		super(acct);
@@ -136,7 +131,7 @@ public class Product extends UntzDBObject {
 	/**
 	 * Get a product by productId
 	 * 
-	 * @param name
+	 * @param productId
 	 * @return
 	 */
 	public static Product getByProductId(String productId)

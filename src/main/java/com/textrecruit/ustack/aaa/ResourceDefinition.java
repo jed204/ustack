@@ -1,25 +1,22 @@
 package com.textrecruit.ustack.aaa;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
-import com.textrecruit.ustack.data.UntzDBObject;
-import com.textrecruit.ustack.data.UserAccount;
-import com.textrecruit.ustack.exceptions.AccountExistsException;
-import com.textrecruit.ustack.exceptions.ObjectExistsException;
-import com.textrecruit.ustack.exceptions.PasswordLengthException;
-import com.textrecruit.ustack.main.UAppCfg;
-import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
-
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.textrecruit.ustack.data.UDataCache;
+import com.textrecruit.ustack.data.UntzDBObject;
+import com.textrecruit.ustack.data.UserAccount;
+import com.textrecruit.ustack.exceptions.ObjectExistsException;
+import com.textrecruit.ustack.main.UAppCfg;
 import com.textrecruit.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 public class ResourceDefinition extends UntzDBObject {
 
@@ -461,12 +458,10 @@ public class ResourceDefinition extends UntzDBObject {
 
 	/**
 	 * Create a new user account
-	 * 
-	 * @param userName
-	 * @param password
+	 * @param name
+	 * @param type
 	 * @return
-	 * @throws AccountExistsException
-	 * @throws PasswordLengthException
+	 * @throws ObjectExistsException
 	 */
 	public static ResourceDefinition createResource(String name, String type) throws ObjectExistsException
 	{

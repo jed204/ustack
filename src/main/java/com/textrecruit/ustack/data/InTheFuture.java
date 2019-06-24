@@ -1,12 +1,5 @@
 package com.textrecruit.ustack.data;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -15,6 +8,12 @@ import com.textrecruit.ustack.main.Duration;
 import com.textrecruit.ustack.main.InTheFutureCallbackInt;
 import com.textrecruit.ustack.main.UAppCfg;
 import com.textrecruit.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class InTheFuture extends UntzDBObject {
 
@@ -59,7 +58,7 @@ public class InTheFuture extends UntzDBObject {
 
 	/**
 	 * Generate a InTheFuture object from the MongoDB object
-	 * @param user
+	 * @param not
 	 */
 	public InTheFuture(DBObject not) {
 		super(not);

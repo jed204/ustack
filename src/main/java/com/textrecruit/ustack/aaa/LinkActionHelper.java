@@ -1,17 +1,11 @@
 package com.textrecruit.ustack.aaa;
 
-import java.util.Iterator;
-
-import org.apache.log4j.Logger;
-
 import com.mongodb.BasicDBList;
 import com.mongodb.DBObject;
-import com.textrecruit.ustack.data.NotificationInst;
-import com.textrecruit.ustack.data.NotificationTemplate;
-import com.textrecruit.ustack.data.SiteAccount;
-import com.textrecruit.ustack.data.UntzDBObject;
-import com.textrecruit.ustack.data.UntzDBObjectTemplate;
-import com.textrecruit.ustack.data.UserAccount;
+import com.textrecruit.ustack.data.*;
+import org.apache.log4j.Logger;
+
+import java.util.Iterator;
 
 public class LinkActionHelper {
 
@@ -59,8 +53,9 @@ public class LinkActionHelper {
 
 	/**
 	 * Called when a link is being requested to be added
+	 * @param actor
 	 * @param resourceLink
-	 * @param user
+	 * @param obj
 	 */
 	public static void handleLinkAddAction(String actor,ResourceLink resourceLink, UntzDBObject obj)
 	{
@@ -190,7 +185,7 @@ public class LinkActionHelper {
 	/**
 	 * Called when a link is being requested to be removed
 	 * @param resourceLink
-	 * @param user
+	 * @param obj
 	 */
 	public static void handleLinkRemoveAction(ResourceLink resourceLink, UntzDBObject obj)
 	{

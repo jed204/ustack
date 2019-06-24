@@ -1,12 +1,6 @@
 package com.textrecruit.ustack.data.accting;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.UUID;
-import java.util.regex.Pattern;
-
+import com.mongodb.*;
 import com.textrecruit.ustack.data.UntzDBObject;
 import com.textrecruit.ustack.exceptions.AccountExistsException;
 import com.textrecruit.ustack.exceptions.InvalidSiteAccountName;
@@ -17,11 +11,12 @@ import com.textrecruit.ustack.main.UOpts;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class CreditAccount extends UntzDBObject {
 
@@ -69,7 +64,7 @@ public class CreditAccount extends UntzDBObject {
 
 	/**
 	 * Generate a CreditAccount object from the MongoDB object
-	 * @param user
+	 * @param acct
 	 */
 	public CreditAccount(DBObject acct) {
 		super(acct);
@@ -676,7 +671,7 @@ public class CreditAccount extends UntzDBObject {
 	/**
 	 * Get a credit account by name
 	 * 
-	 * @param userName
+	 * @param name
 	 * @return
 	 */
 	public static CreditAccount getAccount(String name)
@@ -700,7 +695,7 @@ public class CreditAccount extends UntzDBObject {
 	/**
 	 * Get a credit account by name
 	 * 
-	 * @param userName
+	 * @param uid
 	 * @return
 	 */
 	public static CreditAccount getAccountByUid(String uid)

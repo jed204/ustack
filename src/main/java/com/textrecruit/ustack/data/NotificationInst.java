@@ -1,21 +1,15 @@
 package com.textrecruit.ustack.data;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
-import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
-
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import com.mongodb.*;
 import com.textrecruit.ustack.exceptions.ObjectExistsException;
 import com.textrecruit.ustack.main.UAppCfg;
 import com.textrecruit.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * A notification instance is a subscription for a user to be notified against
@@ -67,7 +61,7 @@ public class NotificationInst extends UntzDBObject {
 
 	/**
 	 * Generate a NotificationInst object from the MongoDB object
-	 * @param user
+	 * @param not
 	 */
 	public NotificationInst(DBObject not) {
 		super(not);
@@ -229,9 +223,9 @@ public class NotificationInst extends UntzDBObject {
 
 	/**
 	 * Get a notification object by name and user
-	 * 
 	 * @param eventName
-	 * @param userName
+	 * @param srchField
+	 * @param value
 	 * @return
 	 */
 	public static NotificationInst getNotification(String eventName, String srchField, String value)

@@ -1,30 +1,24 @@
 package com.textrecruit.ustack.data;
 
+import com.Ostermiller.util.CSVParser;
+import com.Ostermiller.util.LabeledCSVParser;
+import com.mongodb.*;
+import com.textrecruit.ustack.aaa.ResourceDefinition;
+import com.textrecruit.ustack.aaa.ResourceLink;
+import com.textrecruit.ustack.exceptions.AccountExistsException;
+import com.textrecruit.ustack.exceptions.InvalidSiteAccountName;
+import com.textrecruit.ustack.exceptions.PasswordLengthException;
+import com.textrecruit.ustack.main.UAppCfg;
+import com.textrecruit.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-
-import com.textrecruit.ustack.exceptions.AccountExistsException;
-import com.textrecruit.ustack.exceptions.PasswordLengthException;
-import com.textrecruit.ustack.main.UAppCfg;
-import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
-
-import com.Ostermiller.util.CSVParser;
-import com.Ostermiller.util.LabeledCSVParser;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.textrecruit.ustack.aaa.ResourceDefinition;
-import com.textrecruit.ustack.aaa.ResourceLink;
-import com.textrecruit.ustack.exceptions.InvalidSiteAccountName;
-import com.textrecruit.ustack.main.UOpts;
 
 /**
  * A 'Site'
@@ -86,7 +80,7 @@ public class SiteAccount extends UntzDBObject {
 
 	/**
 	 * Generate a SiteAccount object from the MongoDB object
-	 * @param user
+	 * @param site
 	 */
 	public SiteAccount(DBObject site) {
 		super(site);
@@ -398,8 +392,8 @@ public class SiteAccount extends UntzDBObject {
 	/**
 	 * Create a new site account
 	 * 
-	 * @param userName
-	 * @param password
+	 * @param siteName
+	 * @param checkForDupe
 	 * @return
 	 * @throws AccountExistsException
 	 * @throws PasswordLengthException
@@ -439,7 +433,7 @@ public class SiteAccount extends UntzDBObject {
 	/**
 	 * Get a site account by name
 	 * 
-	 * @param userName
+	 * @param siteName
 	 * @return
 	 */
 	public static SiteAccount getSite(String siteName)

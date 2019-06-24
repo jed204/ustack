@@ -881,7 +881,6 @@ public class UserAccount extends UntzDBObject {
 	
 	/**
 	 * Returns a list of TermsConditions names that the user needs to complete
-	 * @param containerName
 	 * @return
 	 */
 	public List<String> getTermsConditionsRenewList()
@@ -1162,7 +1161,7 @@ public class UserAccount extends UntzDBObject {
 	/**
 	 * Get a user account by uid
 	 * 
-	 * @param userName
+	 * @param uid
 	 * @return
 	 */
 	public static UserAccount getUserById(String uid)

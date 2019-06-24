@@ -1,19 +1,18 @@
 package com.textrecruit.ustack.data;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
-import com.textrecruit.ustack.main.UAppCfg;
-import org.apache.log4j.Logger;
-import org.bson.types.ObjectId;
-
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.textrecruit.ustack.exceptions.ObjectExistsException;
+import com.textrecruit.ustack.main.UAppCfg;
 import com.textrecruit.ustack.main.UOpts;
+import org.apache.log4j.Logger;
+import org.bson.types.ObjectId;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Terms + Conditions you may want a user to agree to (now and on a moving forward basis)
@@ -59,7 +58,7 @@ public class TermsConditions extends UntzDBObject {
 
 	/**
 	 * Generate a TermsConditions object from the MongoDB object
-	 * @param user
+	 * @param tos
 	 */
 	public TermsConditions(DBObject tos) {
 		super(tos);
@@ -164,7 +163,7 @@ public class TermsConditions extends UntzDBObject {
 		return new TermsConditions(obj);
 	}
 
-	/** Returns the T&Cs by ID */
+	/** Returns the T & Cs by ID */
 	public static TermsConditions getByGUID(String guid)
 	{
 		if (guid == null || guid.length() == 0)

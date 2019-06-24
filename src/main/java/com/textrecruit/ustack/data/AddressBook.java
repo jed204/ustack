@@ -1,23 +1,14 @@
 package com.textrecruit.ustack.data;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
+import com.mongodb.*;
+import com.textrecruit.ustack.exceptions.InvalidSiteAccountName;
+import com.textrecruit.ustack.exceptions.InvalidUserAccountName;
 import com.textrecruit.ustack.main.UAppCfg;
+import com.textrecruit.ustack.main.UOpts;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.textrecruit.ustack.exceptions.InvalidSiteAccountName;
-import com.textrecruit.ustack.exceptions.InvalidUserAccountName;
-import com.textrecruit.ustack.main.UOpts;
+import java.util.*;
 
 /**
  * The address book object allows you to manage an address book per user.
@@ -73,7 +64,7 @@ public class AddressBook extends UntzDBObject {
 
 	/**
 	 * Generate a AddressBook object from the MongoDB object
-	 * @param user
+	 * @param object
 	 */
 	public AddressBook(DBObject object) {
 		super(object);
@@ -454,9 +445,9 @@ public class AddressBook extends UntzDBObject {
 
 	/**
 	 * Get a address book by siteId
-	 * 
-	 * @param id
+	 * @param siteId
 	 * @return
+	 * @throws InvalidSiteAccountName
 	 */
 	public static AddressBook getBySiteId(String siteId) throws InvalidSiteAccountName
 	{
@@ -481,9 +472,9 @@ public class AddressBook extends UntzDBObject {
 	
 	/**
 	 * Get a address book by userId
-	 * 
-	 * @param id
+	 * @param userId
 	 * @return
+	 * @throws InvalidUserAccountName
 	 */
 	public static AddressBook getByUserId(String userId) throws InvalidUserAccountName
 	{
@@ -508,8 +499,7 @@ public class AddressBook extends UntzDBObject {
 	
 	/**
 	 * Get a address book by name
-	 * 
-	 * @param id
+	 * @param name
 	 * @return
 	 */
 	public static AddressBook getByName(String name)

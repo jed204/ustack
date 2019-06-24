@@ -1,21 +1,15 @@
 package com.textrecruit.ustack.data;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Vector;
-
+import com.mongodb.*;
+import com.textrecruit.ustack.exceptions.ObjectExistsException;
 import com.textrecruit.ustack.main.UAppCfg;
+import com.textrecruit.ustack.main.UOpts;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.textrecruit.ustack.exceptions.ObjectExistsException;
-import com.textrecruit.ustack.main.UOpts;
+import java.util.Date;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * A email/sms/ios/etc template for sending data to users based on notifications
@@ -65,7 +59,7 @@ public class NotificationTemplate extends UntzDBObject {
 
 	/**
 	 * Generate a NotificationTemplate object from the MongoDB object
-	 * @param user
+	 * @param templ
 	 */
 	public NotificationTemplate(DBObject templ) {
 		super(templ);
@@ -181,7 +175,7 @@ public class NotificationTemplate extends UntzDBObject {
 	/**
 	 * Create a new NotificationTemplate for an eventName
 	 * 
-	 * @param name
+	 * @param eventName
 	 * @return
 	 * @throws ObjectExistsException
 	 */
@@ -205,7 +199,7 @@ public class NotificationTemplate extends UntzDBObject {
 	/**
 	 * Get a notification template object by eventName
 	 * 
-	 * @param name
+	 * @param eventName
 	 * @return
 	 */
 	public static NotificationTemplate getNotificationTemplate(String eventName)
@@ -226,7 +220,7 @@ public class NotificationTemplate extends UntzDBObject {
 		return new NotificationTemplate(obj);
 	}
 
-	/** Returns the T&Cs by ID */
+	/** Returns the T & Cs by ID */
 	public static NotificationTemplate getByGUID(String guid)
 	{
 		if (guid == null || guid.length() == 0)

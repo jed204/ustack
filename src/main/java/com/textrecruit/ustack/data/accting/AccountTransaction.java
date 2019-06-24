@@ -1,17 +1,16 @@
 package com.textrecruit.ustack.data.accting;
 
-import java.util.Date;
-
+import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.textrecruit.ustack.data.UntzDBObject;
 import com.textrecruit.ustack.main.UAppCfg;
 import com.textrecruit.ustack.main.UOpts;
 import org.apache.log4j.Logger;
 import org.bson.types.ObjectId;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
+import java.util.Date;
 
 public class AccountTransaction extends UntzDBObject {
 	
@@ -122,7 +121,7 @@ public class AccountTransaction extends UntzDBObject {
 
 	/**
 	 * Generate a AccountTransaction object from the MongoDB object
-	 * @param user
+	 * @param acct
 	 */
 	public AccountTransaction(DBObject acct) {
 		super(acct);

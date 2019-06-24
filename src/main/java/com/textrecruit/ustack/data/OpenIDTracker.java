@@ -1,15 +1,10 @@
 package com.textrecruit.ustack.data;
 
-import java.util.Date;
-
+import com.mongodb.*;
+import com.textrecruit.ustack.main.UOpts;
 import org.bson.types.ObjectId;
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.textrecruit.ustack.main.UOpts;
+import java.util.Date;
 
 /**
  * Used to interact with external OpenID systems
@@ -32,7 +27,7 @@ public class OpenIDTracker extends UntzDBObject {
 	
 	/**
 	 * Generate a OpenIDTracker object from the MongoDB object
-	 * @param user
+	 * @param object
 	 */
 	public OpenIDTracker(DBObject object) {
 		super(object);
