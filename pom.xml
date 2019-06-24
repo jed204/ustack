@@ -1,11 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.untzuntz.ustack</groupId>
-	<artifactId>ustack-core</artifactId>
+	<groupId>com.textrecruit.ustack</groupId>
+	<artifactId>textrecruit-ustack-core</artifactId>
 	<packaging>jar</packaging>
 	<version>2.0.14</version>
-	<name>UStack Core</name>
+	<name>TextRecruit UStack Core</name>
         <licenses>
                 <license>
                         <name>The Apache Software License, Version 2.0</name>
@@ -152,18 +152,11 @@
 	      <version>1.17.1</version>
 	    </dependency>
 	</dependencies>
-	<description>Ustack Core</description>
+	<description>TextRecruit Ustack Core</description>
 	<organization>
-		<url>http://www.untzuntz.com</url>
-		<name>UntzUntz, LLC.</name>
+		<url>http://www.textrecruit.com</url>
+		<name>TextRecruit</name>
 	</organization>
-	<developers>
-		<developer>
-			<id>jed204</id>
-			<name>Jed Danner</name>
-			<email>jdanner@untzuntz.com</email>
-		</developer>
-	</developers>
 	<build>
 		<plugins>
 			<plugin>
@@ -220,11 +213,11 @@
 			</plugin>
 		</plugins>
 	</build>
-	<url>www.untzuntz.com</url>
+	<url>www.textrecruit.com</url>
 	<scm>
-		<url>git@github.com:jed204/ustack.git</url>
-		<connection>scm:git:git@github.com:jed204/ustack.git</connection>
-		<developerConnection>scm:git:git@github.com:jed204/tags</developerConnection>
+		<url>git@github.com:TextRecruit/ustack.git</url>
+		<connection>scm:git:git@github.com:TextRecruit/ustack.git</connection>
+		<developerConnection>scm:git:git@github.com:TextRecruit/tags</developerConnection>
 	</scm>
 	<repositories>
 		<repository>
@@ -243,9 +236,13 @@
 		</repository>
 	</repositories>
         <distributionManagement>
-                <repository>
-                        <id>sonatype-nexus-staging</id>
-                        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
+			<snapshotRepository>
+				<id>ossrh</id>
+				<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			</snapshotRepository>
+			<repository>
+				<id>ossrh</id>
+				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			</repository>
         </distributionManagement>
 </project>
