@@ -4,7 +4,7 @@
 	<groupId>com.textrecruit.ustack</groupId>
 	<artifactId>textrecruit-ustack-core</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<name>TextRecruit UStack Core</name>
         <licenses>
                 <license>
@@ -219,6 +219,13 @@
 		<connection>scm:git:git@github.com:TextRecruit/ustack.git</connection>
 		<developerConnection>scm:git:git@github.com:TextRecruit/tags</developerConnection>
 	</scm>
+	<developers>
+		<developer>
+			<id>alijaza</id>
+			<name>Alireza Jazayeri</name>
+			<email>aj@textrecruit.com</email>
+		</developer>
+	</developers>
 	<repositories>
 		<repository>
 			<id>spy</id>
