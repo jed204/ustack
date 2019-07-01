@@ -51,8 +51,24 @@ public class URedisClient implements UDataCacheClientInt {
 
     public boolean isConnected() {
 
-        if (redisson.getClusterNodesGroup().pingAll()) {
-            return true;
+        if (redisson == null) {
+            return false;
+        }
+
+        try {
+            if (redisson.getClusterNodesGroup().pingAll()) {
+                return true;
+            }
+        } catch (Exception e) {
+            // Ignore
+        }
+
+        try {
+            if (redisson.getNodesGroup().pingAll()) {
+                return true;
+            }
+        } catch (Exception e) {
+            // Ignore
         }
 
         return false;
