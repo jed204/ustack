@@ -101,4 +101,21 @@ public class UMemcachedClient implements UDataCacheClientInt {
         return false;
     }
 
+    @Override
+    public boolean isConnected() {
+        if (mc == null) {
+            return false;
+        }
+
+        if (mc.isFailureMode()) {
+            return false;
+        }
+
+        if (mc.getConnector().isStarted()) {
+            return true;
+        }
+
+        return false;
+    }
+
 }

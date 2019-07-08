@@ -32,7 +32,11 @@ public class UDataCache {
 
 				} else if (connString.startsWith("redis:")) {
 
-					client = new URedisClient(connString);
+					client = new URedisClient(connString, true);
+
+				} else if (connString.startsWith("redissingle:")) {
+
+					client = new URedisClient(connString, false);
 
 				} else {
 

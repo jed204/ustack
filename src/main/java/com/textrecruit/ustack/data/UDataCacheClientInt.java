@@ -6,5 +6,6 @@ public interface UDataCacheClientInt {
     void set(final String key, final int exp, final Object value);
     Object get(final String key);
     boolean delete(final String key);
+    boolean isConnected();
 
 }

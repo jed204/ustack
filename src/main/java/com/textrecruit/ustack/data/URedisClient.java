@@ -14,13 +14,17 @@ public class URedisClient implements UDataCacheClientInt {
 
     private RedissonClient redisson;
 
-    public URedisClient(String connectionString) {
+    public URedisClient(String connectionString, boolean sentinel) {
 
-        connect(connectionString);
+        if (sentinel) {
+            connectSentinel(connectionString);
+        } else {
+            connectSingle(connectionString);
+        }
 
     }
 
-    public void connect(String connectionString) {
+    public void connectSentinel(String connectionString) {
 
         try {
 
@@ -32,23 +36,26 @@ public class URedisClient implements UDataCacheClientInt {
             redisson = Redisson.create(config);
 
         } catch (Exception e) {
-            logger.error("Unable to connect to redis in cluster mode", e);
-        }
-
-        if (redisson == null || !isConnected()) {
-            try {
-
-                Config config = new Config();
-                config.useSingleServer().setAddress(connectionString);
-                redisson = Redisson.create(config);
-
-            } catch (Exception e) {
-                logger.error("Unable to connect to redis in single mode", e);
-            }
+            logger.error("Unable to connect to redis in sentinel mode", e);
         }
 
     }
 
+    public void connectSingle(String connectionString) {
+
+        try {
+
+            Config config = new Config();
+            config.useSingleServer().setAddress(connectionString);
+            redisson = Redisson.create(config);
+
+        } catch (Exception e) {
+            logger.error("Unable to connect to redis in single mode", e);
+        }
+
+    }
+
+    @Override
     public boolean isConnected() {
 
         if (redisson == null) {
@@ -79,7 +86,7 @@ public class URedisClient implements UDataCacheClientInt {
 
         try {
             RAtomicLong val = redisson.getAtomicLong(key);
-            val.expireAt(exp);
+            val.expireAt(exp*1000);
             return val.incrementAndGet();
         } catch (Exception e) {
             logger.error("Unable to get key from redis server", e);
@@ -94,7 +101,7 @@ public class URedisClient implements UDataCacheClientInt {
         try {
             RBucket val = redisson.getBucket(key);
             val.set(value);
-            val.expireAt(exp);
+            val.expireAt(exp*1000);
         } catch (Exception e) {
             logger.warn("Unable to set key from redis server", e);
         }
