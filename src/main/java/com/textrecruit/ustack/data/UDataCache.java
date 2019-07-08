@@ -36,6 +36,7 @@ public class UDataCache {
 
 				} else if (connString.startsWith("redissingle:")) {
 
+					connString = connString.replaceFirst("^redissingle:", "redis:");
 					client = new URedisClient(connString, false);
 
 				} else {
