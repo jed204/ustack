@@ -86,7 +86,8 @@ public class URedisClient implements UDataCacheClientInt {
 
         try {
             RAtomicLong val = redisson.getAtomicLong(key);
-            val.expireAt(exp*1000);
+            long expireTimestamp = System.currentTimeMillis() + (exp*1000);
+            val.expireAt(expireTimestamp);
             return val.incrementAndGet();
         } catch (Exception e) {
             logger.error("Unable to get key from redis server", e);
@@ -101,7 +102,8 @@ public class URedisClient implements UDataCacheClientInt {
         try {
             RBucket val = redisson.getBucket(key);
             val.set(value);
-            val.expireAt(exp*1000);
+            long expireTimestamp = System.currentTimeMillis() + (exp*1000);
+            val.expireAt(expireTimestamp);
         } catch (Exception e) {
             logger.warn("Unable to set key from redis server", e);
         }
