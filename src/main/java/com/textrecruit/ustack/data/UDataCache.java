@@ -30,14 +30,20 @@ public class UDataCache {
 					connString = connString.replaceFirst("^memcached:", "");
 					client = new UMemcachedClient(connString);
 
-				} else if (connString.startsWith("redis:")) {
+				} else if (connString.startsWith("redisreplicated:")) {
 
-					client = new URedisClient(connString, true);
+					connString = connString.replaceFirst("^redisreplicated:", "redis:");
+					client = new URedisClient(connString, URedisClient.ConnectionType.REPLICATED);
+
+				} else if (connString.startsWith("redissentinel:")) {
+
+					connString = connString.replaceFirst("^redissentinel:", "redis:");
+					client = new URedisClient(connString, URedisClient.ConnectionType.SENTINEL);
 
 				} else if (connString.startsWith("redissingle:")) {
 
 					connString = connString.replaceFirst("^redissingle:", "redis:");
-					client = new URedisClient(connString, false);
+					client = new URedisClient(connString, URedisClient.ConnectionType.SINGLE);
 
 				} else {
 

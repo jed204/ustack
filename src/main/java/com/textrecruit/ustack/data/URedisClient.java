@@ -12,14 +12,38 @@ public class URedisClient implements UDataCacheClientInt {
 
     static Logger logger = Logger.getLogger(URedisClient.class);
 
+    public enum ConnectionType {
+        SENTINEL,
+        SINGLE,
+        REPLICATED
+    }
+
     private RedissonClient redisson;
 
-    public URedisClient(String connectionString, boolean sentinel) {
+    public URedisClient(String connectionString, ConnectionType type) {
 
-        if (sentinel) {
+        if (ConnectionType.REPLICATED.equals(type)) {
+            connectReplicated(connectionString);
+        } else if (ConnectionType.SENTINEL.equals(type)) {
             connectSentinel(connectionString);
         } else {
             connectSingle(connectionString);
+        }
+
+    }
+
+    public void connectReplicated(String connectionString) {
+
+        try {
+
+            Config config = new Config();
+            config.useReplicatedServers()
+                    .addNodeAddress(connectionString);
+
+            redisson = Redisson.create(config);
+
+        } catch (Exception e) {
+            logger.error("Unable to connect to redis in sentinel mode", e);
         }
 
     }
