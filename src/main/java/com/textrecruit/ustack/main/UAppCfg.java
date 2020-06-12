@@ -17,7 +17,8 @@ public class UAppCfg {
 	
 	/** String of the hostname + port information for memcache */
 	public static final String CACHE_HOST_STRING = "UAppCfg.CacheHost";
-	
+	public static final String CACHE_HOST_PASSWORD = "UAppCfg.CachePassword";
+
 	/** Default hostname for the mongodb cluster */
 	public static final String MONGO_DB_HOST = "MongoDB.DefaultHost";
 	public static final String MONGO_DB_CONN_STRING= "MongoDB.ConnectionURI";

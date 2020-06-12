@@ -1,5 +1,7 @@
 package com.textrecruit.ustack.data;
 
+import com.textrecruit.ustack.main.UAppCfg;
+import com.textrecruit.ustack.main.UOpts;
 import org.apache.log4j.Logger;
 import org.redisson.Redisson;
 import org.redisson.api.RAtomicLong;
@@ -38,6 +40,7 @@ public class URedisClient implements UDataCacheClientInt {
 
             Config config = new Config();
             config.useReplicatedServers()
+                    .setPassword(UOpts.getString(UAppCfg.CACHE_HOST_PASSWORD))
                     .addNodeAddress(connectionString);
 
             redisson = Redisson.create(config);
@@ -54,6 +57,7 @@ public class URedisClient implements UDataCacheClientInt {
 
             Config config = new Config();
             config.useSentinelServers()
+                    .setPassword(UOpts.getString(UAppCfg.CACHE_HOST_PASSWORD))
                     .setMasterName("mymaster")
                     .addSentinelAddress(connectionString);
 
@@ -70,7 +74,10 @@ public class URedisClient implements UDataCacheClientInt {
         try {
 
             Config config = new Config();
-            config.useSingleServer().setAddress(connectionString);
+            config.useSingleServer()
+                    .setPassword(UOpts.getString(UAppCfg.CACHE_HOST_PASSWORD))
+                    .setAddress(connectionString);
+
             redisson = Redisson.create(config);
 
         } catch (Exception e) {
