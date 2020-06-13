@@ -1,7 +1,6 @@
 package com.textrecruit.ustack.data;
 
 import com.textrecruit.ustack.main.UAppCfg;
-import com.textrecruit.ustack.main.UOpts;
 import org.apache.log4j.Logger;
 import org.redisson.Redisson;
 import org.redisson.api.RAtomicLong;
@@ -24,23 +23,25 @@ public class URedisClient implements UDataCacheClientInt {
 
     public URedisClient(String connectionString, ConnectionType type) {
 
+        String password = System.getProperty(UAppCfg.CACHE_HOST_PASSWORD);
+
         if (ConnectionType.REPLICATED.equals(type)) {
-            connectReplicated(connectionString);
+            connectReplicated(connectionString, password);
         } else if (ConnectionType.SENTINEL.equals(type)) {
-            connectSentinel(connectionString);
+            connectSentinel(connectionString, password);
         } else {
-            connectSingle(connectionString);
+            connectSingle(connectionString, password);
         }
 
     }
 
-    public void connectReplicated(String connectionString) {
+    private void connectReplicated(String connectionString, String password) {
 
         try {
 
             Config config = new Config();
             config.useReplicatedServers()
-                    .setPassword(UOpts.getString(UAppCfg.CACHE_HOST_PASSWORD))
+                    .setPassword(password)
                     .addNodeAddress(connectionString);
 
             redisson = Redisson.create(config);
@@ -51,13 +52,13 @@ public class URedisClient implements UDataCacheClientInt {
 
     }
 
-    public void connectSentinel(String connectionString) {
+    private void connectSentinel(String connectionString, String password) {
 
         try {
 
             Config config = new Config();
             config.useSentinelServers()
-                    .setPassword(UOpts.getString(UAppCfg.CACHE_HOST_PASSWORD))
+                    .setPassword(password)
                     .setMasterName("mymaster")
                     .addSentinelAddress(connectionString);
 
@@ -69,13 +70,13 @@ public class URedisClient implements UDataCacheClientInt {
 
     }
 
-    public void connectSingle(String connectionString) {
+    private void connectSingle(String connectionString, String password) {
 
         try {
 
             Config config = new Config();
             config.useSingleServer()
-                    .setPassword(UOpts.getString(UAppCfg.CACHE_HOST_PASSWORD))
+                    .setPassword(password)
                     .setAddress(connectionString);
 
             redisson = Redisson.create(config);
