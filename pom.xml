@@ -4,7 +4,7 @@
 	<groupId>com.textrecruit.ustack</groupId>
 	<artifactId>textrecruit-ustack-core</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 	<name>TextRecruit UStack Core</name>
         <licenses>
                 <license>
@@ -105,7 +105,7 @@
 		<dependency>
 			<groupId>org.redisson</groupId>
 			<artifactId>redisson</artifactId>
-			<version>3.11.1</version>
+			<version>3.13.1</version>
 		</dependency>
 		<dependency>
 	      <groupId>com.sun.jersey</groupId>

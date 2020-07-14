@@ -42,12 +42,16 @@ public class URedisClient implements UDataCacheClientInt {
             Config config = new Config();
             config.useReplicatedServers()
                     .setPassword(password)
-                    .addNodeAddress(connectionString);
+                    .addNodeAddress(connectionString)
+                    .setTimeout(10000)
+                    .setConnectTimeout(20000)
+                    .setPingConnectionInterval(1000)
+                    .setKeepAlive(true);
 
             redisson = Redisson.create(config);
 
         } catch (Exception e) {
-            logger.error("Unable to connect to redis in sentinel mode", e);
+            logger.error("Unable to connect to redis in replicated mode", e);
         }
 
     }
