@@ -4,7 +4,7 @@
 	<groupId>com.textrecruit.ustack</groupId>
 	<artifactId>textrecruit-ustack-core</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.9</version>
+	<version>1.0.10</version>
 	<name>TextRecruit UStack Core</name>
         <licenses>
                 <license>
