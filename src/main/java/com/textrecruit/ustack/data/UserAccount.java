@@ -1177,17 +1177,6 @@ public class UserAccount extends UntzDBObject {
 		return new UserAccount(user);
 	}
 
-	/**
-	 * Get a user account by uid
-	 *
-	 * @param uid
-	 * @return
-	 */
-	public  UserAccount getUserByIdWrapper(String uid)
-	{
-		return getUserById(uid);
-	}
-
 	public static UserAccount getInstance(){
 		return new UserAccount();
 	}
