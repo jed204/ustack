@@ -57,7 +57,7 @@ public class UserAccount extends UntzDBObject {
 		
 	}
 	
-	private UserAccount()
+	public UserAccount()
 	{
 		// setup basic values on account
 		put("created", new Date());
@@ -1036,6 +1036,11 @@ public class UserAccount extends UntzDBObject {
 			return null;
 		
 		return new UserAccount(user);
+	}
+
+	public UserAccount wrapperForGetUser(String userName)
+	{
+		return getUser(userName);
 	}
 	
 	/**
